@@ -1,0 +1,43 @@
+{
+  "name": "webdata.frame",
+  "version": "0.0.1",
+  "description": "Web data frame",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf docs out",
+    "docs": "docco ./wdf/*js",
+    "test": "mocha",
+    "build": "webpack && mocha",
+    "devtest": "webpack-dev-server --config webpack.mocha.js",
+    "dev": "webpack-dev-server --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/walnutgeek/webdata.frame.git"
+  },
+  "keywords": [
+    "dataframe",
+    "pandas",
+    "data",
+    "dataset",
+    "R",
+    "SAS",
+    "python"
+  ],
+  "author": "wg@walnutgeek.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/walnutgeek/webdata.frame/issues"
+  },
+  "homepage": "https://github.com/walnutgeek/webdata.frame#readme",
+  "devDependencies": {
+    "docco": "^0.7.0",
+    "jshint": "^2.8.0",
+    "jshint-loader": "^0.8.3",
+    "mocha": "^2.3.4",
+    "mocha-loader": "^0.7.1",
+    "rimraf": "^2.4.3",
+    "webpack": "^1.12.6",
+    "webpack-dev-server": "^1.12.1"
+  }
+}
