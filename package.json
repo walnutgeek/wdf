@@ -1,19 +1,22 @@
 {
-  "name": "webdata.frame",
+  "name": "wdf",
   "version": "0.0.1",
   "description": "Web data frame",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf docs out",
-    "docs": "docco ./wdf/*js",
-    "test": "mocha",
-    "build": "webpack && mocha",
+    "clean": "rimraf dist",
     "devtest": "webpack-dev-server --config webpack.mocha.js",
+    "test": "mocha",
+    "build": "webpack && webpack --config webpack.uglified.js && mocha && webpack --config webpack.mocha.js",
+    "zip": "cd dist && zip wdf.zip wdf*",
+    "copy_public": "docco ./docs/*md -o dist && cp ./node_modules/mocha/mocha.css dist/ ",
+    "docs": "docco ./wdf/*js ./docs/*md -t docs/docco.jst -c docs/docco.css -o dist",
+    "all": "echo clean build zip copy_public docs|xargs -n 1 npm run",
     "dev": "webpack-dev-server --config webpack.config.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/walnutgeek/webdata.frame.git"
+    "url": "git+https://github.com/walnutgeek/wdf.git"
   },
   "keywords": [
     "dataframe",
@@ -27,16 +30,19 @@
   "author": "wg@walnutgeek.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/walnutgeek/webdata.frame/issues"
+    "url": "https://github.com/walnutgeek/wdf/issues"
   },
-  "homepage": "https://github.com/walnutgeek/webdata.frame#readme",
+  "homepage": "https://github.com/walnutgeek/wdf#readme",
   "devDependencies": {
     "docco": "^0.7.0",
+    "ejs": "^2.3.4",
     "jshint": "^2.8.0",
     "jshint-loader": "^0.8.3",
+    "markdown": "^0.5.0",
     "mocha": "^2.3.4",
     "mocha-loader": "^0.7.1",
     "rimraf": "^2.4.3",
+    "uglify-loader": "^1.2.0",
     "webpack": "^1.12.6",
     "webpack-dev-server": "^1.12.1"
   }

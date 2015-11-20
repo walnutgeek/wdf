@@ -1,6 +1,4 @@
-var main=require("./webpack.config");
-module.exports = {
-  entry: 'mocha!./test/index.js',
-  output: main.output_fn('testBundle.js'),
-  module: main.module
-};
+var cfg=require("./webpack.config");
+cfg.entry = 'mocha!./test/index.js';
+cfg.output = cfg._output_fn('testBundle.js');
+module.exports = cfg;

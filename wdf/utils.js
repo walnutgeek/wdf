@@ -358,7 +358,10 @@ u$.convertListToObject=function(array,extractor) {
 // Extract name of functions and use them as keys to reshape `funcList` array
 // to object.
 u$.convertFunctionsToObject=function(funcList) {
-  return u$.convertListToObject(funcList, u$.combineKeyExtractors(u$.getPropertyExtractor("name"), u$.extractFunctionName));
+  return u$.convertListToObject(funcList,
+      u$.combineKeyExtractors(
+          u$.getPropertyExtractor("name"),
+          u$.extractFunctionName));
 };
 
 

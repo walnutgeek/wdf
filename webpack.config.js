@@ -1,28 +1,30 @@
 var path = require("path");
-var fs = require('fs');
 
-function output_fn(name, dirname){
-  dirname = dirname || 'out';
-  var dir = path.resolve(__dirname, dirname) ;
-  return { path: dir, filename: name, publicPath: "/" + dirname,
-  };
+function absdir(r){
+  return path.resolve(__dirname, r) ;
 }
 
+function output_fn(name, dirname){
+  dirname = dirname || 'dist';
+  var dir = absdir( dirname) ;
+  return { path: dir, filename: name, publicPath: "/" + dirname, library: 'wdf' };
+}
+
+
 module.exports = {
-  output_fn: output_fn,
-  entry: path.resolve(__dirname, "wdf/index.js"),
-  output: output_fn('bundle.js'),
+  _output_fn: output_fn,
+  entry: absdir("index.js"),
+  output: output_fn('wdf.js'),
+  devtool: "cheap-source-map",
   module: {
     preLoaders: [
       { test: /\.js$/,
         loaders: ['jshint'],
         // define an include so we check just the files we need
-        include: [ __dirname + "/wdf", __dirname + "/test" ]
+        include: [ "/wdf", "/test"].map(absdir)
       }
     ],
-    loaders: [
-      { test: /\.css$/, loader: "style!css" }
-    ]
+    loaders: []
   },
 
 };
