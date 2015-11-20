@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>DataFrame.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+   <!-- meta name="viewport" content="width=device-width, initial-scale=1.0" -->
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+  
+</head>
+<head>
+</head>
+<body>
+  <div id="container">
+    
+    <div id="background"></div>
+    
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="index.html">
+                  index.md
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.md
+                </a>
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="types.html">
+                  types.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>DataFrame.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h2 id="private-stuff">Private stuff</h2>
+<p>methods and classes that not supposed to be used directly</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> u$ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./utils"</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="Column" >
+        
+        <li id="section-2">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p><code>Column</code> has <code>name</code>. Also <code>data</code> array is there to store all column’s value.
+Optionally if <code>type</code> defined when all <code>data</code> assumed to be casted to that type (
+See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this column in column set.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">var</span> Column = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name,len,type</span>)</span>{
+  <span class="hljs-keyword">this</span>.name = name;
+  <span class="hljs-keyword">this</span>.data = [];
+  <span class="hljs-keyword">if</span>( len ){
+    <span class="hljs-keyword">this</span>.data.length = len ;
+  }
+  <span class="hljs-keyword">this</span>.type = type ;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="ColumnSet" >
+        
+        <li id="section-3">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>ColumnSet - store all columns <code>byIndex</code> in array and  <code>byName</code> in hashtable.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> ColumnSet = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+  <span class="hljs-keyword">this</span>.byIndex = [];
+  <span class="hljs-keyword">this</span>.byName = {};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="ColumnSet.prototype.getColumn" >
+        
+        <li id="section-4">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>get column either by name or by index</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>ColumnSet.prototype.getColumn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">name_or_idx</span>)</span>{
+  <span class="hljs-keyword">return</span> (u$.isNumber(name_or_idx) ? <span class="hljs-keyword">this</span>.byIndex : <span class="hljs-keyword">this</span>.byName )[name_or_idx];
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="ColumnSet.prototype.enforceColumn" >
+        
+        <li id="section-5">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>enforce column by name</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>ColumnSet.prototype.enforceColumn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">name,n_rows,type</span>)</span>{
+  <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.byName[name];
+  <span class="hljs-keyword">if</span>( u$.isNullish(c) ){
+    c = <span class="hljs-keyword">new</span> Column(name ,n_rows, type);
+    c.col_idx = <span class="hljs-keyword">this</span>.byIndex.length;
+    <span class="hljs-keyword">this</span>.byIndex.push(c);
+    <span class="hljs-keyword">this</span>.byName[name] = c;
+  }
+  <span class="hljs-keyword">return</span> c;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="ColumnSet.prototype.enforceColumnAt" >
+        
+        <li id="section-6">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>enforce column by <code>col_idx</code>, <code>name</code> will be set to <code>&#39;c&#39;+col_idx</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>ColumnSet.prototype.enforceColumnAt = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col_idx,n_rows,type</span>)</span>{
+  <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.byIndex[col_idx];
+  <span class="hljs-keyword">if</span>( u$.isNullish(c) ){
+    <span class="hljs-keyword">var</span> name = <span class="hljs-string">"c"</span>+col_idx ;
+    c = <span class="hljs-keyword">new</span> Column(name, n_rows, type);
+    c.col_idx = col_idx;
+    <span class="hljs-keyword">this</span>.byIndex[col_idx] = c;
+    <span class="hljs-keyword">this</span>.byName[name] = c;
+  }
+  <span class="hljs-keyword">return</span> c;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="ColumnSet.prototype.addColumns" >
+        
+        <li id="section-7">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>add bunch of columns, preallocate array for <code>n_rows</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>ColumnSet.prototype.addColumns = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">cols,n_rows</span>)</span>{
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span> ; i &lt; cols.length ; i++){
+    <span class="hljs-keyword">var</span> name = cols[i], type ;
+    <span class="hljs-keyword">if</span>(u$.isObject(cols[i])){
+      name = cols[i].name;
+      type = cols[i].type;
+    }
+    <span class="hljs-keyword">this</span>.enforceColumn(name, n_rows, type);
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame" >
+        
+        <li id="section-8">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h2 id="-section-id-dataframe-dataframe-section-"><section id='DataFrame'>Dataframe</section></h2>
+<p><strong>new Dataframe(rows,columns)</strong>:</p>
+<ul>
+<li><code>rows</code> - array of rows. row could be array or object.</li>
+<li><code>columns</code> - array that contains column names or objects with <code>{name: &quot;colname&quot;,type: &quot;number&quot;}</code>.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> DataFrame = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">rows, columns</span>)</span>{
+  <span class="hljs-keyword">var</span> obj = <span class="hljs-keyword">this</span>;
+  <span class="hljs-keyword">if</span>( obj.constructor !== DataFrame ){
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> DataFrame(rows,columns);
+  }
+  rows = rows || [];
+  <span class="hljs-keyword">this</span>.columnSet = <span class="hljs-keyword">new</span> ColumnSet().addColumns( columns||[],rows.length);
+  <span class="hljs-keyword">this</span>.index = u$.range(rows.length);
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> row = <span class="hljs-number">0</span>; row &lt; rows.length; row++) {
+    <span class="hljs-keyword">var</span> row_data = rows[row];
+    <span class="hljs-keyword">if</span>( u$.isObject(row_data) ){
+      <span class="hljs-keyword">var</span> keys = <span class="hljs-built_in">Object</span>.keys(row_data);
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> k = <span class="hljs-number">0</span>; k &lt; keys.length; k++) {
+        <span class="hljs-keyword">this</span>.columnSet.enforceColumn(keys[k]).data[row] = row_data[keys[k]];
+      }
+    }<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( u$.isArray(row_data) ){
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> col_idx = <span class="hljs-number">0</span>; col_idx &lt; row_data.length; col_idx++) {
+        <span class="hljs-keyword">this</span>.columnSet.enforceColumnAt(col_idx).data[row] = row_data[col_idx];
+      }
+    }<span class="hljs-keyword">else</span>{
+      <span class="hljs-keyword">throw</span> { msg: <span class="hljs-string">"row should be object or array and not:"</span>+row_data };
+    }
+  }
+  <span class="hljs-keyword">return</span> obj;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame.parse_csv" >
+        
+        <li id="section-9">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p><strong>parse_csv(str,header)</strong></p>
+<p>parse comma separated values (CSV) format  provided in string <code>str</code>.
+<code>header</code> is array with column names, if omitted first line of  CSV  in <code>str</code> considered header .</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+DataFrame.parse_csv = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">str, header</span>) </span>{
+  <span class="hljs-keyword">var</span> arr = [];
+  <span class="hljs-keyword">var</span> quote = <span class="hljs-literal">false</span>;  <span class="hljs-comment">// true means we're inside a quoted field</span>
+
+  <span class="hljs-keyword">var</span> row ,col ,c ;
+  <span class="hljs-keyword">for</span> (row = col = c = <span class="hljs-number">0</span>; c &lt; str.length; c++) {
+    <span class="hljs-keyword">var</span> cc = str[c], nc = str[c+<span class="hljs-number">1</span>];        <span class="hljs-comment">// current character, next character</span>
+    arr[row] = arr[row] || [];             <span class="hljs-comment">// create a new row if necessary</span>
+    arr[row][col] = arr[row][col] || <span class="hljs-string">''</span>;   <span class="hljs-comment">// create a new column (start with empty string) if necessary</span>
+    <span class="hljs-keyword">if</span> (cc === <span class="hljs-string">'"'</span> &amp;&amp; quote &amp;&amp; nc === <span class="hljs-string">'"'</span>) { <span class="hljs-comment">// if two quotes inside quoted field</span>
+      arr[row][col] += cc; ++c;
+      <span class="hljs-keyword">continue</span>; <span class="hljs-comment">// add quote and skip next char</span>
+    }
+    <span class="hljs-keyword">if</span> (cc === <span class="hljs-string">'"'</span>) { <span class="hljs-comment">// if lone quote</span>
+      quote = !quote; <span class="hljs-keyword">continue</span>; <span class="hljs-comment">// toggle quoted field</span>
+    }
+    <span class="hljs-keyword">if</span> (cc === <span class="hljs-string">','</span> &amp;&amp; !quote) { <span class="hljs-comment">// if comma in the wild</span>
+      ++col; <span class="hljs-keyword">continue</span>; <span class="hljs-comment">// start next cell</span>
+    }
+    <span class="hljs-keyword">if</span> (cc === <span class="hljs-string">'\n'</span> &amp;&amp; !quote) { <span class="hljs-comment">// if new line in the wild</span>
+      ++row; col = <span class="hljs-number">0</span>; <span class="hljs-keyword">continue</span>;  <span class="hljs-comment">// move to next row</span>
+    }
+    arr[row][col] += cc; <span class="hljs-comment">// or add char to current cell</span>
+  }
+  header = header || arr.shift();
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> DataFrame(arr,header);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame.prototype.getRow" >
+        
+        <li id="section-10">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><strong>getRow(row_num,result)</strong></p>
+<p>get data row out of DataFrame.</p>
+<ul>
+<li><code>row_num</code> - row number</li>
+<li><code>result</code> - object or array to be filled in. <strong>@optional</strong>
+ if not provided empty object is assumed.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row_num,result</span>)</span>{
+  <span class="hljs-keyword">var</span> ph_row = <span class="hljs-keyword">this</span>.index[row_num] ;
+  result = result || {};
+  <span class="hljs-keyword">this</span>.columnSet.byIndex.forEach( u$.isArray(result) ?
+      <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">c, col_idx</span>) </span>{ result[col_idx] = c.data[ph_row]; } :
+      <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">c</span>)          </span>{ result[c.name] = c.data[ph_row]; });
+  <span class="hljs-keyword">return</span> result;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame.prototype.get" >
+        
+        <li id="section-11">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p><strong>get(row,col)</strong></p>
+<p>get one value out of DataFrame</p>
+<ul>
+<li><code>row_num</code> - row number</li>
+<li><code>col</code> - column index or column name</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>DataFrame.prototype.get=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row_num,col</span>)</span>{
+  <span class="hljs-keyword">var</span> ph_row = <span class="hljs-keyword">this</span>.index[row_num] ;
+  <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.columnSet.getColumn(col);
+  <span class="hljs-keyword">return</span> c.data[ph_row];
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame.prototype.set" >
+        
+        <li id="section-12">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p><strong>set(row_num,col,v)</strong></p>
+<p>set value in one cell of DataFrame</p>
+<ul>
+<li><code>row_num</code> - row number</li>
+<li><code>col</code> - column index or column name</li>
+<li><code>v</code> -  value to set</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>DataFrame.prototype.set=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row_num,col, v</span>)</span>{
+  <span class="hljs-keyword">var</span> ph_row = <span class="hljs-keyword">this</span>.index[row_num] ;
+  <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.columnSet.getColumn(col);
+  c.data[ph_row] = v;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame.prototype.getRowCount" >
+        
+        <li id="section-13">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p><strong>getRowCount()</strong></p>
+<p>get row count</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>DataFrame.prototype.getRowCount=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.index.length;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame.prototype.newRow" >
+        
+        <li id="section-14">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p><strong>newRow()</strong></p>
+<p>add new row. Returns new row number.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>DataFrame.prototype.newRow=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+  <span class="hljs-keyword">var</span> new_row_num=<span class="hljs-keyword">this</span>.index.length;
+  <span class="hljs-keyword">this</span>.index[new_row_num] = new_row_num;
+  <span class="hljs-keyword">return</span> new_row_num;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame.prototype.deleteRow" >
+        
+        <li id="section-15">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p><strong>deleteRow(row_num)</strong></p>
+<p>delete row by <code>row_num</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>DataFrame.prototype.deleteRow=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row_num</span>)</span>{
+  <span class="hljs-keyword">this</span>.index.splice(row_num,<span class="hljs-number">1</span>);
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame.prototype.getColumn" >
+        
+        <li id="section-16">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>getColumn(col)</p>
+<p>get all data out column. returns array of values</p>
+<ul>
+<li><code>col</code> - column index or column name</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>DataFrame.prototype.getColumn=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col</span>)</span>{
+  <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.columnSet.getColumn(col);
+  <span class="hljs-keyword">if</span>(c){
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.index.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">idx</span>)</span>{
+      <span class="hljs-keyword">return</span> c.data[idx];
+    });
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame.prototype.apply" >
+        
+        <li id="section-17">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p><strong> apply(logic) </strong></p>
+<p>run <code>logic(df,row_num)</code> function on all rows of DataFrame</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>DataFrame.prototype.apply=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">logic</span>)</span>{
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> row_num = <span class="hljs-number">0</span>; row_num &lt; <span class="hljs-keyword">this</span>.index.length; row_num++) {
+    logic(<span class="hljs-keyword">this</span>,row_num);
+  }
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame.prototype.map" >
+        
+        <li id="section-18">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p><strong> map(logic) </strong></p>
+<p>run <code>logic(df,row_num)</code> function on all rows of DataFrame.
+Collect results from each run into array. <code>undefined</code> results
+will not be included in array.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>DataFrame.prototype.map=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">logic</span>)</span>{
+  <span class="hljs-keyword">var</span> collector = [], r;
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> row_num = <span class="hljs-number">0</span>; row_num &lt; <span class="hljs-keyword">this</span>.index.length; row_num++) {
+    r = logic(<span class="hljs-keyword">this</span>,row_num);
+    <span class="hljs-keyword">if</span>( r !== <span class="hljs-literal">undefined</span> ){
+      collector.push(r);
+    }
+  }
+  <span class="hljs-keyword">return</span> collector;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame.prototype.getData" >
+        
+        <li id="section-19">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p><strong>getData()</strong></p>
+<p>Get all data in structure:
+returns {Object}</p>
+<ul>
+<li>columns - columns array<ul>
+<li>name - column name</li>
+<li>type - column type, if defined</li>
+</ul>
+</li>
+<li>rows - array of rows. each row array of values.</li>
+</ul>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+DataFrame.prototype.getData =<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+  <span class="hljs-keyword">var</span> r = {columns:[],rows:[]};
+  <span class="hljs-keyword">var</span> columns = <span class="hljs-keyword">this</span>.columnSet.byIndex;
+  <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> col=<span class="hljs-number">0</span>;col &lt; columns.length; col++){
+    <span class="hljs-keyword">var</span> column = columns[col];
+    <span class="hljs-keyword">var</span> col_def = {name: column.name};
+    <span class="hljs-keyword">if</span>(column.type){
+      col_def.type = column.type.name;
+    }
+    r.columns.push( col_def);
+  }
+  r.rows = <span class="hljs-keyword">this</span>.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">df,row_num</span>)</span>{
+    <span class="hljs-keyword">return</span> df.getRow(row_num,[]);
+  });
+  <span class="hljs-keyword">return</span> r;
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <a name="DataFrame.prototype.getObjects" >
+        
+        <li id="section-20">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p><strong>getObjects()</strong></p>
+<p>returns all rows in  array , each row is object
+with column names pointing to values</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+DataFrame.prototype.getObjects =<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">df,row_num</span>)</span>{
+    <span class="hljs-keyword">return</span> df.getRow(row_num);
+  });
+};
+
+<span class="hljs-built_in">module</span>.exports = DataFrame;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+    <p>
+  
+
+
+  </div>
+</body>
+</html>
