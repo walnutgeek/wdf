@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <%
+function get_function_name(code){
+    var n = code.replace(/^\s*/,"").replace(/^var\s+/,"");
+    return ( n.match( /^([$_\.\w]+)\s*=\s*function/ ) ||
+             n.match( /^function\s+([$_\.\w]+)\s*\(/ ) ||
+             []) [1] ;
+
+}
 function process(sources,title,hasTitle,sections){
   var sect_info = [];
   for (var i=0, l=sections.length; i<l; i++) {
     var code = sections[i].codeText;
-    var n = code.replace(/^\s*/,"").replace(/^var\s+/,"");
-    sect_info.push({name: (n.match(/^([$_\.\w]+)\s*=\s*function/)||n.match(/^function\s+([$_\.\w]+)\s*\(/)||[])[1] });
-    //console.log(sect_info[i], "->", code );
+    sect_info.push({name: get_function_name(code) });
   }
   return { sect_info : sect_info , isCode : title.lastIndexOf(".js") == (title.length-3) };
 }
 
 var d = process(sources,title,hasTitle,sections);
+var mocha = title === "Tests" ;
 %>
 <html>
 <head>
   <title><%= title %></title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-   <!-- meta name="viewport" content="width=device-width, initial-scale=1.0" -->
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="<%= css %>" />
-  <% if( title === "Tests" ){ %>
+  <% if( mocha ){ %>
         <link rel="stylesheet" href="mocha.css" />
   <% } %>
 </head>
@@ -31,11 +36,11 @@ var d = process(sources,title,hasTitle,sections);
     <%
     var ul_class = "";
     if( d.isCode ){
-      ul_class = "sections";
-    %>
-    <div id="background"></div>
+      ul_class = "sections"; %>
+      <div id="background"></div>
     <% } %>
-    <% if (sources.length > 1) { %>
+    <%
+    if (sources.length > 1) { %>
       <ul id="jump_to">
         <li>
           <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
@@ -55,20 +60,21 @@ var d = process(sources,title,hasTitle,sections);
       </ul>
     <% } %>
     <ul class="<%= ul_class %>">
-        <% if (!hasTitle) { %>
+        <%
+        if (!hasTitle) { %>
           <li id="title">
               <div class="annotation">
                   <h1><%= title %></h1>
               </div>
           </li>
         <% } %>
-        <% for (var i=0, l=sections.length; i<l; i++) { %>
-        <% var section = sections[i];
+        <%
+        for (var i=0, l=sections.length; i<l; i++) {
+           var section = sections[i];
            var si = d.sect_info[i];
-           if( si.name ){
-        %>
-        <a name="<%= si.name %>" />
-        <% }%>
+           if( si.name ){ %>
+              <a name="<%= si.name %>" />
+        <% } %>
         <li id="section-<%= i + 1 %>">
 
             <div class="annotation">
@@ -79,19 +85,19 @@ var d = process(sources,title,hasTitle,sections);
               <%= section.docsHtml %>
             </div>
             <% if (section.codeText.replace(/\s/gm, '') != '') { %>
-            <div class="content"><%= section.codeHtml %></div>
+                 <div class="content"><%= section.codeHtml %></div>
             <% } %>
         </li>
         <% } %>
     </ul>
     <p>
-  <% if( title === "Tests" ){ %>
+  <%
+  if( mocha ){ %>
     <div id="mocha">
     <div id="messages"></div>
     <div id="fixtures"></div>
     <script src="testBundle.js"></script>
   <% } %>
-
 
   </div>
 </body>
