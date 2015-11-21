@@ -5,8 +5,13 @@
   "main": "index.js",
   "config": {
     "blanket": {
-      "pattern": [ "" ],
-      "data-cover-never": [ "node_modules", "tests" ]
+      "pattern": [
+        ""
+      ],
+      "data-cover-never": [
+        "node_modules",
+        "tests"
+      ]
     }
   },
   "scripts": {
@@ -18,9 +23,10 @@
     "copy_public": "docco ./docs/*md -o dist && cp ./node_modules/mocha/mocha.css dist/ ",
     "docs": "docco ./wdf/*js ./docs/*md -t docs/docco.jst -c docs/docco.css -o dist",
     "all": "echo clean build zip copy_public docs|xargs -n 1 npm run",
-    "cover" : "mocha --require blanket -R html-cov > dist/coverage.html",
-    "coveralls" : "mocha --require blanket --reporter mocha-lcov-reporter | coveralls",
-    "travis": "echo clean build coveralls|xargs -n 1 npm run",
+    "cover": "mocha --require blanket -R html-cov > dist/coverage.html",
+    "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | coveralls",
+    "codecov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec  && codecov <./coverage/coverage.json",
+    "travis": "echo clean build codecov|xargs -n 1 npm run",
     "gh": "gh-pages -d dist/",
     "dev": "webpack-dev-server --config webpack.config.js"
   },
@@ -45,10 +51,12 @@
   "homepage": "https://github.com/walnutgeek/wdf#readme",
   "devDependencies": {
     "blanket": "^1.2.1",
+    "codecov": "^1.0.1",
     "coveralls": "^2.11.4",
     "docco": "^0.7.0",
     "ejs": "^2.3.4",
     "gh-pages": "^0.5.0",
+    "istanbul": "^0.4.0",
     "jshint": "^2.8.0",
     "jshint-loader": "^0.8.3",
     "markdown": "^0.5.0",
