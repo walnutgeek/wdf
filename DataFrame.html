@@ -4,7 +4,6 @@
 <head>
   <title>DataFrame.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-   <!-- meta name="viewport" content="width=device-width, initial-scale=1.0" -->
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
   
@@ -14,7 +13,7 @@
 <body>
   <div id="container">
     
-    <div id="background"></div>
+      <div id="background"></div>
     
     
       <ul id="jump_to">
@@ -64,7 +63,6 @@
           </li>
         
         
-        
         <li id="section-1">
 
             <div class="annotation">
@@ -77,12 +75,11 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> u$ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./utils"</span>);</pre></div></div>
+                 <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> u$ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./utils"</span>);</pre></div></div>
             
         </li>
         
-        
-        <a name="Column" >
+              <a name="Column" />
         
         <li id="section-2">
 
@@ -97,7 +94,7 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
+                 <div class="content"><div class='highlight'><pre>
 <span class="hljs-keyword">var</span> Column = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name,len,type</span>)</span>{
   <span class="hljs-keyword">this</span>.name = name;
   <span class="hljs-keyword">this</span>.data = [];
@@ -109,8 +106,7 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
             
         </li>
         
-        
-        <a name="ColumnSet" >
+              <a name="ColumnSet" />
         
         <li id="section-3">
 
@@ -123,15 +119,14 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> ColumnSet = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+                 <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> ColumnSet = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
   <span class="hljs-keyword">this</span>.byIndex = [];
   <span class="hljs-keyword">this</span>.byName = {};
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="ColumnSet.prototype.getColumn" >
+              <a name="ColumnSet.prototype.getColumn" />
         
         <li id="section-4">
 
@@ -144,14 +139,13 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>ColumnSet.prototype.getColumn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">name_or_idx</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>ColumnSet.prototype.getColumn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">name_or_idx</span>)</span>{
   <span class="hljs-keyword">return</span> (u$.isNumber(name_or_idx) ? <span class="hljs-keyword">this</span>.byIndex : <span class="hljs-keyword">this</span>.byName )[name_or_idx];
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="ColumnSet.prototype.enforceColumn" >
+              <a name="ColumnSet.prototype.enforceColumn" />
         
         <li id="section-5">
 
@@ -164,7 +158,7 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>ColumnSet.prototype.enforceColumn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">name,n_rows,type</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>ColumnSet.prototype.enforceColumn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">name,n_rows,type</span>)</span>{
   <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.byName[name];
   <span class="hljs-keyword">if</span>( u$.isNullish(c) ){
     c = <span class="hljs-keyword">new</span> Column(name ,n_rows, type);
@@ -177,8 +171,7 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
             
         </li>
         
-        
-        <a name="ColumnSet.prototype.enforceColumnAt" >
+              <a name="ColumnSet.prototype.enforceColumnAt" />
         
         <li id="section-6">
 
@@ -191,7 +184,7 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>ColumnSet.prototype.enforceColumnAt = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col_idx,n_rows,type</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>ColumnSet.prototype.enforceColumnAt = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col_idx,n_rows,type</span>)</span>{
   <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.byIndex[col_idx];
   <span class="hljs-keyword">if</span>( u$.isNullish(c) ){
     <span class="hljs-keyword">var</span> name = <span class="hljs-string">"c"</span>+col_idx ;
@@ -205,8 +198,7 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
             
         </li>
         
-        
-        <a name="ColumnSet.prototype.addColumns" >
+              <a name="ColumnSet.prototype.addColumns" />
         
         <li id="section-7">
 
@@ -219,7 +211,7 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>ColumnSet.prototype.addColumns = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">cols,n_rows</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>ColumnSet.prototype.addColumns = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">cols,n_rows</span>)</span>{
   <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span> ; i &lt; cols.length ; i++){
     <span class="hljs-keyword">var</span> name = cols[i], type ;
     <span class="hljs-keyword">if</span>(u$.isObject(cols[i])){
@@ -233,8 +225,7 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
             
         </li>
         
-        
-        <a name="DataFrame" >
+              <a name="DataFrame" />
         
         <li id="section-8">
 
@@ -252,7 +243,7 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> DataFrame = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">rows, columns</span>)</span>{
+                 <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> DataFrame = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">rows, columns</span>)</span>{
   <span class="hljs-keyword">var</span> obj = <span class="hljs-keyword">this</span>;
   <span class="hljs-keyword">if</span>( obj.constructor !== DataFrame ){
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> DataFrame(rows,columns);
@@ -280,8 +271,7 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
             
         </li>
         
-        
-        <a name="DataFrame.parse_csv" >
+              <a name="DataFrame.parse_csv" />
         
         <li id="section-9">
 
@@ -296,7 +286,7 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
+                 <div class="content"><div class='highlight'><pre>
 DataFrame.parse_csv = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">str, header</span>) </span>{
   <span class="hljs-keyword">var</span> arr = [];
   <span class="hljs-keyword">var</span> quote = <span class="hljs-literal">false</span>;  <span class="hljs-comment">// true means we're inside a quoted field</span>
@@ -327,8 +317,7 @@ DataFrame.parse_csv = <span class="hljs-function"><span class="hljs-keyword">fun
             
         </li>
         
-        
-        <a name="DataFrame.prototype.getRow" >
+              <a name="DataFrame.prototype.getRow" />
         
         <li id="section-10">
 
@@ -347,7 +336,7 @@ DataFrame.parse_csv = <span class="hljs-function"><span class="hljs-keyword">fun
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
+                 <div class="content"><div class='highlight'><pre>
 DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row_num,result</span>)</span>{
   <span class="hljs-keyword">var</span> ph_row = <span class="hljs-keyword">this</span>.index[row_num] ;
   result = result || {};
@@ -359,8 +348,7 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
             
         </li>
         
-        
-        <a name="DataFrame.prototype.get" >
+              <a name="DataFrame.prototype.get" />
         
         <li id="section-11">
 
@@ -378,7 +366,7 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>DataFrame.prototype.get=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row_num,col</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>DataFrame.prototype.get=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row_num,col</span>)</span>{
   <span class="hljs-keyword">var</span> ph_row = <span class="hljs-keyword">this</span>.index[row_num] ;
   <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.columnSet.getColumn(col);
   <span class="hljs-keyword">return</span> c.data[ph_row];
@@ -386,8 +374,7 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
             
         </li>
         
-        
-        <a name="DataFrame.prototype.set" >
+              <a name="DataFrame.prototype.set" />
         
         <li id="section-12">
 
@@ -406,7 +393,7 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>DataFrame.prototype.set=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row_num,col, v</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>DataFrame.prototype.set=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row_num,col, v</span>)</span>{
   <span class="hljs-keyword">var</span> ph_row = <span class="hljs-keyword">this</span>.index[row_num] ;
   <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.columnSet.getColumn(col);
   c.data[ph_row] = v;
@@ -414,8 +401,7 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
             
         </li>
         
-        
-        <a name="DataFrame.prototype.getRowCount" >
+              <a name="DataFrame.prototype.getRowCount" />
         
         <li id="section-13">
 
@@ -429,14 +415,13 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>DataFrame.prototype.getRowCount=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+                 <div class="content"><div class='highlight'><pre>DataFrame.prototype.getRowCount=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.index.length;
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="DataFrame.prototype.newRow" >
+              <a name="DataFrame.prototype.newRow" />
         
         <li id="section-14">
 
@@ -450,7 +435,7 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>DataFrame.prototype.newRow=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+                 <div class="content"><div class='highlight'><pre>DataFrame.prototype.newRow=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
   <span class="hljs-keyword">var</span> new_row_num=<span class="hljs-keyword">this</span>.index.length;
   <span class="hljs-keyword">this</span>.index[new_row_num] = new_row_num;
   <span class="hljs-keyword">return</span> new_row_num;
@@ -458,8 +443,7 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
             
         </li>
         
-        
-        <a name="DataFrame.prototype.deleteRow" >
+              <a name="DataFrame.prototype.deleteRow" />
         
         <li id="section-15">
 
@@ -473,14 +457,13 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>DataFrame.prototype.deleteRow=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row_num</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>DataFrame.prototype.deleteRow=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row_num</span>)</span>{
   <span class="hljs-keyword">this</span>.index.splice(row_num,<span class="hljs-number">1</span>);
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="DataFrame.prototype.getColumn" >
+              <a name="DataFrame.prototype.getColumn" />
         
         <li id="section-16">
 
@@ -497,7 +480,7 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>DataFrame.prototype.getColumn=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>DataFrame.prototype.getColumn=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col</span>)</span>{
   <span class="hljs-keyword">var</span> c = <span class="hljs-keyword">this</span>.columnSet.getColumn(col);
   <span class="hljs-keyword">if</span>(c){
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.index.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">idx</span>)</span>{
@@ -509,8 +492,7 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
             
         </li>
         
-        
-        <a name="DataFrame.prototype.apply" >
+              <a name="DataFrame.prototype.apply" />
         
         <li id="section-17">
 
@@ -524,7 +506,7 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>DataFrame.prototype.apply=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">logic</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>DataFrame.prototype.apply=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">logic</span>)</span>{
   <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> row_num = <span class="hljs-number">0</span>; row_num &lt; <span class="hljs-keyword">this</span>.index.length; row_num++) {
     logic(<span class="hljs-keyword">this</span>,row_num);
   }
@@ -532,8 +514,7 @@ DataFrame.prototype.getRow=<span class="hljs-function"><span class="hljs-keyword
             
         </li>
         
-        
-        <a name="DataFrame.prototype.map" >
+              <a name="DataFrame.prototype.map" />
         
         <li id="section-18">
 
@@ -549,7 +530,7 @@ will not be included in array.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>DataFrame.prototype.map=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">logic</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>DataFrame.prototype.map=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">logic</span>)</span>{
   <span class="hljs-keyword">var</span> collector = [], r;
   <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> row_num = <span class="hljs-number">0</span>; row_num &lt; <span class="hljs-keyword">this</span>.index.length; row_num++) {
     r = logic(<span class="hljs-keyword">this</span>,row_num);
@@ -562,8 +543,7 @@ will not be included in array.</p>
             
         </li>
         
-        
-        <a name="DataFrame.prototype.getData" >
+              <a name="DataFrame.prototype.getData" />
         
         <li id="section-19">
 
@@ -586,7 +566,7 @@ returns {Object}</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
+                 <div class="content"><div class='highlight'><pre>
 DataFrame.prototype.getData =<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
   <span class="hljs-keyword">var</span> r = {columns:[],rows:[]};
   <span class="hljs-keyword">var</span> columns = <span class="hljs-keyword">this</span>.columnSet.byIndex;
@@ -606,8 +586,7 @@ DataFrame.prototype.getData =<span class="hljs-function"><span class="hljs-keywo
             
         </li>
         
-        
-        <a name="DataFrame.prototype.getObjects" >
+              <a name="DataFrame.prototype.getObjects" />
         
         <li id="section-20">
 
@@ -622,7 +601,7 @@ with column names pointing to values</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
+                 <div class="content"><div class='highlight'><pre>
 DataFrame.prototype.getObjects =<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">df,row_num</span>)</span>{
     <span class="hljs-keyword">return</span> df.getRow(row_num);
@@ -636,7 +615,6 @@ DataFrame.prototype.getObjects =<span class="hljs-function"><span class="hljs-ke
     </ul>
     <p>
   
-
 
   </div>
 </body>

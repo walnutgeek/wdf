@@ -4,7 +4,6 @@
 <head>
   <title>utils.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-   <!-- meta name="viewport" content="width=device-width, initial-scale=1.0" -->
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
   
@@ -14,7 +13,7 @@
 <body>
   <div id="container">
     
-    <div id="background"></div>
+      <div id="background"></div>
     
     
       <ul id="jump_to">
@@ -64,7 +63,6 @@
           </li>
         
         
-        
         <li id="section-1">
 
             <div class="annotation">
@@ -76,7 +74,6 @@
             </div>
             
         </li>
-        
         
         <li id="section-2">
 
@@ -90,10 +87,9 @@
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> u$ = <span class="hljs-built_in">module</span>.exports = {} ;</pre></div></div>
+                 <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> u$ = <span class="hljs-built_in">module</span>.exports = {} ;</pre></div></div>
             
         </li>
-        
         
         <li id="section-3">
 
@@ -108,8 +104,7 @@
             
         </li>
         
-        
-        <a name="u$.isArray" >
+              <a name="u$.isArray" />
         
         <li id="section-4">
 
@@ -123,14 +118,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isArray=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">o</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.isArray=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">o</span>) </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.prototype.toString.call(o) === <span class="hljs-string">'[object Array]'</span>;
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isString" >
+              <a name="u$.isString" />
         
         <li id="section-5">
 
@@ -144,14 +138,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isString=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.isString=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> a === <span class="hljs-string">"string"</span> || a <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">String</span>;
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isNumber" >
+              <a name="u$.isNumber" />
         
         <li id="section-6">
 
@@ -165,14 +158,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isNumber=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.isNumber=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> a === <span class="hljs-string">"number"</span> || a <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Number</span>;
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isInteger" >
+              <a name="u$.isInteger" />
         
         <li id="section-7">
 
@@ -186,14 +178,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isInteger=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.isInteger=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
   <span class="hljs-keyword">return</span> u$.isNumber(a) &amp;&amp; a % <span class="hljs-number">1</span> === <span class="hljs-number">0</span>;
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isBoolean" >
+              <a name="u$.isBoolean" />
         
         <li id="section-8">
 
@@ -207,14 +198,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isBoolean=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.isBoolean=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> a === <span class="hljs-string">"boolean"</span> || a <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Boolean</span>;
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isFunction" >
+              <a name="u$.isFunction" />
         
         <li id="section-9">
 
@@ -228,14 +218,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isFunction=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.isFunction=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> a === <span class="hljs-string">"function"</span> || a <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Function</span>;
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isDate" >
+              <a name="u$.isDate" />
         
         <li id="section-10">
 
@@ -249,14 +238,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isDate=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.isDate=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
   <span class="hljs-keyword">return</span> a <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Date</span>;
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isUndef" >
+              <a name="u$.isUndef" />
         
         <li id="section-11">
 
@@ -270,14 +258,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isUndef=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.isUndef=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>) </span>{
   <span class="hljs-keyword">return</span> x === <span class="hljs-literal">undefined</span>; <span class="hljs-comment">//<span class="hljs-doctag">TODO:</span> consider to use: typeof x === "undefined"</span>
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isNull" >
+              <a name="u$.isNull" />
         
         <li id="section-12">
 
@@ -291,14 +278,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isNull=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>)  </span>{
+                 <div class="content"><div class='highlight'><pre>u$.isNull=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>)  </span>{
   <span class="hljs-keyword">return</span> x === <span class="hljs-literal">null</span>;
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isNullish" >
+              <a name="u$.isNullish" />
         
         <li id="section-13">
 
@@ -312,14 +298,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isNullish=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.isNullish=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
   <span class="hljs-keyword">return</span> a === <span class="hljs-literal">null</span> || a === <span class="hljs-literal">undefined</span>;
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isPrimitive" >
+              <a name="u$.isPrimitive" />
         
         <li id="section-14">
 
@@ -333,15 +318,14 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isPrimitive=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.isPrimitive=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
   <span class="hljs-keyword">return</span> u$.isString(a) || u$.isNumber(a) || u$.isBoolean(a) ||
       u$.isFunction(a) || u$.isDate(a);
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isObject" >
+              <a name="u$.isObject" />
         
         <li id="section-15">
 
@@ -355,14 +339,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isObject=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.isObject=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
   <span class="hljs-keyword">return</span> !u$.isNullish(a) &amp;&amp; !u$.isPrimitive(a) &amp;&amp; !u$.isArray(a);
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isArrayEmpty" >
+              <a name="u$.isArrayEmpty" />
         
         <li id="section-16">
 
@@ -376,14 +359,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isArrayEmpty=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">array</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>u$.isArrayEmpty=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">array</span>)</span>{
   <span class="hljs-keyword">return</span> u$.isNullish(array) || (u$.isArray(array) &amp;&amp; array.length === <span class="hljs-number">0</span>);
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.isStringEmpty" >
+              <a name="u$.isStringEmpty" />
         
         <li id="section-17">
 
@@ -397,14 +379,13 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.isStringEmpty=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>u$.isStringEmpty=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>)</span>{
   <span class="hljs-keyword">return</span> u$.isNullish(s) || (u$.isString(s) &amp;&amp; s.trim().length() === <span class="hljs-number">0</span>);
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.numDefault" >
+              <a name="u$.numDefault" />
         
         <li id="section-18">
 
@@ -418,7 +399,7 @@
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.numDefault=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v,default_v</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>u$.numDefault=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v,default_v</span>)</span>{
   <span class="hljs-keyword">if</span>(u$.isNullish(v) || <span class="hljs-built_in">isNaN</span>(v)){
     <span class="hljs-keyword">return</span> default_v;
   }
@@ -426,7 +407,6 @@
 };</pre></div></div>
             
         </li>
-        
         
         <li id="section-19">
 
@@ -441,8 +421,7 @@
             
         </li>
         
-        
-        <a name="u$.brodcastCall" >
+              <a name="u$.brodcastCall" />
         
         <li id="section-20">
 
@@ -459,7 +438,7 @@ do not throw exceptions.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.brodcastCall=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">brodcastTo, funcName, args, vocal</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>u$.brodcastCall=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">brodcastTo, funcName, args, vocal</span>)</span>{
   vocal = vocal || <span class="hljs-literal">false</span>;
   <span class="hljs-keyword">if</span>(! u$.isArrayEmpty(brodcastTo) ){
     brodcastTo.forEach(
@@ -477,8 +456,7 @@ do not throw exceptions.</p>
             
         </li>
         
-        
-        <a name="u$.new_Object" >
+              <a name="u$.new_Object" />
         
         <li id="section-21">
 
@@ -492,7 +470,7 @@ do not throw exceptions.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
+                 <div class="content"><div class='highlight'><pre>
 u$.new_Object = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">constructor, args</span>) </span>{
   <span class="hljs-keyword">var</span> new_obj = <span class="hljs-built_in">Object</span>.create(constructor.prototype);
   <span class="hljs-keyword">var</span> ctor_ret = constructor.apply(new_obj, args);
@@ -501,8 +479,7 @@ u$.new_Object = <span class="hljs-function"><span class="hljs-keyword">function<
             
         </li>
         
-        
-        <a name="u$.extractFunctionName" >
+              <a name="u$.extractFunctionName" />
         
         <li id="section-22">
 
@@ -523,15 +500,14 @@ u$.new_Object = <span class="hljs-function"><span class="hljs-keyword">function<
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.extractFunctionName=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">f</span>) </span>{ <span class="hljs-comment">// because IE does not support Function.prototype.name property</span>
+                 <div class="content"><div class='highlight'><pre>u$.extractFunctionName=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">f</span>) </span>{ <span class="hljs-comment">// because IE does not support Function.prototype.name property</span>
   <span class="hljs-keyword">var</span> m = f.toString().match(<span class="hljs-regexp">/^\s*function\s*([^\s(]+)/</span>);
   <span class="hljs-keyword">return</span> m ? m[<span class="hljs-number">1</span>] : <span class="hljs-string">""</span>;
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.getPropertyExtractor" >
+              <a name="u$.getPropertyExtractor" />
         
         <li id="section-23">
 
@@ -549,7 +525,7 @@ u$.new_Object = <span class="hljs-function"><span class="hljs-keyword">function<
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.getPropertyExtractor=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">property</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.getPropertyExtractor=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">property</span>) </span>{
   <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">o</span>) </span>{
     <span class="hljs-keyword">return</span> o[property];
   };
@@ -557,8 +533,7 @@ u$.new_Object = <span class="hljs-function"><span class="hljs-keyword">function<
             
         </li>
         
-        
-        <a name="u$.combineKeyExtractors" >
+              <a name="u$.combineKeyExtractors" />
         
         <li id="section-24">
 
@@ -582,7 +557,7 @@ and first <code>value !== undefined</code> get returned:</p>
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.combineKeyExtractors=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.combineKeyExtractors=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
   <span class="hljs-keyword">var</span> extractors = u$.extractArray(<span class="hljs-built_in">arguments</span>);
   <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">o</span>) </span>{
     <span class="hljs-keyword">for</span> ( <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; extractors.length; i++) {
@@ -597,7 +572,6 @@ and first <code>value !== undefined</code> get returned:</p>
             
         </li>
         
-        
         <li id="section-25">
 
             <div class="annotation">
@@ -611,8 +585,7 @@ and first <code>value !== undefined</code> get returned:</p>
             
         </li>
         
-        
-        <a name="u$.extractArray" >
+              <a name="u$.extractArray" />
         
         <li id="section-26">
 
@@ -639,7 +612,7 @@ array as well.</p>
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.extractArray=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">args</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.extractArray=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">args</span>) </span>{
   <span class="hljs-keyword">if</span> ( !args || args.length === <span class="hljs-number">0</span>) {
     <span class="hljs-keyword">return</span> [];
   } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (args.length === <span class="hljs-number">1</span>) {
@@ -653,8 +626,7 @@ array as well.</p>
             
         </li>
         
-        
-        <a name="u$.binarySearch" >
+              <a name="u$.binarySearch" />
         
         <li id="section-27">
 
@@ -680,7 +652,7 @@ something like: <code>a &lt; b ? -1 : a &gt; b ? 1 : 0</code></p>
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.binarySearch=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">searchFor, array, comparator, mapper</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.binarySearch=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">searchFor, array, comparator, mapper</span>) </span>{
   <span class="hljs-keyword">var</span> mapToValue = mapper || <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>) </span>{
         <span class="hljs-keyword">return</span> x;
       };
@@ -703,8 +675,7 @@ something like: <code>a &lt; b ? -1 : a &gt; b ? 1 : 0</code></p>
             
         </li>
         
-        
-        <a name="u$.range" >
+              <a name="u$.range" />
         
         <li id="section-28">
 
@@ -721,7 +692,7 @@ something like: <code>a &lt; b ? -1 : a &gt; b ? 1 : 0</code></p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.range=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">start, end, step</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.range=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">start, end, step</span>) </span>{
   <span class="hljs-keyword">if</span>(u$.isUndef(step)) {
     step = <span class="hljs-number">1</span>;
   }
@@ -738,8 +709,7 @@ something like: <code>a &lt; b ? -1 : a &gt; b ? 1 : 0</code></p>
             
         </li>
         
-        
-        <a name="u$.repeat" >
+              <a name="u$.repeat" />
         
         <li id="section-29">
 
@@ -754,7 +724,7 @@ result of <code>value(i)</code> call will be stored in array instead.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
+                 <div class="content"><div class='highlight'><pre>
 u$.repeat=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n, value</span>) </span>{
   <span class="hljs-keyword">var</span> result = [];
   <span class="hljs-keyword">for</span> ( <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; n; i++) {
@@ -765,8 +735,7 @@ u$.repeat=<span class="hljs-function"><span class="hljs-keyword">function</span>
             
         </li>
         
-        
-        <a name="u$.convertListToObject" >
+              <a name="u$.convertListToObject" />
         
         <li id="section-30">
 
@@ -782,7 +751,7 @@ in object.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.convertListToObject=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">array,extractor</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.convertListToObject=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">array,extractor</span>) </span>{
   <span class="hljs-keyword">var</span> obj = {};
   <span class="hljs-keyword">for</span> ( <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; array.length; i++) {
     <span class="hljs-keyword">var</span> v = array[i];
@@ -796,8 +765,7 @@ in object.</p>
             
         </li>
         
-        
-        <a name="u$.convertFunctionsToObject" >
+              <a name="u$.convertFunctionsToObject" />
         
         <li id="section-31">
 
@@ -812,7 +780,7 @@ to object.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.convertFunctionsToObject=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">funcList</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.convertFunctionsToObject=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">funcList</span>) </span>{
   <span class="hljs-keyword">return</span> u$.convertListToObject(funcList,
       u$.combineKeyExtractors(
           u$.getPropertyExtractor(<span class="hljs-string">"name"</span>),
@@ -821,8 +789,7 @@ to object.</p>
             
         </li>
         
-        
-        <a name="u$.applyOnAll" >
+              <a name="u$.applyOnAll" />
         
         <li id="section-32">
 
@@ -837,7 +804,7 @@ object</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.applyOnAll=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">obj, action</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.applyOnAll=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">obj, action</span>) </span>{
   <span class="hljs-keyword">for</span> ( <span class="hljs-keyword">var</span> k <span class="hljs-keyword">in</span> obj) {
     <span class="hljs-keyword">if</span> (obj.hasOwnProperty(k)) {
       action(obj[k], k, obj);
@@ -847,8 +814,7 @@ object</p>
             
         </li>
         
-        
-        <a name="u$.append" >
+              <a name="u$.append" />
         
         <li id="section-33">
 
@@ -865,7 +831,7 @@ mentioned in <code>excludes</code> it will be omitted.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.append=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">object, params, excludes</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.append=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">object, params, excludes</span>) </span>{
   <span class="hljs-keyword">for</span> ( <span class="hljs-keyword">var</span> key <span class="hljs-keyword">in</span> params) {
     <span class="hljs-keyword">if</span> ( params.hasOwnProperty(key) &amp;&amp;
         ( !excludes || !excludes.contains(key) ) ) {
@@ -877,8 +843,7 @@ mentioned in <code>excludes</code> it will be omitted.</p>
             
         </li>
         
-        
-        <a name="u$.size" >
+              <a name="u$.size" />
         
         <li id="section-34">
 
@@ -892,7 +857,7 @@ mentioned in <code>excludes</code> it will be omitted.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.size=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">obj</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.size=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">obj</span>) </span>{
   <span class="hljs-keyword">var</span> sz = <span class="hljs-number">0</span>;
   <span class="hljs-keyword">for</span> ( <span class="hljs-keyword">var</span> key <span class="hljs-keyword">in</span> obj) {
     <span class="hljs-keyword">if</span> (obj.hasOwnProperty(key)){
@@ -904,8 +869,7 @@ mentioned in <code>excludes</code> it will be omitted.</p>
             
         </li>
         
-        
-        <a name="u$.join" >
+              <a name="u$.join" />
         
         <li id="section-35">
 
@@ -931,7 +895,7 @@ elements before join.</li>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.join=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">collection, delimiter, toValue</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.join=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">collection, delimiter, toValue</span>) </span>{
   <span class="hljs-keyword">var</span> keys = u$.isObject(collection) ? <span class="hljs-built_in">Object</span>.keys(collection) : collection;
   <span class="hljs-keyword">if</span> (!toValue) {
     toValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">s</span>) </span>{
@@ -963,7 +927,6 @@ elements before join.</li>
             
         </li>
         
-        
         <li id="section-36">
 
             <div class="annotation">
@@ -977,8 +940,7 @@ elements before join.</li>
             
         </li>
         
-        
-        <a name="u$.filterChars" >
+              <a name="u$.filterChars" />
         
         <li id="section-37">
 
@@ -995,7 +957,7 @@ function requirements.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.filterChars=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s,filter</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>u$.filterChars=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s,filter</span>)</span>{
   <span class="hljs-keyword">var</span> at = <span class="hljs-number">0</span> ;
   <span class="hljs-keyword">while</span>( at &lt; s.length &amp;&amp; filter(s.charAt(at),at,s) ) {
     at++;
@@ -1005,8 +967,7 @@ function requirements.</p>
             
         </li>
         
-        
-        <a name="u$.detectRepeatingChar" >
+              <a name="u$.detectRepeatingChar" />
         
         <li id="section-38">
 
@@ -1020,7 +981,7 @@ function requirements.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.detectRepeatingChar=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s,prefix_ch</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>u$.detectRepeatingChar=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s,prefix_ch</span>)</span>{
   <span class="hljs-keyword">return</span> u$.filterChars(s,<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ch</span>)</span>{
     <span class="hljs-keyword">return</span> ch === prefix_ch;
   });
@@ -1028,8 +989,7 @@ function requirements.</p>
             
         </li>
         
-        
-        <a name="u$.detectPrefix" >
+              <a name="u$.detectPrefix" />
         
         <li id="section-39">
 
@@ -1044,7 +1004,7 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.detectPrefix=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s,prefix</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>u$.detectPrefix=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s,prefix</span>)</span>{
   <span class="hljs-keyword">return</span> prefix.length === u$.filterChars(s,<span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">ch,at</span>)</span>{
         <span class="hljs-keyword">return</span> ch === prefix.charAt(at);
       });
@@ -1052,8 +1012,7 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
             
         </li>
         
-        
-        <a name="u$.ensureDate" >
+              <a name="u$.ensureDate" />
         
         <li id="section-40">
 
@@ -1067,7 +1026,7 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.ensureDate=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.ensureDate=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
   <span class="hljs-keyword">return</span> a <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Date</span> ? a : <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(a);
 };
 
@@ -1077,8 +1036,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
             
         </li>
         
-        
-        <a name="u$.error" >
+              <a name="u$.error" />
         
         <li id="section-41">
 
@@ -1092,7 +1050,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.error=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">params,  err</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.error=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">params,  err</span>) </span>{
   err = err || <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>();
   params = params || {};
   <span class="hljs-keyword">if</span> ( u$.isNullish(err._message) ) {
@@ -1113,8 +1071,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
             
         </li>
         
-        
-        <a name="u$.assert" >
+              <a name="u$.assert" />
         
         <li id="section-42">
 
@@ -1128,7 +1085,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.assert=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">provided, expected, message</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.assert=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">provided, expected, message</span>) </span>{
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">check</span>(<span class="hljs-params">expected</span>) </span>{
     <span class="hljs-keyword">return</span> provided === expected;
   }
@@ -1144,7 +1101,6 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
             
         </li>
         
-        
         <li id="section-43">
 
             <div class="annotation">
@@ -1158,7 +1114,6 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
             
         </li>
         
-        
         <li id="section-44">
 
             <div class="annotation">
@@ -1171,7 +1126,6 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
             </div>
             
         </li>
-        
         
         <li id="section-45">
 
@@ -1187,8 +1141,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
             
         </li>
         
-        
-        <a name="pad_with" >
+              <a name="pad_with" />
         
         <li id="section-46">
 
@@ -1204,7 +1157,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pad_with</span>(<span class="hljs-params">input, template</span>) </span>{
+                 <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pad_with</span>(<span class="hljs-params">input, template</span>) </span>{
   <span class="hljs-keyword">var</span> r = <span class="hljs-built_in">String</span>(input);
   <span class="hljs-keyword">if</span> (r.length !== template.length) {
     r = (template + r).substr(r.length, template.length);
@@ -1214,8 +1167,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
             
         </li>
         
-        
-        <a name="pad_with_zeros" >
+              <a name="pad_with_zeros" />
         
         <li id="section-47">
 
@@ -1233,7 +1185,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pad_with_zeros</span>(<span class="hljs-params">input, n</span>) </span>{
+                 <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pad_with_zeros</span>(<span class="hljs-params">input, n</span>) </span>{
   <span class="hljs-keyword">var</span> r = <span class="hljs-built_in">String</span>(input);
   <span class="hljs-keyword">while</span>(r.length &lt; n) {
     r = <span class="hljs-string">'0'</span> + r;
@@ -1242,7 +1194,6 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 }</pre></div></div>
             
         </li>
-        
         
         <li id="section-48">
 
@@ -1255,7 +1206,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> DATE_PATTERNS = {
+                 <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> DATE_PATTERNS = {
   YYYY_MM_DDThh_mm_ss: { delims: [<span class="hljs-string">'-'</span>,<span class="hljs-string">'-'</span>,<span class="hljs-string">'T'</span>,<span class="hljs-string">':'</span>,<span class="hljs-string">':'</span>] },
   YYYY_MM_DD_hh_mm_ss: { delims: [<span class="hljs-string">'-'</span>,<span class="hljs-string">'-'</span>,<span class="hljs-string">' '</span>,<span class="hljs-string">':'</span>,<span class="hljs-string">':'</span>] },
   YYYYMMDD_hhmmss: { delims: [<span class="hljs-string">''</span>,<span class="hljs-string">''</span>,<span class="hljs-string">'-'</span>,<span class="hljs-string">''</span>,<span class="hljs-string">''</span>] },
@@ -1265,7 +1216,6 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 };</pre></div></div>
             
         </li>
-        
         
         <li id="section-49">
 
@@ -1278,7 +1228,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> DATE_FIELD_SIZES = [<span class="hljs-number">4</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>];
+                 <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> DATE_FIELD_SIZES = [<span class="hljs-number">4</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>,<span class="hljs-number">2</span>];
 <span class="hljs-keyword">var</span> pattern_texts = DATE_FIELD_SIZES.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>)</span>{
   <span class="hljs-keyword">var</span> s=<span class="hljs-string">'('</span>;
   <span class="hljs-keyword">while</span>(n--){
@@ -1288,7 +1238,6 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 });</pre></div></div>
             
         </li>
-        
         
         <li id="section-50">
 
@@ -1301,7 +1250,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> name <span class="hljs-keyword">in</span> DATE_PATTERNS){
+                 <div class="content"><div class='highlight'><pre><span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> name <span class="hljs-keyword">in</span> DATE_PATTERNS){
   <span class="hljs-keyword">var</span> o = DATE_PATTERNS[name];
   <span class="hljs-keyword">var</span> n = o.delims.length+<span class="hljs-number">1</span>;
   <span class="hljs-keyword">var</span> s = <span class="hljs-string">''</span>;
@@ -1316,8 +1265,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
             
         </li>
         
-        
-        <a name="new_date" >
+              <a name="new_date" />
         
         <li id="section-51">
 
@@ -1330,7 +1278,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">new_date</span>(<span class="hljs-params">in_utc,components</span>)</span>{
+                 <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">new_date</span>(<span class="hljs-params">in_utc,components</span>)</span>{
   <span class="hljs-keyword">if</span> (in_utc){
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(<span class="hljs-built_in">Date</span>.UTC.apply(<span class="hljs-literal">null</span>,components));
   }<span class="hljs-keyword">else</span>{
@@ -1340,8 +1288,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
             
         </li>
         
-        
-        <a name="parse_date" >
+              <a name="parse_date" />
         
         <li id="section-52">
 
@@ -1354,7 +1301,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parse_date</span>(<span class="hljs-params">in_utc, s</span>)</span>{
+                 <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parse_date</span>(<span class="hljs-params">in_utc, s</span>)</span>{
   <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> pkey <span class="hljs-keyword">in</span> DATE_PATTERNS){
     <span class="hljs-keyword">var</span> m = DATE_PATTERNS[pkey].regexp.exec(s);
     <span class="hljs-keyword">if</span>(m){
@@ -1366,7 +1313,6 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 }</pre></div></div>
             
         </li>
-        
         
         <li id="section-53">
 
@@ -1381,8 +1327,7 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
             
         </li>
         
-        
-        <a name="u$.date_from_string" >
+              <a name="u$.date_from_string" />
         
         <li id="section-54">
 
@@ -1396,14 +1341,13 @@ u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function<
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.date_from_string=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>u$.date_from_string=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>)</span>{
   <span class="hljs-keyword">return</span> parse_date(<span class="hljs-literal">true</span>,s);
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.date_components" >
+              <a name="u$.date_components" />
         
         <li id="section-55">
 
@@ -1419,15 +1363,14 @@ in local time</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.date_components=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>u$.date_components=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>)</span>{
   <span class="hljs-keyword">return</span> [d.getFullYear(),d.getMonth() + <span class="hljs-number">1</span>,d.getDate(),
     d.getHours(),d.getMinutes(),d.getSeconds()];
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.utc_components" >
+              <a name="u$.utc_components" />
         
         <li id="section-56">
 
@@ -1443,13 +1386,12 @@ in UTC time</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.utc_components=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>)</span>{
+                 <div class="content"><div class='highlight'><pre>u$.utc_components=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">d</span>)</span>{
   <span class="hljs-keyword">return</span> [d.getUTCFullYear(),d.getUTCMonth() + <span class="hljs-number">1</span>,d.getUTCDate(),
     d.getUTCHours(),d.getUTCMinutes(),d.getUTCSeconds()];
 };</pre></div></div>
             
         </li>
-        
         
         <li id="section-57">
 
@@ -1465,7 +1407,6 @@ array of supprted  date formats names</p>
             
         </li>
         
-        
         <li id="section-58">
 
             <div class="annotation">
@@ -1479,12 +1420,11 @@ array of supprted  date formats names</p>
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.SUPPORTED_DATE_FORMATS = <span class="hljs-built_in">Object</span>.keys(DATE_PATTERNS);</pre></div></div>
+                 <div class="content"><div class='highlight'><pre>u$.SUPPORTED_DATE_FORMATS = <span class="hljs-built_in">Object</span>.keys(DATE_PATTERNS);</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.date_to_string_fn" >
+              <a name="u$.date_to_string_fn" />
         
         <li id="section-59">
 
@@ -1503,7 +1443,7 @@ into components <code>utc_components</code> (default) and <code>date_components<
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
+                 <div class="content"><div class='highlight'><pre>
 u$.date_to_string_fn=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">format,components_fn</span>)</span>{
   components_fn = components_fn || u$.utc_components;
   <span class="hljs-keyword">var</span> delims = DATE_PATTERNS[format].delims ;
@@ -1523,8 +1463,7 @@ u$.date_to_string_fn=<span class="hljs-function"><span class="hljs-keyword">func
             
         </li>
         
-        
-        <a name="u$.dateToIsoString" >
+              <a name="u$.dateToIsoString" />
         
         <li id="section-60">
 
@@ -1539,7 +1478,7 @@ of <code>Date.prototype.toISOString</code>. will be removed soon.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.dateToIsoString=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">date</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.dateToIsoString=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">date</span>) </span>{
   <span class="hljs-keyword">return</span> date.toISOString();
   <span class="hljs-comment">/*return date.getUTCFullYear() +  '-' +
    pad_with(date.getUTCMonth() + 1, '00') + '-' +
@@ -1552,8 +1491,7 @@ of <code>Date.prototype.toISOString</code>. will be removed soon.</p>
             
         </li>
         
-        
-        <a name="u$.parseDateUTC" >
+              <a name="u$.parseDateUTC" />
         
         <li id="section-61">
 
@@ -1568,15 +1506,14 @@ assuming UTC timezone</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>
+                 <div class="content"><div class='highlight'><pre>
 u$.parseDateUTC=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>)</span>{
   <span class="hljs-keyword">return</span> parse_date(<span class="hljs-literal">true</span>,s);
 };</pre></div></div>
             
         </li>
         
-        
-        <a name="u$.relativeDateString" >
+              <a name="u$.relativeDateString" />
         
         <li id="section-62">
 
@@ -1601,7 +1538,7 @@ less then 24 hours</li>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.relativeDateString=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">date,rel</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.relativeDateString=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">date,rel</span>) </span>{
   <span class="hljs-keyword">if</span>(!u$.isDate(date)){
     <span class="hljs-keyword">if</span>(!u$.isNullish(date)){
       date = u$.parseDateUTC(date);
@@ -1631,7 +1568,6 @@ less then 24 hours</li>
             
         </li>
         
-        
         <li id="section-63">
 
             <div class="annotation">
@@ -1645,8 +1581,7 @@ less then 24 hours</li>
             
         </li>
         
-        
-        <a name="u$.BiMap" >
+              <a name="u$.BiMap" />
         
         <li id="section-64">
 
@@ -1686,7 +1621,7 @@ to strings, and we use values as keys in inverse mapping too.</p>
 </code></pre>
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.BiMap=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">map</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.BiMap=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">map</span>) </span>{
   <span class="hljs-keyword">if</span>( ! (<span class="hljs-keyword">this</span> <span class="hljs-keyword">instanceof</span> u$.BiMap) ){
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> u$.BiMap(map);
   }
@@ -1706,8 +1641,7 @@ to strings, and we use values as keys in inverse mapping too.</p>
             
         </li>
         
-        
-        <a name="this.get" >
+              <a name="this.get" />
         
         <li id="section-65">
 
@@ -1720,12 +1654,11 @@ to strings, and we use values as keys in inverse mapping too.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.get =    <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key</span>) </span>{ <span class="hljs-keyword">return</span> forward[key]; };</pre></div></div>
+                 <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.get =    <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key</span>) </span>{ <span class="hljs-keyword">return</span> forward[key]; };</pre></div></div>
             
         </li>
         
-        
-        <a name="this.key" >
+              <a name="this.key" />
         
         <li id="section-66">
 
@@ -1738,12 +1671,11 @@ to strings, and we use values as keys in inverse mapping too.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.key =    <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">val</span>) </span>{ <span class="hljs-keyword">return</span> inverse()[val]; };</pre></div></div>
+                 <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.key =    <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">val</span>) </span>{ <span class="hljs-keyword">return</span> inverse()[val]; };</pre></div></div>
             
         </li>
         
-        
-        <a name="this.put" >
+              <a name="this.put" />
         
         <li id="section-67">
 
@@ -1756,12 +1688,11 @@ to strings, and we use values as keys in inverse mapping too.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.put =    <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key,val</span>) </span>{ forward[key] = val; _inverse = <span class="hljs-literal">null</span>; };</pre></div></div>
+                 <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.put =    <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key,val</span>) </span>{ forward[key] = val; _inverse = <span class="hljs-literal">null</span>; };</pre></div></div>
             
         </li>
         
-        
-        <a name="this.del" >
+              <a name="this.del" />
         
         <li id="section-68">
 
@@ -1774,12 +1705,11 @@ to strings, and we use values as keys in inverse mapping too.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.del =    <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key</span>) </span>{ <span class="hljs-keyword">delete</span> forward[key];_inverse = <span class="hljs-literal">null</span>; };</pre></div></div>
+                 <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.del =    <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key</span>) </span>{ <span class="hljs-keyword">delete</span> forward[key];_inverse = <span class="hljs-literal">null</span>; };</pre></div></div>
             
         </li>
         
-        
-        <a name="this.keys" >
+              <a name="this.keys" />
         
         <li id="section-69">
 
@@ -1792,12 +1722,11 @@ to strings, and we use values as keys in inverse mapping too.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.keys =   <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.keys(forward); };</pre></div></div>
+                 <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.keys =   <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.keys(forward); };</pre></div></div>
             
         </li>
         
-        
-        <a name="this.values" >
+              <a name="this.values" />
         
         <li id="section-70">
 
@@ -1810,11 +1739,10 @@ to strings, and we use values as keys in inverse mapping too.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.values = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.keys(inverse()); };
+                 <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">this</span>.values = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{ <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.keys(inverse()); };
 };</pre></div></div>
             
         </li>
-        
         
         <li id="section-71">
 
@@ -1829,8 +1757,7 @@ to strings, and we use values as keys in inverse mapping too.</p>
             
         </li>
         
-        
-        <a name="u$.Tokenizer" >
+              <a name="u$.Tokenizer" />
         
         <li id="section-72">
 
@@ -1843,7 +1770,7 @@ to strings, and we use values as keys in inverse mapping too.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.Tokenizer=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s, delimiters</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.Tokenizer=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s, delimiters</span>) </span>{
   <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>;
 
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isValueChar</span>(<span class="hljs-params"></span>) </span>{
@@ -1920,8 +1847,7 @@ u$.escapeXmlBody=<span class="hljs-function"><span class="hljs-keyword">function
             
         </li>
         
-        
-        <a name="u$.splitUrlPath" >
+              <a name="u$.splitUrlPath" />
         
         <li id="section-73">
 
@@ -1935,7 +1861,7 @@ u$.escapeXmlBody=<span class="hljs-function"><span class="hljs-keyword">function
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>u$.splitUrlPath=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">urlpath</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>u$.splitUrlPath=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">urlpath</span>) </span>{
   <span class="hljs-keyword">var</span> path = urlpath.split(<span class="hljs-string">"/"</span>);
   <span class="hljs-keyword">var</span> last = path[path.length-<span class="hljs-number">1</span>].split(<span class="hljs-string">'?'</span>);
   <span class="hljs-keyword">var</span> result = {
@@ -1972,7 +1898,6 @@ u$.escapeXmlBody=<span class="hljs-function"><span class="hljs-keyword">function
     </ul>
     <p>
   
-
 
   </div>
 </body>
