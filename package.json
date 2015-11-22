@@ -1,6 +1,6 @@
 {
   "name": "wdf",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Web data frame",
   "main": "index.js",
   "config": {
@@ -15,7 +15,7 @@
     }
   },
   "scripts": {
-    "clean": "rimraf dist",
+    "clean": "rimraf dist coverage",
     "devtest": "webpack-dev-server --config webpack.mocha.js",
     "test": "mocha",
     "build": "webpack && webpack --config webpack.uglified.js && mocha && webpack --config webpack.mocha.js",
@@ -42,6 +42,11 @@
     "R",
     "SAS",
     "python"
+  ],
+  "files": [
+    "README.md",
+    "index.js",
+    "wdf/*.js"
   ],
   "author": "wg@walnutgeek.com",
   "license": "MIT",
