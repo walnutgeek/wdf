@@ -24,7 +24,6 @@
     "docs": "docco ./wdf/*js ./docs/*md -t docs/docco.jst -c docs/docco.css -o dist",
     "all": "echo clean build zip copy_public docs|xargs -n 1 npm run",
     "cover": "mocha --require blanket -R html-cov > dist/coverage.html",
-    "coveralls": "mocha --require blanket --reporter mocha-lcov-reporter | coveralls",
     "codecov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec  && codecov <./coverage/coverage.json",
     "travis": "echo clean build codecov|xargs -n 1 npm run",
     "gh": "npm run docs && gh-pages -d dist/",
