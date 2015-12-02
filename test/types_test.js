@@ -1,7 +1,7 @@
 var assert = require('assert');
+var _ = require("lodash");
 
 describe( 'wdf/types',function(){
-  var u$ = require("../wdf/utils");
   var t$ = require("../wdf/types");
 
   it('Sort & Order', function() {
@@ -70,7 +70,7 @@ describe( 'wdf/types',function(){
         expected = cases[t].positive[input];
         msg = t+' in:'+input+' expected:'+expected;
         if( !isNaN(expected) ){
-          if(u$.isDate(expected) && u$.isDate(out)){
+          if(_.isDate(expected) && _.isDate(out)){
             assert.equal(out.valueOf(), expected.valueOf(), msg );
           }else{
             assert.equal(out, expected,msg );

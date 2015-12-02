@@ -3,6 +3,7 @@
 //    var u$ = require("./utils");
 //  ```
 var u$ = require("./utils");
+var _ = require("lodash");
 // ## private stuff
 
 // order functions take two arguments (let's say `a` and `b`)
@@ -15,7 +16,7 @@ var u$ = require("./utils");
 //     order function in chain have it's say
 //   * `0` if `a` equals `b` period.
 //
-// here is generic order function ->
+// here is generic order function
 function generic_order(a,b){
   return a === b ? null : a < b ? -1 : 1 ;
 }
@@ -92,7 +93,7 @@ t$.extractValuesByIndex = function (indexArray, valueArray) {
 //
 // returns index array matching `valueArray`
 t$.createIndex = function (valueArray) {
-  return u$.range(valueArray.length);
+  return _.range(valueArray.length);
 };
 // **orderInverse(f)**
 //
@@ -108,8 +109,8 @@ t$.orderInverse = function(f) {
 // and then according to order functions provided in argument.
 t$.orderNullsFirst = function(){
   var funcs = u$.extractArray(arguments);
-  funcs.splice(0,0,t$.orderPredicateFirst(u$.isUndef));
-  funcs.splice(1,0,t$.orderPredicateFirst(u$.isNull));
+  funcs.splice(0,0,t$.orderPredicateFirst(_.isUndefined));
+  funcs.splice(1,0,t$.orderPredicateFirst(_.isNull));
   return t$.orderChain(funcs);
 };
 // ** addTypes(typesMap) **
@@ -132,18 +133,14 @@ var BOOLEAN_STRINGS = (function(a){
 t$.addTypes({
 // ** string ** type
   string: {
-    is: function(v){
-      return u$.isString(v);
-    },
+    is: _.isString,
     from_string: function(v){
       return "" === v ? null : v ;
     }
   },
 // ** number ** type
   number: {
-    is: function(v){
-      return u$.isNumber(v);
-    },
+    is: _.isNumber,
     from_string: function(v){
       return NANs.indexOf(v) > -1 ? NaN :  u$.numDefault(+v,undefined);
     },
@@ -153,9 +150,7 @@ t$.addTypes({
   },
 // ** boolean ** type
   boolean: {
-    is: function(v){
-      return u$.isBoolean(v);
-    },
+    is: _.isBoolean,
     from_string: function(v){
       var idx = BOOLEAN_STRINGS.indexOf(v.toLowerCase());
       return idx < 0 ? undefined : idx % 2 === 1 ;
@@ -166,9 +161,7 @@ t$.addTypes({
   },
 // ** datetime ** type
   datetime: {
-    is: function(v){
-      return u$.isDate(v);
-    },
+    is: _.isDate,
     from_string: u$.date_from_string,
     notnull_to_string: u$.date_to_string_fn("YYYY_MM_DD_hh_mm_ss"),
     order: function(a, b) {
@@ -177,9 +170,7 @@ t$.addTypes({
   },
 // ** date ** type
   date: {
-    is: function(v){
-      return u$.isDate(v);
-    },
+    is: _.isDate,
     from_string: u$.date_from_string,
     notnull_to_string: u$.date_to_string_fn("YYYY_MM_DD"),
     order: function(a, b) {

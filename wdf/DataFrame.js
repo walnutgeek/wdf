@@ -2,6 +2,7 @@
 //
 // methods and classes that not supposed to be used directly
 var u$ = require("./utils");
+var _ = require("lodash");
 
 // `Column` has `name`. Also `data` array is there to store all column's value.
 // Optionally if `type` defined when all `data` assumed to be casted to that type (
@@ -24,7 +25,7 @@ var ColumnSet = function(){
 
 // get column either by name or by index
 ColumnSet.prototype.getColumn = function(name_or_idx){
-  return (u$.isNumber(name_or_idx) ? this.byIndex : this.byName )[name_or_idx];
+  return (_.isNumber(name_or_idx) ? this.byIndex : this.byName )[name_or_idx];
 };
 
 // enforce column by name
@@ -56,7 +57,7 @@ ColumnSet.prototype.enforceColumnAt = function(col_idx,n_rows,type){
 ColumnSet.prototype.addColumns = function(cols,n_rows){
   for(var i = 0 ; i < cols.length ; i++){
     var name = cols[i], type ;
-    if(u$.isObject(cols[i])){
+    if(_.isPlainObject(cols[i])){
       name = cols[i].name;
       type = cols[i].type;
     }
@@ -77,15 +78,15 @@ var DataFrame = function (rows, columns){
   }
   rows = rows || [];
   this.columnSet = new ColumnSet().addColumns( columns||[],rows.length);
-  this.index = u$.range(rows.length);
+  this.index = _.range(rows.length);
   for (var row = 0; row < rows.length; row++) {
     var row_data = rows[row];
-    if( u$.isObject(row_data) ){
+    if( _.isPlainObject(row_data) ){
       var keys = Object.keys(row_data);
       for (var k = 0; k < keys.length; k++) {
         this.columnSet.enforceColumn(keys[k]).data[row] = row_data[keys[k]];
       }
-    }else if( u$.isArray(row_data) ){
+    }else if( _.isArray(row_data) ){
       for (var col_idx = 0; col_idx < row_data.length; col_idx++) {
         this.columnSet.enforceColumnAt(col_idx).data[row] = row_data[col_idx];
       }
@@ -139,7 +140,7 @@ DataFrame.parse_csv = function (str, header) {
 DataFrame.prototype.getRow=function(row_num,result){
   var ph_row = this.index[row_num] ;
   result = result || {};
-  this.columnSet.byIndex.forEach( u$.isArray(result) ?
+  this.columnSet.byIndex.forEach( _.isArray(result) ?
       function (c, col_idx) { result[col_idx] = c.data[ph_row]; } :
       function (c)          { result[c.name] = c.data[ph_row]; });
   return result;

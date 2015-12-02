@@ -1,4 +1,5 @@
 var assert = require('assert');
+var _ = require("lodash");
 
 function testArrays(expected, actual) {
   assert.equal(expected.length, actual.length );
@@ -55,14 +56,6 @@ describe( 'wdf/utils',function(){
       }
     });
   });
-  it( '#escapeXmlBody', function() {
-    assert.equal("&lt;body&gt;&amp;aaa; single quote = ' &amp; double quote = \" &lt;/body&gt;",
-        u$.escapeXmlBody("<body>&aaa; single quote = ' & double quote = \" </body>"));
-  });
-  it( '#escapeXmlAttribute', function() {
-    assert.equal("&lt;body&gt;&amp;aaa; single quote = &#39; &amp; double quote = &quot; &lt;/body&gt;",
-        u$.escapeXmlAttribute("<body>&aaa; single quote = ' & double quote = \" </body>"));
-  });
   it( '#Tokenizer', function() {
     var tt = u$.Tokenizer("a/b/c//dd/x/v/l", "/?&=");
     assert.equal(tt.nextDelimiter(), "");
@@ -94,39 +87,21 @@ describe( 'wdf/utils',function(){
     m.del('b');
     assert.equal(""+m.keys(), "a,z");
   });
-  it( '#isArray', function() {
-    assert.ok(u$.isArray([ 1, 2, 3 ]));
-    assert.ok(!u$.isArray(1));
-    assert.ok(!u$.isArray(function() {}));
+  it( '#extractArray', function() {
+    assert.deepEqual([], u$.extractArray());
   });
-  it( '#extractFunctionName', function() {
+  it( '#combineKeyExtractors', function() {
     function a(){return 5;}
     assert.equal("a", u$.extractFunctionName(a));
     function $_a(){return 5;}
     assert.equal("$_a", u$.extractFunctionName($_a));
-  });
-  it( '#append', function() {
-    var x = {
-      a : "a",
-      b : "b"
-    };
-    u$.append(x, {
-      b : "b2",
-      c : "c"
-    });
-    assert.equal(x.a, "a");
-    assert.equal(x.b, "b2");
-    assert.equal(x.c, "c");
-  });
-  it( '#size', function() {
-    assert.equal(u$.size({}), 0);
-    assert.equal(u$.size({
-      a : "a",
-      b : "b"
-    }), 2);
-    assert.equal(u$.size({
-      a : "a"
-    }), 1);
+    var len = u$.combineKeyExtractors(['len','size']
+        .map(u$.getPropertyExtractor)) ;
+    assert.equal(3,len({size: 3}));
+    assert.equal(5,len({len: 5}));
+    assert.equal(undefined,len(a));
+    assert.deepEqual({a:a,$_a:$_a},
+        u$.convertListToObject([a,$_a],u$.extractFunctionName) )
   });
   it( '#join', function() {
     assert.equal(u$.join([ 1, 2, 3 ]), "1,2,3");
@@ -156,12 +131,6 @@ describe( 'wdf/utils',function(){
     }, function(k, m) {
       return m[k];
     }), "[1,2,3]");
-  });
-  it( '#isString', function() {
-    assert.equal(u$.isString("abc"), true);
-    assert.equal(u$.isString(String("abc")), true);
-    assert.equal(u$.isString(5), false);
-    assert.equal(u$.isString([]), false);
   });
   it( '#splitUrlPath', function() {
     function test(path, compare_with){
@@ -284,6 +253,17 @@ describe( 'wdf/utils',function(){
   it( '#repeat', function() {
     testArrays([ 0, 0, 0, 0 ], u$.repeat(4, 0));
     testArrays([ 1, 1, 1, 1 ], u$.repeat(4, 1));
+  });
+  it( '#parse_date', function() {
+    function test(to_s,to_d,s){
+      assert.equal(s,to_s(to_d(s)));
+    }
+
+    var to_utc_s = u$.date_to_string_fn("YYYY_MM_DD_hh_mm_ss",u$.utc_components);
+    test(to_utc_s,u$.parseDateUTC, "2015-12-31 23:59:59");
+    var to_local_s = u$.date_to_string_fn("YYYY_MM_DD_hh_mm_ss",u$.date_components);
+    test(to_local_s,u$.parseDate, "2015-12-31 23:59:59");
+
   });
 
 });

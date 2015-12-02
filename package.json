@@ -16,16 +16,16 @@
   },
   "scripts": {
     "clean": "rimraf dist coverage",
-    "devtest": "webpack-dev-server --config webpack.mocha.js",
-    "test": "mocha",
-    "build": "webpack && webpack --config webpack.uglified.js && mocha && webpack --config webpack.mocha.js",
+    "devserver": "webpack-dev-server --config webpack.mocha.js",
+    "test": "mocha && webpack --config webpack.mocha.js",
+    "build": "webpack && webpack --config webpack.uglified.js",
+    "cover": "istanbul cover _mocha -- -R spec",
     "zip": "cd dist && zip wdf.zip wdf*",
     "copy_public": "docco ./docs/*md -o dist && cp ./node_modules/mocha/mocha.css dist/ ",
     "docs": "docco ./wdf/*js ./docs/*md -t docs/docco.jst -c docs/docco.css -o dist",
-    "all": "echo clean build zip copy_public docs|xargs -n 1 npm run",
-    "cover": "mocha --require blanket -R html-cov > dist/coverage.html",
-    "codecov": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R spec  && codecov <./coverage/coverage.json",
-    "travis": "echo clean build codecov|xargs -n 1 npm run",
+    "all": "echo clean build test zip copy_public docs cover|xargs -n 1 npm run",
+    "codecov": "codecov < ./coverage/coverage.json",
+    "travis": "echo clean build cover codecov|xargs -n 1 npm run",
     "gh": "npm run docs && gh-pages -d dist/",
     "dev": "webpack-dev-server --config webpack.config.js"
   },
@@ -68,5 +68,8 @@
     "uglify-loader": "^1.2.0",
     "webpack": "^1.12.6",
     "webpack-dev-server": "^1.12.1"
+  },
+  "dependencies": {
+    "lodash": "^3.10.1"
   }
 }

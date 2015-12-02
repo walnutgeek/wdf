@@ -3,80 +3,26 @@
 //  ```
 //    var u$ = requre("wdf/utils");
 //  ```
+
 var u$ = module.exports = {} ;
+var _ = require("lodash");
+
 //
 // ## Detect Types
 
-
-// **isArray(o)**
-//
-// `true` if `o` is Array
-u$.isArray=function(o) {
-  return Object.prototype.toString.call(o) === '[object Array]';
-};
-
-// **isString(o)**
-//
-// `true` if `o` is String
-u$.isString=function(a) {
-  return typeof a === "string" || a instanceof String;
-};
-
-// **isNumber(o)**
-//
-// `true` if `o` is number
-u$.isNumber=function(a) {
-  return typeof a === "number" || a instanceof Number;
-};
 
 // **isInteger(o)**
 //
 // `true` if `o` is whole number
 u$.isInteger=function(a) {
-  return u$.isNumber(a) && a % 1 === 0;
+  return _.isNumber(a) && a % 1 === 0;
 };
-
-// **isBoolean(o)**
-//
-// `true` if `o` is boolean
-u$.isBoolean=function(a) {
-  return typeof a === "boolean" || a instanceof Boolean;
-};
-
-// **isFunction(o)**
-//
-// `true` if `o` is function
-u$.isFunction=function(a) {
-  return typeof a === "function" || a instanceof Function;
-};
-
-// **isDate(o)**
-//
-// `true` if `o` is Date
-u$.isDate=function(a) {
-  return a instanceof Date;
-};
-
-// **isUndef(o)**
-//
-// `true` if `o` is undefined
-u$.isUndef=function(x) {
-  return x === undefined; //TODO: consider to use: typeof x === "undefined"
-};
-
-// **isNull(o)**
-//
-// `true` if `o` is null
-u$.isNull=function(x)  {
-  return x === null;
-};
-
 
 // **isNullish(o)**
 //
 // `true` if `o` is boolean
 u$.isNullish=function(a) {
-  return a === null || a === undefined;
+  return _.isNull(a) || _.isUndefined(a);
 };
 
 
@@ -84,16 +30,8 @@ u$.isNullish=function(a) {
 //
 // returns `true` if `a` is build-in non composite type
 u$.isPrimitive=function(a) {
-  return u$.isString(a) || u$.isNumber(a) || u$.isBoolean(a) ||
-      u$.isFunction(a) || u$.isDate(a);
-};
-
-
-// **isObject(a)**
-//
-// returns `true` if `a` is not primitive, not empty, and not array
-u$.isObject=function(a) {
-  return !u$.isNullish(a) && !u$.isPrimitive(a) && !u$.isArray(a);
+  return _.isString(a) || _.isNumber(a) || _.isBoolean(a) ||
+      _.isFunction(a) || _.isDate(a);
 };
 
 
@@ -101,7 +39,7 @@ u$.isObject=function(a) {
 //
 // returns `true` if `array` is nullish or empty
 u$.isArrayEmpty=function(array){
-  return u$.isNullish(array) || (u$.isArray(array) && array.length === 0);
+  return u$.isNullish(array) || (_.isArray(array) && array.length === 0);
 };
 
 
@@ -109,7 +47,7 @@ u$.isArrayEmpty=function(array){
 //
 // returns `true` if `s` is nullish or empty string
 u$.isStringEmpty=function(s){
-  return u$.isNullish(s) || (u$.isString(s) && s.trim().length() === 0);
+  return u$.isNullish(s) || (_.isString(s) && s.trim().length() === 0);
 };
 
 
@@ -139,7 +77,7 @@ u$.brodcastCall=function(brodcastTo, funcName, args, vocal){
     brodcastTo.forEach(
         function(castTo){
           var f = castTo[funcName];
-          if( u$.isFunction(f) ){
+          if( _.isFunction(f) ){
             f.apply(castTo,args);
           }else if( vocal ){
             throw u$.error({message: "No such function", funcName: funcName, obj: castTo });
@@ -155,9 +93,9 @@ u$.brodcastCall=function(brodcastTo, funcName, args, vocal){
 // Call `constructor` passing variable number of `args` as  array
 
 u$.new_Object = function(constructor, args) {
-  var new_obj = Object.create(constructor.prototype);
-  var ctor_ret = constructor.apply(new_obj, args);
-  return ctor_ret !== undefined ? ctor_ret: new_obj;
+  var a = [null];
+  Array.prototype.push.apply(a,args);
+  return new (Function.prototype.bind.apply(constructor, a));
 };
 
 
@@ -253,7 +191,7 @@ u$.extractArray=function(args) {
     return [];
   } else if (args.length === 1) {
     var arg = args[0];
-    if (u$.isArray(arg)) {
+    if (_.isArray(arg)) {
       return arg;
     }
   }
@@ -301,27 +239,6 @@ u$.binarySearch=function(searchFor, array, comparator, mapper) {
 };
 
 
-//** range(start,end,step) **
-//
-//  replica of python's `range()`. returns array of numbers from
-//  `start`(inclusive) to  `end` (exclusive) spaced  with `step`.
-//  Defaults for `start=0` and `step=1`. Two argument call expects
-//  `range(start,end)`, and one argument is just `range(end)`.
-u$.range=function(start, end, step) {
-  if(u$.isUndef(step)) {
-    step = 1;
-  }
-  if(u$.isUndef(end)) {
-    end = start;
-    start = 0;
-  }
-  var values = [];
-  for (; start < end; start+=step) {
-    values.push(start);
-  }
-  return values;
-};
-
 //**repeat(n,value)**
 //
 // repeats `value` in array `n` times.  If `value` is function
@@ -330,7 +247,7 @@ u$.range=function(start, end, step) {
 u$.repeat=function(n, value) {
   var result = [];
   for ( var i = 0; i < n; i++) {
-    result.push(u$.isFunction(value) ? value(i) : value);
+    result.push(_.isFunction(value) ? value(i) : value);
   }
   return result;
 };
@@ -378,36 +295,6 @@ u$.applyOnAll=function(obj, action) {
 };
 
 
-//** append(object,params,excludes?) **
-//
-// append all key-value pairs form `params` element to `object`.
-// if there is key with same name in `params` and in `object`,
-// one from `params` will overwrite one in the object. If key is
-// mentioned in `excludes` it will be omitted.
-u$.append=function(object, params, excludes) {
-  for ( var key in params) {
-    if ( params.hasOwnProperty(key) &&
-        ( !excludes || !excludes.contains(key) ) ) {
-      object[key] = params[key];
-    }
-  }
-  return object;
-};
-
-
-//** size(obj) **
-//
-// count number of own keys in `object`.
-u$.size=function(obj) {
-  var sz = 0;
-  for ( var key in obj) {
-    if (obj.hasOwnProperty(key)){
-      sz++;
-    }
-  }
-  return sz;
-};
-
 
 //** join(collection, delimiter, toValue)**
 //
@@ -423,7 +310,8 @@ u$.size=function(obj) {
 //   * `toValue` - optional, by default identity function. transform
 //     elements before join.
 u$.join=function(collection, delimiter, toValue) {
-  var keys = u$.isObject(collection) ? Object.keys(collection) : collection;
+  var keys = _.isArray(collection)  || _.isTypedArray(collection)  ?
+      collection : Object.keys(collection) ;
   if (!toValue) {
     toValue = function (s) {
       return s;
@@ -433,7 +321,7 @@ u$.join=function(collection, delimiter, toValue) {
     delimiter = ',';
   }
   var doDelimit = delimiter;
-  if (!u$.isFunction(delimiter)) {
+  if (!_.isFunction(delimiter)) {
     doDelimit = function (collection, fromBegining, fromEnd) {
       return (fromBegining < 0 || fromEnd < 0) ? '' : delimiter;
     };
@@ -499,7 +387,7 @@ u$.ensureDate=function(a) {
 };
 
 u$.ensureString=function(a) {
-  return u$.isString(a) ? a : String(a);
+  return _.isString(a) ? a : String(a);
 };
 
 
@@ -513,14 +401,14 @@ u$.error=function(params,  err) {
     err._message  = err.message ? err.message :  params.message || '' ;
     delete params.message;
   }
-  if ( u$.isObject(err.params) ) {
-    u$.append(err.params, params);
+  if ( _.isPlainObject(err.params) ) {
+    _.assign(err.params, params);
   }else{
     err.params = params;
   }
   err.toString = function (){
     var m =  err._message ;
-    return u$.size(this.params)  ? m + " " + JSON.stringify(this.params) : m;
+    return _.size(this.params)  ? m + " " + JSON.stringify(this.params) : m;
   };
   return err;
 };
@@ -531,7 +419,7 @@ u$.assert=function(provided, expected, message) {
   function check(expected) {
     return provided === expected;
   }
-  var equals = u$.isArray(expected) ? expected.some(check) : check(expected) ;
+  var equals = _.isArray(expected) ? expected.some(check) : check(expected) ;
   if ( !equals ) {
     throw u$.error({
       message : message || "Unexpected value",
@@ -647,6 +535,7 @@ u$.date_from_string=function(s){
 };
 
 
+
 //**date_components(d)**
 //
 // split Date object into array of components :
@@ -726,6 +615,15 @@ u$.dateToIsoString=function(date) {
 u$.parseDateUTC=function(s){
   return parse_date(true,s);
 };
+
+//** parseDate(s) **
+//
+// parse date using on of `SUPPORTED_DATE_FORMATS`
+// assuming local timezone
+
+u$.parseDate=function(s){
+  return parse_date(false,s);
+};
 //** relativeDateString(date,rel) **
 //
 // produce string representation of UTC time in format
@@ -741,14 +639,14 @@ u$.parseDateUTC=function(s){
 //  "2015-10-22 08:34"
 // ```
 u$.relativeDateString=function(date,rel) {
-  if(!u$.isDate(date)){
+  if(!_.isDate(date)){
     if(!u$.isNullish(date)){
       date = u$.parseDateUTC(date);
     }else{
       return "";
     }
   }
-  if(!u$.isDate(rel)){
+  if(!_.isDate(rel)){
     rel = new Date();
   }
   if( Math.abs(date.getTime() - rel.getTime()) < 86400000 ){
@@ -872,42 +770,6 @@ u$.Tokenizer=function(s, delimiters) {
       i = _i;
     }
   };
-};
-
-var mappingEntities = {
-  "<" : "&lt;",
-  ">" : "&gt;",
-  "&" : "&amp;",
-  '"' : "&quot;",
-  "'" : "&#39;",
-};
-
-function escapeEntities(s, delims) {
-  var t = new u$.Tokenizer(s, delims);
-  var r = "";
-  for (;;) {
-    var v = t.nextValue();
-    var d = t.nextDelimiter();
-    if (v) {
-      r += v;
-    }
-    if (d) {
-      for ( var i = 0; i < d.length; i++) {
-        r += mappingEntities[d.charAt(i)];
-      }
-    }
-    if (!v && !d) {
-      return r;
-    }
-  }
-}
-
-u$.escapeXmlAttribute=function(s) {
-  return escapeEntities(s, "<>&'\"");
-};
-
-u$.escapeXmlBody=function(s) {
-  return escapeEntities(s, "<>&");
 };
 
 //** splitUrlPath(urlpath) **
