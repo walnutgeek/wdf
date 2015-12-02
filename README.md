@@ -10,4 +10,6 @@ Insipred by Pandas dataframe or R-like dataframe or SAS-like dataset.
 [![npm version](https://badge.fury.io/js/wdf.svg)](https://www.npmjs.com/package/wdf)
 [![deps](https://david-dm.org/username/repo.svg)](https://david-dm.org/walnutgeek/wdf)
 
+![codecov.io](https://codecov.io/github/walnutgeek/wdf/branch.svg?branch=master)
+
 [more details](https://walnutgeek.github.io/wdf)
