@@ -395,7 +395,7 @@ describe( 'wdf/utils.Type',function(){
     for(var t in  cases){
       for(var i in cases[t]){
         input = cases[t][i][0];
-        out=u$.types[t].to_string(input);
+        out = u$.types[t].to_string(input);
         expected = cases[t][i][1];
         msg = t+' in:'+input+' expected:'+expected;
         assert.equal(out, expected,msg );

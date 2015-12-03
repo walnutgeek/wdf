@@ -1,4 +1,3 @@
-
 //  misc utilities. Initialize it like:
 //  ```
 //    var u$ = requre("wdf/utils");
@@ -71,7 +70,6 @@ u$.numDefault=function(v,default_v){
   }
   return v;
 };
-
 
 
 // ## Function Utils
