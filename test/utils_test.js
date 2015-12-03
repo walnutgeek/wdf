@@ -9,7 +9,6 @@ function testArrays(expected, actual) {
 }
 
 var u$ = require("../wdf/utils");
-var t$ = require("../wdf/types");
 
 
 describe( 'wdf/utils',function(){
@@ -201,7 +200,7 @@ describe( 'wdf/utils',function(){
   it( '#binarySearch', function() {
     var array = [ 1, 2, 4, 6, 8, 10, 25 ];
     function test(value, position) {
-      var found = u$.binarySearch(value, array, t$.number.compare);
+      var found = u$.binarySearch(value, array, u$.types.number.compare);
       assert.equal(found, position);
     }
     test(10, 5);
@@ -265,6 +264,146 @@ describe( 'wdf/utils',function(){
     test(to_local_s,u$.parseDate, "2015-12-31 23:59:59");
 
   });
+  it( '#testFor', function() {
+    try{
+      u$.testFor('','any',[]);
+      assert.fail('not supposed to get here');
+    }catch(e){
+      assert.equal("Unexpected value {\"expected\":[\"some\",\"every\"],\"provided\":\"any\"}",
+          e.toString());
+    }
+    var values = [
+      undefined, null, 0, 1, 1.5, " ", "", "a",
+      new Date, false, true, function(){}, {x:0} ,[1] ];
 
+    function test(f,condition,predicates){
+      values.forEach(function(v){
+        assert.equal(u$.testFor(v,condition,predicates),f(v));
+      });
+    }
+
+    test(u$.isNullish,'some',[_.isNull, _.isUndefined]);
+    test(u$.isPrimitive,'some',
+        [_.isString, _.isNumber, _.isBoolean,
+          _.isFunction, _.isDate] );
+    test(u$.isStringEmpty,'some', [u$.isNullish,
+      function(s){return _.isString(s) && s.trim().length === 0;}]);
+
+  });
+  it( '#isInteger', function() {
+    assert.ok(u$.isInteger(1));
+    assert.ok(u$.isInteger(-1));
+    assert.ok(!u$.isInteger(-7.00000000000001),"7.......");
+  });
+});
+
+describe( 'wdf/utils.Type',function(){
+
+  it('Sort & Order', function() {
+    var cmp = u$.types.string.compare;
+    assert.equal(cmp(undefined,null),-1);
+    assert.equal(cmp(null,undefined),1);
+    assert.equal(cmp(null,'z'),-1);
+    assert.equal(cmp('z',null),1);
+    assert.equal(cmp(undefined,'z'),-1);
+    assert.equal(cmp('z', undefined),1);
+    assert.equal(cmp('z','a'),1);
+    assert.equal(cmp('a','z'),-1);
+    var array = ['a',null,undefined,'z','r',undefined ] ;
+    var index = u$.createIndex(array);
+    assert.deepEqual(array,['a',null,undefined,'z','r',undefined ],'sanity');
+    assert.deepEqual(index,[0,1,2,3,4,5 ] , 'index');
+    index.sort(u$.indexOrder(cmp,array));
+    assert.deepEqual(u$.extractValuesByIndex(index,array),[ undefined, undefined, null, "a", "r", "z" ],'check order');
+    assert.deepEqual(index,[ 2, 5, 1, 0, 4, 3 ],'check index');
+    assert.deepEqual(array,['a',null,undefined,'z','r',undefined ],'original array unchanged');
+  });
+
+  it('types[*].from_string', function() {
+    var cases = {
+      string : {
+        positive: {'' : null, 'a' : 'a', '3' : '3' },
+        negative: []
+      },
+      number : {
+        positive: {
+          '' : NaN, 'NaN': NaN, '3' : 3, '0' : 0,
+          '0x15' : 21, '1e8' : 1e8, 'null' : NaN },
+        negative: ['3a', 's']
+      },
+      boolean : {
+        positive: {
+          '' : null, 'null': null, '1' : true, '0' : false,
+          'Y' : true, 'true' : true, 'no' : false },
+        negative: ['3a', 's' , '5', '2.7']
+      },
+      date : {
+        positive: {
+          '2015-09-15T17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
+          '2015-09-15 17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
+          '2015-09-15' : new Date(Date.UTC(2015,8,15,0,0,0)),
+          '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),  },
+        '20150915170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+        '20150915-170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+        negative: ['3a', 's' , '5', '2.7']
+      },
+      datetime : {
+        positive: {
+          '2015-09-15T17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
+          '2015-09-15 17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
+          '2015-09-15' : new Date(Date.UTC(2015,8,15,0,0,0)),
+          '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),  },
+        '20150915170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+        '20150915-170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+        negative: ['3a', 's' , '5', '2.7']
+      },
+    };
+    var input, out, expected, msg ;
+    for(var t in  cases){
+      for(input in cases[t].positive){
+        out=u$.types[t].from_string(input);
+        expected = cases[t].positive[input];
+        msg = t+' in:'+input+' expected:'+expected;
+        if( !isNaN(expected) ){
+          if(_.isDate(expected) && _.isDate(out)){
+            assert.equal(out.valueOf(), expected.valueOf(), msg );
+          }else{
+            assert.equal(out, expected,msg );
+          }
+        }else{
+          assert.ok( isNaN(out), msg);
+        }
+      }
+      for(var i in cases[t].negative){
+        input = cases[t].negative[i] ;
+        out = u$.types[t].from_string(input) ;
+        msg =  t+' in:'+input+' should be undefined:'+out ;
+        assert.ok( undefined === out, msg);
+      }
+    }
+
+  });
+  it('types[*].to_string', function() {
+    var cases = {
+      string : [ [null , ''], ['a' , 'a'], [ '3' , '3'] ],
+      number : [ [ NaN,''],[3,'3'],[null,''],[1e8,'100000000']],
+      boolean : [ [true,'true'],[false,'false'],[null,'']],
+      date : [[new Date(Date.UTC(2015,8,15,17,0,14)),'2015-09-15'],[null,'']],
+      datetime : [[new Date(Date.UTC(2015,8,15,17,0,14)),'2015-09-15 17:00:14'],[null,'']],
+    };
+    var input, out, expected, msg ;
+    for(var t in  cases){
+      for(var i in cases[t]){
+        input = cases[t][i][0];
+        out=u$.types[t].to_string(input);
+        expected = cases[t][i][1];
+        msg = t+' in:'+input+' expected:'+expected;
+        assert.equal(out, expected,msg );
+      }
+    }
+
+//    var x = '2015-09-15T17:00:14';
+//    assert.equal(moment(x).format('YYYY-MM-DDTHH:mm:ss'),x);
+  });
 });
 
