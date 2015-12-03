@@ -834,7 +834,6 @@ function generic_order(a,b){
 u$.types = {} ;
 
 function Type(name, props) {
-  var self = this;
   this.name = name ;
   this.is = props.is ;
   this.from_string = props.from_string ;
