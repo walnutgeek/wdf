@@ -3,7 +3,7 @@
 //  ```
 //    var u$ = requre("wdf/utils");
 //  ```
-
+"use strict";
 var u$ = module.exports = {} ;
 var _ = require("lodash");
 
@@ -935,9 +935,8 @@ u$.addTypes=function(typesMap){
 
 var NANs = ["","NaN","null"];
 
-var BOOLEAN_STRINGS = (function(a){
-  return a.concat(a.map(function(s){return s[0];}));
-})(["no","yes","false","true","0","1"]);
+var BOOLEAN_STRINGS = ["0","1","n","y","f","t",
+  "no","yes","false","true"];
 
 u$.addTypes({
 // ** string ** type

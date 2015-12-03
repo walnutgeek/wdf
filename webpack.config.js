@@ -15,7 +15,7 @@ module.exports = {
   _output_fn: output_fn,
   entry: absdir("index.js"),
   output: output_fn('wdf.js'),
-  devtool: "cheap-source-map",
+  devtool: "source-map",
   module: {
     preLoaders: [
       { test: /\.js$/,

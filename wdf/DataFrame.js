@@ -1,6 +1,8 @@
 // ## Private stuff
 //
 // methods and classes that not supposed to be used directly
+"use strict";
+
 var u$ = require("./utils");
 var _ = require("lodash");
 
@@ -73,7 +75,7 @@ ColumnSet.prototype.addColumns = function(cols,n_rows){
 //    - `columns` - array that contains column names or objects with `{name: "colname",type: "number"}`.
 var DataFrame = function (rows, columns){
   var obj = this;
-  if( obj.constructor !== DataFrame ){
+  if( _.isUndefined(obj) || obj.constructor !== DataFrame ){
     return new DataFrame(rows,columns);
   }
   rows = rows || [];
