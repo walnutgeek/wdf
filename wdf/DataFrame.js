@@ -99,6 +99,10 @@ var DataFrame = function (rows, columns){
   return obj;
 };
 
+function make_df_from_(array_of_rows, header) {
+  header = header || array_of_rows.shift();
+  return new DataFrame(array_of_rows, header);
+}
 
 // **parse_csv(str,header)**
 //
@@ -106,6 +110,10 @@ var DataFrame = function (rows, columns){
 // `header` is array with column names, if omitted first line of  CSV  in `str` considered header .
 
 DataFrame.parse_csv = function (str, header) {
+  return make_df_from_(parse_csv_to_array_of_rows(str),header);
+};
+
+function parse_csv_to_array_of_rows (str){
   var arr = [];
   var quote = false;  // true means we're inside a quoted field
 
@@ -129,9 +137,25 @@ DataFrame.parse_csv = function (str, header) {
     }
     arr[row][col] += cc; // or add char to current cell
   }
-  header = header || arr.shift();
-  return new DataFrame(arr,header);
+  return arr;
+}
+
+function parse_dom_table_to_array_of_rows(dom_table) {
+  return [].map.call(dom_table.rows,function(row){
+    return [].map.call(row.cells, function(c){ return c.textContent; });
+  });
+}
+
+// **parse_dom_table(dom_table, header)**
+//
+// parse comma separated values (CSV) format  provided in string `dom_table`.
+// `header` is array with column names, if omitted first row in  table
+// considered header .
+
+DataFrame.parse_dom_table = function (dom_table, header) {
+  return make_df_from_(parse_dom_table_to_array_of_rows(dom_table),header);
 };
+
 // **getRow(row_num,result)**
 //
 // get data row out of DataFrame.

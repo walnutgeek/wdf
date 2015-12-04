@@ -26,8 +26,9 @@
     "gh": "npm run docs && gh-pages -d dist/",
     "dev": "webpack-dev-server --config webpack.config.js",
     "devserver": "webpack-dev-server --config webpack.mocha.js",
-    "all": "echo clean build test zip copy_public docs cover|xargs -n 1 npm run",
-    "travis": "echo clean build test cover codecov|xargs -n 1 npm run"
+    "debug": "node-debug -p 3333 ./node_modules/.bin/_mocha",
+    "all": "npm-run-all clean build test zip copy_public docs cover",
+    "travis": "npm-run-all clean build test cover codecov"
   },
   "repository": {
     "type": "git",
@@ -62,14 +63,17 @@
     "jshint-loader": "^0.8.3",
     "markdown": "^0.5.0",
     "mocha": "^2.3.4",
+    "mocha-jsdom": "^1.0.0",
     "mocha-lcov-reporter": "^1.0.0",
     "mocha-loader": "^0.7.1",
+    "npm-run-all": "^1.3.3",
     "rimraf": "^2.4.3",
     "uglify-loader": "^1.2.0",
     "webpack": "^1.12.6",
     "webpack-dev-server": "^1.12.1"
   },
   "dependencies": {
+    "jsdom": "^3.1.2",
     "lodash": "^3.10.1"
   }
 }

@@ -137,4 +137,24 @@ describe( 'wdf/DataFrame', function(){
     df.deleteRow(0);
     assert.deepEqual(df.getData(),  { "columns":  columns, "rows": [ [ "2", "3" ]]}, 'getData after delete' );
   });
+
+
+  describe('DOM', function () {
+    it('parse_dom_table', function () {
+      var dom = require("./dom")('<table>' +
+          '<tr><th>col1</th><th>col2</th><th>col3</th></tr>' +
+          '<tr><td>0 text 1</td><td>text 2</td><td>0</td></tr>' +
+          '<tr><td>1 text 1</td><td>text 2</td><td>1</td></tr>' +
+          '<tr><td>2 text 1</td><td>text 2</td><td>2</td></tr>' +
+          '<tr><td>3 text 1</td><td>text 2</td><td>3</td></tr>' +
+          '<tr><td>4 text 1</td><td>text 2</td><td>4</td></tr></table>');
+
+      var df = DataFrame.parse_dom_table(dom);
+      var array = df.getObjects();
+      assert.equal(5,array.length);
+      assert.deepEqual({col1:"0 text 1",col2:"text 2",col3:"0"}, array[0] );
+    });
+
+  })
+
 });

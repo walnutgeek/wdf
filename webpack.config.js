@@ -1,4 +1,5 @@
 var path = require("path");
+var webpack = require("webpack");
 
 function absdir(r){
   return path.resolve(__dirname, r) ;
@@ -24,7 +25,10 @@ module.exports = {
         include: [ "/wdf", "/test"].map(absdir)
       }
     ],
-    loaders: []
+    loaders: [],
   },
+  plugins: [
+    new webpack.IgnorePlugin(/jsdom/)
+  ],
 
 };
