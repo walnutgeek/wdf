@@ -169,7 +169,7 @@ describe( 'wdf/DataFrame', function(){
       assert.equal(5,array.length);
       assert.deepEqual({
         "col name 1":"ABC",
-        "col name 2":"",
+        "col name 2": "",
         "col name 3":"52"}, array[3] );
     });
   });
