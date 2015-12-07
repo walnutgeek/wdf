@@ -10,11 +10,11 @@ var _ = require("lodash");
 // ## Detect Types
 
 
-// **isInteger(o)**
+// **isUint32(o)**
 //
 // `true` if `o` is whole number
-u$.isInteger=function(a) {
-  return _.isNumber(a) && a % 1 === 0;
+u$.isUint32=function(a) {
+  return _.isNumber(a) && a >= 0 && a <= 0xFFFFFFFF && a % 1 === 0 ;
 };
 
 // ** testFor(a,condition,predicates) **
@@ -933,7 +933,8 @@ u$.addTypes=function(typesMap){
 
 var NANs = ["","NaN","null"];
 
-var BOOLEAN_STRINGS = ["0","1","n","y","f","t",
+var BOOLEAN_STRINGS = [
+  "0","1","n","y","f","t",
   "no","yes","false","true"];
 
 u$.addTypes({
@@ -947,6 +948,16 @@ u$.addTypes({
 // ** number ** type
   number: {
     is: _.isNumber,
+    from_string: function(v){
+      return NANs.indexOf(v) > -1 ? NaN :  u$.numDefault(+v,undefined);
+    },
+    notnull_to_string: function(v){
+      return isNaN(v)? '' : v;
+    },
+  },
+// ** integer ** type
+  uint32: {
+    is: u$.isUint32,
     from_string: function(v){
       return NANs.indexOf(v) > -1 ? NaN :  u$.numDefault(+v,undefined);
     },

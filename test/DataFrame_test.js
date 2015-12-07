@@ -66,32 +66,6 @@ describe( 'wdf/DataFrame', function(){
     assert.equal( df.get(1,1) , 3 ,  'get(1,1)' );
     assert.equal( df.getRowCount(), 2 ,  'simple counstructor test getter' );
   });
-  it( 'parse_csv', function() {
-    var df = DataFrame.parse_csv("abc,cdx\n1,2\n2,3\n");
-    assert.equal( df.get(0,"abc"), '1' ,  'get(0,abc)' );
-    assert.equal( df.get(0,"cdx"), '2' ,  'get(0,cdx)' );
-    assert.equal( df.get(1,"abc"), '2' ,  'get(1,abc)' );
-    assert.equal( df.get(1,"cdx"), '3' ,  'get(1,cdx)' );
-    assert.equal( df.getRowCount(), 2 ,  'simple case' );
-
-    var df2 = DataFrame.parse_csv('abc,cdx\n1,"2\n2,3"\n');
-    assert.equal( df2.get(0,"abc"), '1' ,  'get(0,abc)' );
-    assert.equal( df2.get(0,"cdx"), '2\n2,3' ,  'get(0,cdx)' );
-    assert.equal( df2.getRowCount(), 1 ,  'no header - quoted field' );
-    var df3 = DataFrame.parse_csv('abc,cdx\n1,"2\n2,3"\n',['a','c']);
-    assert.equal( df3.get(0,"a") , 'abc'  );
-    assert.equal( df3.get(0,"c") , 'cdx'  );
-    assert.equal( df3.get(1,"a") , '1'  );
-    assert.equal( df3.get(1,"c") , '2\n2,3' );
-    assert.equal( df3.getRowCount() , 2 ,  'header provided - quoted field' );
-    var df4 = DataFrame.parse_csv('abc,cdx\n,"2\n2,3"\n',['a','c']);
-    assert.equal( df4.get(0,"a") , 'abc'  );
-    assert.equal( df4.get(0,"c") , 'cdx'  );
-    assert.equal( df4.get(1,"a") , ''  );
-    assert.equal( df4.get(1,"c") , '2\n2,3' );
-    assert.equal( df4.getRowCount() , 2 ,  'header provided - quoted field' );
-
-  });
   it( 'getColumn', function() {
     var df = new DataFrame(objectRows);
     assert.deepEqual( df.getColumn("a") , [2,3]  );
@@ -138,11 +112,40 @@ describe( 'wdf/DataFrame', function(){
     assert.deepEqual(df.getData(),  { "columns":  columns, "rows": [ [ "2", "3" ]]}, 'getData after delete' );
   });
 
-  var parse_fragment = require("./dom");
 
-  describe('DOM', function () {
+
+  describe('parse', function () {
+
+    it( 'parse_csv', function() {
+      var df = DataFrame.parse_csv("abc,cdx\n1,2\n2,3\n");
+      assert.equal( df.get(0,"abc"), '1' ,  'get(0,abc)' );
+      assert.equal( df.get(0,"cdx"), '2' ,  'get(0,cdx)' );
+      assert.equal( df.get(1,"abc"), '2' ,  'get(1,abc)' );
+      assert.equal( df.get(1,"cdx"), '3' ,  'get(1,cdx)' );
+      assert.equal( df.getRowCount(), 2 ,  'simple case' );
+
+      var df2 = DataFrame.parse_csv('abc,cdx\n1,"2\n2,3"\n');
+      assert.equal( df2.get(0,"abc"), '1' ,  'get(0,abc)' );
+      assert.equal( df2.get(0,"cdx"), '2\n2,3' ,  'get(0,cdx)' );
+      assert.equal( df2.getRowCount(), 1 ,  'no header - quoted field' );
+      var df3 = DataFrame.parse_csv('abc,cdx\n1,"2\n2,3"\n',['a','c']);
+      assert.equal( df3.get(0,"a") , 'abc'  );
+      assert.equal( df3.get(0,"c") , 'cdx'  );
+      assert.equal( df3.get(1,"a") , '1'  );
+      assert.equal( df3.get(1,"c") , '2\n2,3' );
+      assert.equal( df3.getRowCount() , 2 ,  'header provided - quoted field' );
+      var df4 = DataFrame.parse_csv('abc,cdx\n,"2\n2,3"\n',['a','c']);
+      assert.equal( df4.get(0,"a") , 'abc'  );
+      assert.equal( df4.get(0,"c") , 'cdx'  );
+      assert.equal( df4.get(1,"a") , ''  );
+      assert.equal( df4.get(1,"c") , '2\n2,3' );
+      assert.equal( df4.getRowCount() , 2 ,  'header provided - quoted field' );
+
+    });
+
     it('parse_dom_table', function () {
-      var dom = parse_fragment('<table>' +
+      var dom_fragment = require("./dom_fragment");
+      var dom = dom_fragment('<table>' +
           '<tr><th>col1</th><th>col2</th><th>col3</th></tr>' +
           '<tr><td>0 text 1</td><td>text 2</td><td>0</td></tr>' +
           '<tr><td>1 text 1</td><td>text 2</td><td>1</td></tr>' +
@@ -155,15 +158,16 @@ describe( 'wdf/DataFrame', function(){
       var array = df.getObjects();
       assert.equal(5,array.length);
       assert.deepEqual({col1:"0 text 1",col2:"text 2",col3:"0"}, array[0] );
-      dom = parse_fragment("<table><thead>"+
-        "<tr><th>col name 1</th><th>col name 2</th><th>col name 3</th></tr></thead><tbody>"+
+      dom = dom_fragment("<table>" +
+        "<thead><tr><th>col name 1</th><th>col name 2</th><th>col name 3</th></tr></thead>" +
+        "<tbody>"+
         "<tr><td></td><td></td><td></td></tr>"+
         "<tr><td></td><td></td><td></td></tr>"+
         "<tr><td></td><td></td><td></td></tr>"+
         "<tr><td>ABC</td><td></td><td>52</td></tr>"+
         "<tr><td></td><td></td><td></td></tr>" +
-        "</tbody></table>");
-
+        "</tbody>" +
+        "</table>");
       var df = DataFrame.parse_dom_table(dom);
       var array = df.getObjects();
       assert.equal(5,array.length);

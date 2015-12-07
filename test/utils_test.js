@@ -290,10 +290,12 @@ describe( 'wdf/utils',function(){
       function(s){return _.isString(s) && s.trim().length === 0;}]);
 
   });
-  it( '#isInteger', function() {
-    assert.ok(u$.isInteger(1));
-    assert.ok(u$.isInteger(-1));
-    assert.ok(!u$.isInteger(-7.00000000000001),"7.......");
+  it( '#isUint32', function() {
+    assert.ok(u$.isUint32(1));
+    assert.ok(!u$.isUint32(-1));
+    assert.ok(!u$.isUint32(-7.00000000000001),"7.......");
+    assert.ok(u$.isUint32(0xffffffff));
+    assert.ok(!u$.isUint32(0x100000000));
   });
 
   describe( 'types',function(){

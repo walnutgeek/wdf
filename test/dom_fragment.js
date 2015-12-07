@@ -1,3 +1,8 @@
+// ```
+// var dom_fragment = require("./dom_fragment");
+// dom_fragment(
+// ```
+//
 try{
   var jsdom = require('jsdom').jsdom;
   module.exports = function ( html){
