@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for wdf/DataFrame.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">wdf/</a> DataFrame.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">94.52% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>138/146</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">88.68% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>47/53</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">100% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>30/30</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">95% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>133/140</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">41×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">46×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-yes">38×</span>
+<span class="cline-any cline-yes">38×</span>
+<span class="cline-any cline-yes">38×</span>
+<span class="cline-any cline-yes">38×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">26×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-yes">37×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">12×</span>
+<span class="cline-any cline-yes">27×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-yes">25×</span>
+<span class="cline-any cline-yes">62×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">17×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">117×</span>
+<span class="cline-any cline-yes">117×</span>
+<span class="cline-any cline-yes">117×</span>
+<span class="cline-any cline-yes">117×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">117×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">111×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">93×</span>
+<span class="cline-any cline-yes">18×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">75×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">36×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-yes">32×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">34×</span>
+<span class="cline-any cline-yes">34×</span>
+<span class="cline-any cline-yes">34×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">7×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-yes">13×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">10×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// ## Private stuff
+//
+// methods and classes that not supposed to be used directly
+"use strict";
+&nbsp;
+var u$ = require("./utils");
+var _ = require("lodash");
+&nbsp;
+// `Column` has `name`. Also `data` array is there to store all column's value.
+// Optionally if `type` defined when all `data` assumed to be casted to that type (
+// See [type](types.html) ). Also `col_idx` point on this column in column set.
+&nbsp;
+var Column = function (name,len,type){
+  this.name = name;
+  this.data = [];
+  if( len ){
+    this.data.length = len ;
+  }
+  this.type = type ;
+};
+&nbsp;
+// ColumnSet - store all columns `byIndex` in array and  `byName` in hashtable.
+var ColumnSet = function(){
+  this.byIndex = [];
+  this.byName = {};
+};
+&nbsp;
+// get column either by name or by index
+ColumnSet.prototype.getColumn = function(name_or_idx){
+  return (_.isNumber(name_or_idx) ? this.byIndex : this.byName )[name_or_idx];
+};
+&nbsp;
+// enforce column by name
+ColumnSet.prototype.enforceColumn = function(name,n_rows,type){
+  var c = this.byName[name];
+  if( u$.isNullish(c) ){
+    c = new Column(name ,n_rows, type);
+    c.col_idx = this.byIndex.length;
+    this.byIndex.push(c);
+    this.byName[name] = c;
+  }
+  return c;
+};
+&nbsp;
+// enforce column by `col_idx`, `name` will be set to `'c'+col_idx`
+ColumnSet.prototype.enforceColumnAt = function(col_idx,n_rows,type){
+  var c = this.byIndex[col_idx];
+  if( u$.isNullish(c) ){
+    var name = "c"+col_idx ;
+    c = new Column(name, n_rows, type);
+    c.col_idx = col_idx;
+    this.byIndex[col_idx] = c;
+    this.byName[name] = c;
+  }
+  return c;
+};
+&nbsp;
+// add bunch of columns, preallocate array for `n_rows`
+ColumnSet.prototype.addColumns = function(cols,n_rows){
+  for(var i = 0 ; i &lt; cols.length ; i++){
+    var name = cols[i], type ;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if(_.isPlainObject(cols[i])){
+<span class="cstat-no" title="statement not covered" >      name = cols[i].name;</span>
+<span class="cstat-no" title="statement not covered" >      type = cols[i].type;</span>
+    }
+    this.enforceColumn(name, n_rows, type);
+  }
+  return this;
+};
+&nbsp;
+// ## &lt;section id='DataFrame'&gt;Dataframe&lt;/section&gt;
+//
+// **new Dataframe(rows,columns)**:
+//    - `rows` - array of rows. row could be array or object.
+//    - `columns` - array that contains column names or objects with `{name: "colname",type: "number"}`.
+var DataFrame = function (rows, columns){
+  var obj = this;
+  if( _.isUndefined(obj) || obj.constructor !== DataFrame ){
+    return new DataFrame(rows,columns);
+  }
+  rows = rows || [];
+  this.columnSet = new ColumnSet().addColumns( columns||[],rows.length);
+  this.index = _.range(rows.length);
+  for (var row = 0; row &lt; rows.length; row++) {
+    var row_data = rows[row];
+    if( _.isPlainObject(row_data) ){
+      var keys = Object.keys(row_data);
+      for (var k = 0; k &lt; keys.length; k++) {
+        this.columnSet.enforceColumn(keys[k]).data[row] = row_data[keys[k]];
+      }
+    }else <span class="missing-if-branch" title="else path not taken" >E</span>if( _.isArray(row_data) ){
+      for (var col_idx = 0; col_idx &lt; row_data.length; col_idx++) {
+        this.columnSet.enforceColumnAt(col_idx).data[row] = row_data[col_idx];
+      }
+    }else{
+<span class="cstat-no" title="statement not covered" >      throw { msg: "row should be object or array and not:"+row_data };</span>
+    }
+  }
+  return obj;
+};
+&nbsp;
+function make_df_from_(array_of_rows, header) {
+  header = header || array_of_rows.shift();
+  return new DataFrame(array_of_rows, header);
+}
+&nbsp;
+// **parse_csv(str,header)**
+//
+// parse comma separated values (CSV) format  provided in string `str`.
+// `header` is array with column names, if omitted first line of  CSV  in `str` considered header .
+&nbsp;
+DataFrame.parse_csv = function (str, header) {
+  return make_df_from_(parse_csv_to_array_of_rows(str),header);
+};
+&nbsp;
+function parse_csv_to_array_of_rows (str){
+  var arr = [];
+  var quote = false;  // true means we're inside a quoted field
+&nbsp;
+  var row ,col ,c ;
+  for (row = col = c = 0; c &lt; str.length; c++) {
+    var cc = str[c], nc = str[c+1];        // current character, next character
+    arr[row] = arr[row] || [];             // create a new row if necessary
+    arr[row][col] = arr[row][col] || '';   // create a new column (start with empty string) if necessary
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (cc === '"' &amp;&amp; quote &amp;&amp; nc === '"') { // if two quotes inside quoted field
+<span class="cstat-no" title="statement not covered" >      arr[row][col] += cc; <span class="cstat-no" title="statement not covered" ></span>++c;</span>
+<span class="cstat-no" title="statement not covered" >      continue; </span>// add quote and skip next char
+    }
+    if (cc === '"') { // if lone quote
+      quote = !quote; continue; // toggle quoted field
+    }
+    if (cc === ',' &amp;&amp; !quote) { // if comma in the wild
+      ++col; continue; // start next cell
+    }
+    if (cc === '\n' &amp;&amp; !quote) { // if new line in the wild
+      ++row; col = 0; continue;  // move to next row
+    }
+    arr[row][col] += cc; // or add char to current cell
+  }
+  return arr;
+}
+&nbsp;
+function parse_dom_table_to_array_of_rows(dom_table) {
+  return [].map.call(dom_table.rows,function(row){
+    return [].map.call(row.cells, function(c){ return c.textContent; });
+  });
+}
+&nbsp;
+// **parse_dom_table(dom_table, header)**
+//
+// parse comma separated values (CSV) format  provided in string `dom_table`.
+// `header` is array with column names, if omitted first row in  table
+// considered header .
+&nbsp;
+DataFrame.parse_dom_table = function (dom_table, header) {
+  return make_df_from_(parse_dom_table_to_array_of_rows(dom_table),header);
+};
+&nbsp;
+// **getRow(row_num,result)**
+//
+// get data row out of DataFrame.
+//    - `row_num` - row number
+//    - `result` - object or array to be filled in. **@optional**
+//       if not provided empty object is assumed.
+&nbsp;
+DataFrame.prototype.getRow=function(row_num,result){
+  var ph_row = this.index[row_num] ;
+  result = result || {};
+  this.columnSet.byIndex.forEach( _.isArray(result) ?
+      function (c, col_idx) { result[col_idx] = c.data[ph_row]; } :
+      function (c)          { result[c.name] = c.data[ph_row]; });
+  return result;
+};
+// **get(row,col)**
+//
+// get one value out of DataFrame
+//   - `row_num` - row number
+//   - `col` - column index or column name
+//
+DataFrame.prototype.get=function(row_num,col){
+  var ph_row = this.index[row_num] ;
+  var c = this.columnSet.getColumn(col);
+  return c.data[ph_row];
+};
+// **set(row_num,col,v)**
+//
+// set value in one cell of DataFrame
+//   - `row_num` - row number
+//   - `col` - column index or column name
+//   - `v` -  value to set
+DataFrame.prototype.set=function(row_num,col, v){
+  var ph_row = this.index[row_num] ;
+  var c = this.columnSet.getColumn(col);
+  c.data[ph_row] = v;
+};
+// **getRowCount()**
+//
+// get row count
+DataFrame.prototype.getRowCount=function(){
+  return this.index.length;
+};
+//**newRow()**
+//
+//add new row. Returns new row number.
+DataFrame.prototype.newRow=function(){
+  var new_row_num=this.index.length;
+  this.index[new_row_num] = new_row_num;
+  return new_row_num;
+};
+//**deleteRow(row_num)**
+//
+//delete row by `row_num`.
+DataFrame.prototype.deleteRow=function(row_num){
+  this.index.splice(row_num,1);
+};
+// getColumn(col)
+//
+// get all data out column. returns array of values
+//   - `col` - column index or column name
+DataFrame.prototype.getColumn=function(col){
+  var c = this.columnSet.getColumn(col);
+  <span class="missing-if-branch" title="else path not taken" >E</span>if(c){
+    return this.index.map(function(idx){
+      return c.data[idx];
+    });
+  }
+<span class="cstat-no" title="statement not covered" >  return undefined;</span>
+};
+// ** apply(logic) **
+//
+// run `logic(df,row_num)` function on all rows of DataFrame
+//
+//
+DataFrame.prototype.apply=function(logic){
+  for (var row_num = 0; row_num &lt; this.index.length; row_num++) {
+    logic(this,row_num);
+  }
+};
+// ** map(logic) **
+//
+// run `logic(df,row_num)` function on all rows of DataFrame.
+// Collect results from each run into array. `undefined` results
+// will not be included in array.
+//
+//
+DataFrame.prototype.map=function(logic){
+  var collector = [], r;
+  for (var row_num = 0; row_num &lt; this.index.length; row_num++) {
+    r = logic(this,row_num);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if( r !== undefined ){
+      collector.push(r);
+    }
+  }
+  return collector;
+};
+// **getData()**
+//
+// Get all data in structure:
+// returns {Object}
+//   - columns - columns array
+//     - name - column name
+//     - type - column type, if defined
+//   - rows - array of rows. each row array of values.
+//
+&nbsp;
+DataFrame.prototype.getData =function(){
+  var r = {columns:[],rows:[]};
+  var columns = this.columnSet.byIndex;
+  for(var col=0;col &lt; columns.length; col++){
+    var column = columns[col];
+    var col_def = {name: column.name};
+    <span class="missing-if-branch" title="if path not taken" >I</span>if(column.type){
+<span class="cstat-no" title="statement not covered" >      col_def.type = column.type.name;</span>
+    }
+    r.columns.push( col_def);
+  }
+  r.rows = this.map(function(df,row_num){
+    return df.getRow(row_num,[]);
+  });
+  return r;
+};
+&nbsp;
+// **getObjects()**
+//
+// returns all rows in  array , each row is object
+// with column names pointing to values
+//
+&nbsp;
+DataFrame.prototype.getObjects =function(){
+  return this.map(function(df,row_num){
+    return df.getRow(row_num);
+  });
+};
+&nbsp;
+module.exports = DataFrame;
+&nbsp;
+&nbsp;
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Dec 07 2015 22:14:27 GMT-0800 (PST)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>
