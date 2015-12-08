@@ -340,13 +340,12 @@ describe( 'wdf/utils',function(){
         },
         date : {
           positive: {
-            '2015-09-15T17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
-            '2015-09-15 17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
+            '' : null ,
             '2015-09-15' : new Date(Date.UTC(2015,8,15,0,0,0)),
             '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),  },
-          '20150915170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
-          '20150915-170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
-          negative: ['3a', 's' , '5', '2.7']
+            '20150915170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+            '20150915-170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+          negative: ['3a', 's' , '5', '2.7', '2015-09-15T17:00:14','2015-09-15 17:00:14']
         },
         datetime : {
           positive: {
@@ -389,8 +388,8 @@ describe( 'wdf/utils',function(){
         string : [ [null , ''], ['a' , 'a'], [ '3' , '3'] ],
         number : [ [ NaN,''],[3,'3'],[null,''],[1e8,'100000000']],
         boolean : [ [true,'true'],[false,'false'],[null,'']],
-        date : [[new Date(Date.UTC(2015,8,15,17,0,14)),'2015-09-15'],[null,'']],
-        datetime : [[new Date(Date.UTC(2015,8,15,17,0,14)),'2015-09-15 17:00:14'],[null,'']],
+        date : [ [new Date(Date.UTC(2015,8,15,17,0,14)),'2015-09-15'],[null,""]],
+        datetime : [ [new Date(Date.UTC(2015,8,15,17,0,14)),'2015-09-15 17:00:14'],[null,""]],
       };
       var input, out, expected, msg ;
       for(var t in  cases){
@@ -407,7 +406,114 @@ describe( 'wdf/utils',function(){
 //    assert.equal(moment(x).format('YYYY-MM-DDTHH:mm:ss'),x);
     });
   });
+  describe('detect_possible_array_types', function() {
+    function matchArrays(a,b){
+      assert.ok(_.isArray(a));
+      assert.ok(_.isArray(b));
+      assert.equal(a.length,b.length);
+      for(var i = 0 ; i < a.length ; i++){
+        if( isNaN(a[i]) && isNaN(b[i]) ){
+          continue;
+        }else if(_.isDate(a[i]) && _.isDate(b[i])){
+          assert.equal(a[i].getTime(),b[i].getTime());
+        }else{
+          assert.ok(a[i]===b[i],JSON.stringify([a[i],b[i]]) );
+        }
+      }
+    }
+    function match(a,b,selected){
+      assert.deepEqual(Object.keys(a).sort(),Object.keys(b).sort());
+      Object.keys(a).forEach(function(k){
+        assert.equal(a[k].hasMissing,b[k].hasMissing);
+        matchArrays(a[k].array,b[k].array);
+      });
+      assert.equal(u$.choose_column_type(b).type,selected);
+    }
 
+    describe('has missing', function() {
+      it('number', function() {
+
+        match(  {
+              string:{ array:['5','0',''],hasMissing:true},
+              number:{ array:[5,0,NaN],hasMissing:true},
+            },
+            u$.detect_possible_array_types(['5','0',''] ),
+            'number');
+      });
+      it('number and boolean', function() {
+        match(  {
+              string:{ array:['1','0',''],hasMissing:true},
+              boolean:{ array:[true,false,null],hasMissing:true},
+              number:{ array:[1,0,NaN],hasMissing:true},
+            },
+            u$.detect_possible_array_types(['1','0',''] ),
+            'number');
+      });
+      it('date', function() {
+        match(  {
+              string:{ array:['1994-10-17','2015-02-03',''],hasMissing:true},
+              date:{ array:[ new Date(Date.UTC(1994,9,17)),new Date(Date.UTC(2015,1,3)),null],hasMissing:true},
+              datetime:{ array:[new Date(Date.UTC(1994,9,17)),new  Date(Date.UTC(2015,1,3)),null],hasMissing:true},
+            },
+            u$.detect_possible_array_types(['1994-10-17','2015-02-03',''] ),
+            'date');
+      });
+      it('string', function() {
+        match(  {
+              string:{ array:['1994-10-17','2015',''],hasMissing:true},
+            },
+            u$.detect_possible_array_types(['1994-10-17','2015',''] ),
+            'string');
+      });
+    });
+
+    describe('no missing', function() {
+      it('number', function() {
+        match(  {
+              string:{ array:['5','0'],hasMissing:false},
+              number:{ array:[5,0],hasMissing:false},
+            },
+            u$.detect_possible_array_types(['5','0'] ),'number');
+      });
+      it('number and boolean', function() {
+        match(  {
+              string:{ array:['1','0'],hasMissing:false},
+              boolean:{ array:[true,false],hasMissing:false},
+              number:{ array:[1,0],hasMissing:false},
+            },
+            u$.detect_possible_array_types(['1','0'] ),'number');
+      });
+      it('date', function() {
+        match(  {
+              string:{ array:['1994-10-17','2015-02-03'],hasMissing:false},
+              date:{ array:[ new Date(Date.UTC(1994,9,17)),new Date(Date.UTC(2015,1,3))],hasMissing:false},
+              datetime:{ array:[new Date(Date.UTC(1994,9,17)),new  Date(Date.UTC(2015,1,3))],hasMissing:false},
+            },
+            u$.detect_possible_array_types(['1994-10-17','2015-02-03'] ),'date');
+      });
+      it('datetime', function() {
+        match(  {
+              string:{ array:['1994-10-17','2015-02-03'],hasMissing:false},
+              datetime:{ array:[new Date(Date.UTC(1994,9,17,17,3,5)),new  Date(Date.UTC(2015,1,3))],hasMissing:false},
+            },
+            u$.detect_possible_array_types(['1994-10-17 17:03:05','2015-02-03']),'datetime');
+      });
+      it('datetime number', function() {
+        match(  {
+              string:{ array:['19941017170305','20150203'],hasMissing:false},
+              number:{ array:[19941017170305,20150203],hasMissing:false},
+              datetime:{ array:[new Date(Date.UTC(1994,9,17,17,3,5)),new  Date(Date.UTC(2015,1,3))],hasMissing:false},
+            },
+            u$.detect_possible_array_types(['19941017170305','20150203']), 'number');
+      });
+      it('string', function() {
+        match(  {
+              string:{ array:['1994-10-17','2015'],hasMissing:false},
+            },
+            u$.detect_possible_array_types(['1994-10-17','2015'] ),'string');
+      });
+    });
+  });
 });
 
 

@@ -537,9 +537,16 @@ function parse_date(in_utc, s){
 //
 //  parse string into date assumning UTC timezone
 u$.date_from_string=function(s){
-  return parse_date(true,s);
+  var dt = parse_date(true, s);
+  return  dt && 0 === dt.getTime() % (24 * 60 * 60 * 1000 ) ? dt : undefined ;
 };
 
+//** datetime_from_string(s)**
+//
+//  parse string into date assumning UTC timezone
+u$.datetime_from_string=function(s){
+  return parse_date(true,s);
+};
 
 
 //**date_components(d)**
@@ -839,6 +846,7 @@ function Type(name, props) {
   this.to_string = props.to_string || function (v){
         return u$.isNullish(v) ? "" : this.notnull_to_string(v) ;
       };
+  this.missing = props.missing || _.isNull;
   this.order = props.order || generic_order;
   this.compare = u$.orderNullsFirst(this.order);
   u$.types[name] = this;
@@ -941,6 +949,7 @@ u$.addTypes({
 // ** string ** type
   string: {
     is: _.isString,
+    missing: function(s) { return u$.isNullish(s) || s === '' ; },
     from_string: function(v){
       return "" === v ? null : v ;
     }
@@ -948,16 +957,7 @@ u$.addTypes({
 // ** number ** type
   number: {
     is: _.isNumber,
-    from_string: function(v){
-      return NANs.indexOf(v) > -1 ? NaN :  u$.numDefault(+v,undefined);
-    },
-    notnull_to_string: function(v){
-      return isNaN(v)? '' : v;
-    },
-  },
-// ** integer ** type
-  uint32: {
-    is: u$.isUint32,
+    missing: isNaN,
     from_string: function(v){
       return NANs.indexOf(v) > -1 ? NaN :  u$.numDefault(+v,undefined);
     },
@@ -969,6 +969,9 @@ u$.addTypes({
   boolean: {
     is: _.isBoolean,
     from_string: function(v){
+      if(''===v){
+        return null;
+      }
       var idx = BOOLEAN_STRINGS.indexOf(v.toLowerCase());
       return idx < 0 ? undefined : idx % 2 === 1 ;
     },
@@ -979,7 +982,9 @@ u$.addTypes({
 // ** datetime ** type
   datetime: {
     is: _.isDate,
-    from_string: u$.date_from_string,
+    from_string: function (v) {
+      return v === '' ? null : u$.datetime_from_string(v);
+    },
     notnull_to_string: u$.date_to_string_fn("YYYY_MM_DD_hh_mm_ss"),
     order: function(a, b) {
       return generic_order( a.valueOf(), b.valueOf());
@@ -988,12 +993,65 @@ u$.addTypes({
 // ** date ** type
   date: {
     is: _.isDate,
-    from_string: u$.date_from_string,
+    from_string: function (v) {
+      return v === '' ? null : u$.date_from_string(v);
+    },
     notnull_to_string: u$.date_to_string_fn("YYYY_MM_DD"),
     order: function(a, b) {
       return generic_order( a.valueOf(), b.valueOf());
     }
   }
 });
+
+// ** detect_possible_array_types(str_array) **
+//
+// takes `str_array` and detect other possible array
+// types from values
+
+u$.detect_possible_array_types=function(str_array){
+  var options={
+    string: { array: str_array, hasMissing: false , type: 'string'}
+  };
+  var eligible_types = ['date','datetime','boolean','number'] ;
+  eligible_types.forEach(function(type){
+    options[type] = { array: [] , hasMissing: false , type: type } ;
+  });
+  str_array.forEach(function(v,i){
+    if( u$.types.string.missing(v) ){
+      options['string'].hasMissing = true;
+    }
+    for(var i = 0 ; i < eligible_types.length ; ){
+      var typeName = eligible_types[i];
+      var type = u$.types[typeName];
+      var parsed = type.from_string(v);
+      if( type.missing(parsed) ){
+        options[typeName].hasMissing = true;
+      }
+      if( _.isUndefined(parsed) ){
+        delete options[typeName];
+        eligible_types.splice(i,1);
+      }else{
+        options[typeName].array.push(parsed);
+        i++;
+      }
+    }
+  });
+  return options;
+};
+
+var PRIORITIES = [ 'number', 'date', 'datetime', 'boolean', 'string' ];
+
+u$.choose_column_type=function(ops){
+  var keys = Object.keys(ops);
+  if(keys.length == 1){
+    return ops[keys[0]];
+  }else{
+    for(var i = 0 ; i < PRIORITIES.length ; i++) {
+      if (ops.hasOwnProperty(PRIORITIES[i])) {
+        return ops[PRIORITIES[i]];
+      }
+    }
+  }
+};
 
 
