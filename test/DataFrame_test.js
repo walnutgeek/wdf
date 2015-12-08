@@ -3,7 +3,9 @@ describe( 'wdf/DataFrame', function(){
   var assert = require("assert");
 
   var rows = [{ abc: 1, cdx: 2},{ abc: 2, cdx: 3}];
-  var columns = ['abc','cdx'];
+  var config = {
+    columns: ['abc','cdx']
+  };
   var arrayRows = [
     [ 2 , null, '20150716'],
     [ 3 , 'x',  '20130710']
@@ -14,9 +16,9 @@ describe( 'wdf/DataFrame', function(){
   ];
   it( 'Initialization', function() {
     // jshint -W064 
-    assert.ok( DataFrame(rows,columns).constructor === DataFrame , 'Initialiesd wit hout new.' );
+    assert.ok( DataFrame(rows,config).constructor === DataFrame , 'Initialiesd wit hout new.' );
     // jshint +W064 
-    assert.ok( new DataFrame(rows,columns).constructor === DataFrame ,  'Initialiesd with new.' );
+    assert.ok( new DataFrame(rows,config).constructor === DataFrame ,  'Initialiesd with new.' );
     assert.ok( new DataFrame(objectRows).constructor === DataFrame ,  'Initialiesd with new.' );
 
   });
@@ -55,7 +57,7 @@ describe( 'wdf/DataFrame', function(){
     assert.equal( df.getRowCount() , 2 );
   });
   it( 'getter', function() {
-    var df = new DataFrame(rows,columns);
+    var df = new DataFrame(rows,config);
     assert.equal( df.get(0,"abc") , 1 ,  'get(0,abc)' );
     assert.equal( df.get(0,"cdx") , 2 ,  'get(0,cdx)' );
     assert.equal( df.get(1,"abc") , 2 ,  'get(1,abc)' );
@@ -128,13 +130,13 @@ describe( 'wdf/DataFrame', function(){
       assert.equal( df2.get(0,"abc"), '1' ,  'get(0,abc)' );
       assert.equal( df2.get(0,"cdx"), '2\n2,3' ,  'get(0,cdx)' );
       assert.equal( df2.getRowCount(), 1 ,  'no header - quoted field' );
-      var df3 = DataFrame.parse_csv('abc,cdx\n1,"2\n2,3"\n',['a','c']);
+      var df3 = DataFrame.parse_csv('abc,cdx\n1,"2\n2,3"\n',{columns:['a','c']});
       assert.equal( df3.get(0,"a") , 'abc'  );
       assert.equal( df3.get(0,"c") , 'cdx'  );
       assert.equal( df3.get(1,"a") , '1'  );
       assert.equal( df3.get(1,"c") , '2\n2,3' );
       assert.equal( df3.getRowCount() , 2 ,  'header provided - quoted field' );
-      var df4 = DataFrame.parse_csv('abc,cdx\n,"2\n2,3"\n',['a','c']);
+      var df4 = DataFrame.parse_csv('abc,cdx\n,"2\n2,3"\n',{columns:['a','c']});
       assert.equal( df4.get(0,"a") , 'abc'  );
       assert.equal( df4.get(0,"c") , 'cdx'  );
       assert.equal( df4.get(1,"a") , ''  );

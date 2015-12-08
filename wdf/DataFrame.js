@@ -19,6 +19,11 @@ var Column = function (name,len,type){
   this.type = type ;
 };
 
+Column.prototype.set=function(row,v){
+  //TODO add logic to detect `type` or coerce `v`
+  this.data[row] = v;
+};
+
 // ColumnSet - store all columns `byIndex` in array and  `byName` in hashtable.
 var ColumnSet = function(){
   this.byIndex = [];
@@ -72,25 +77,29 @@ ColumnSet.prototype.addColumns = function(cols,n_rows){
 //
 // **new Dataframe(rows,columns)**:
 //    - `rows` - array of rows. row could be array or object.
-//    - `columns` - array that contains column names or objects with `{name: "colname",type: "number"}`.
-var DataFrame = function (rows, columns){
+//    - `config` :
+//      - `columns` - array that contains column names or objects with `{name: "colname",type: "number"}`.
+// TODO documentation for config
+
+var DataFrame = function (rows, config){
   var obj = this;
   if( _.isUndefined(obj) || obj.constructor !== DataFrame ){
-    return new DataFrame(rows,columns);
+    return new DataFrame(rows,config);
   }
+  config = config || {};
   rows = rows || [];
-  this.columnSet = new ColumnSet().addColumns( columns||[],rows.length);
+  this.columnSet = new ColumnSet().addColumns( config.columns || [],rows.length);
   this.index = _.range(rows.length);
   for (var row = 0; row < rows.length; row++) {
     var row_data = rows[row];
     if( _.isPlainObject(row_data) ){
       var keys = Object.keys(row_data);
       for (var k = 0; k < keys.length; k++) {
-        this.columnSet.enforceColumn(keys[k]).data[row] = row_data[keys[k]];
+        this.columnSet.enforceColumn(keys[k]).set(row,row_data[keys[k]]);
       }
     }else if( _.isArray(row_data) ){
       for (var col_idx = 0; col_idx < row_data.length; col_idx++) {
-        this.columnSet.enforceColumnAt(col_idx).data[row] = row_data[col_idx];
+        this.columnSet.enforceColumnAt(col_idx).set(row,row_data[col_idx]);
       }
     }else{
       throw { msg: "row should be object or array and not:"+row_data };
@@ -99,9 +108,9 @@ var DataFrame = function (rows, columns){
   return obj;
 };
 
-function make_df_from_(array_of_rows, header) {
-  header = header || array_of_rows.shift();
-  return new DataFrame(array_of_rows, header);
+function make_df_from_(array_of_rows, config) {
+  config = config || {columns: array_of_rows.shift()};
+  return new DataFrame(array_of_rows, config);
 }
 
 // **parse_csv(str,header)**
@@ -109,8 +118,8 @@ function make_df_from_(array_of_rows, header) {
 // parse comma separated values (CSV) format  provided in string `str`.
 // `header` is array with column names, if omitted first line of  CSV  in `str` considered header .
 
-DataFrame.parse_csv = function (str, header) {
-  return make_df_from_(parse_csv_to_array_of_rows(str),header);
+DataFrame.parse_csv = function (str, config) {
+  return make_df_from_(parse_csv_to_array_of_rows(str), config);
 };
 
 function parse_csv_to_array_of_rows (str){
@@ -141,8 +150,8 @@ function parse_csv_to_array_of_rows (str){
 }
 
 function parse_dom_table_to_array_of_rows(dom_table) {
-  return [].map.call(dom_table.rows,function(row){
-    return [].map.call(row.cells, function(c){ return c.textContent; });
+  return [].map.call(dom_table.rows,function(dom_row){
+    return [].map.call(dom_row.cells, function(c){ return c.textContent; });
   });
 }
 
@@ -152,8 +161,8 @@ function parse_dom_table_to_array_of_rows(dom_table) {
 // `header` is array with column names, if omitted first row in  table
 // considered header .
 
-DataFrame.parse_dom_table = function (dom_table, header) {
-  return make_df_from_(parse_dom_table_to_array_of_rows(dom_table),header);
+DataFrame.parse_dom_table = function (dom_table, config) {
+  return make_df_from_(parse_dom_table_to_array_of_rows(dom_table),config);
 };
 
 // **getRow(row_num,result)**
