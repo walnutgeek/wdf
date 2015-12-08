@@ -427,7 +427,7 @@ describe( 'wdf/utils',function(){
         assert.equal(a[k].hasMissing,b[k].hasMissing);
         matchArrays(a[k].array,b[k].array);
       });
-      assert.equal(u$.choose_column_type(b).type,selected);
+      assert.equal(u$.choose_column_type(b).type.name,selected);
     }
 
     describe('has missing', function() {

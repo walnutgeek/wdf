@@ -1010,28 +1010,31 @@ u$.addTypes({
 
 u$.detect_possible_array_types=function(str_array){
   var options={
-    string: { array: str_array, hasMissing: false , type: 'string'}
+    string: { array: str_array, hasMissing: false , type: u$.types.string}
   };
   var eligible_types = ['date','datetime','boolean','number'] ;
-  eligible_types.forEach(function(type){
-    options[type] = { array: [] , hasMissing: false , type: type } ;
+  eligible_types.forEach(function(typeName){
+    options[typeName] = {
+      array: new Array(str_array.length) ,
+      hasMissing: false ,
+      type: u$.types[typeName] } ;
   });
-  str_array.forEach(function(v,i){
+  str_array.forEach(function(v,row){
     if( u$.types.string.missing(v) ){
       options['string'].hasMissing = true;
     }
     for(var i = 0 ; i < eligible_types.length ; ){
       var typeName = eligible_types[i];
-      var type = u$.types[typeName];
-      var parsed = type.from_string(v);
-      if( type.missing(parsed) ){
-        options[typeName].hasMissing = true;
+      var opt = options[typeName];
+      var parsed = opt.type.from_string(v);
+      if( opt.type.missing(parsed) ){
+        opt.hasMissing = true;
       }
       if( _.isUndefined(parsed) ){
         delete options[typeName];
         eligible_types.splice(i,1);
       }else{
-        options[typeName].array.push(parsed);
+        opt.array[row] = parsed;
         i++;
       }
     }
