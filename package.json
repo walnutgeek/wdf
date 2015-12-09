@@ -3,17 +3,6 @@
   "version": "0.0.2",
   "description": "Web data frame",
   "main": "index.js",
-  "config": {
-    "blanket": {
-      "pattern": [
-        ""
-      ],
-      "data-cover-never": [
-        "node_modules",
-        "tests"
-      ]
-    }
-  },
   "scripts": {
     "clean": "rimraf dist coverage",
     "test": "mocha && webpack --config webpack.mocha.js",
