@@ -22,7 +22,7 @@ module.exports = {
       { test: /\.js$/,
         loaders: ['jshint'],
         // define an include so we check just the files we need
-        include: [ "/wdf", "/test"].map(absdir)
+        include: [ "wdf", "test"].map(absdir)
       }
     ],
     loaders: [],
@@ -30,5 +30,4 @@ module.exports = {
   plugins: [
     new webpack.IgnorePlugin(/jsdom/)
   ],
-
 };
