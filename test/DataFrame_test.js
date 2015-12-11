@@ -170,8 +170,8 @@ describe( 'wdf/DataFrame', function(){
         "<tr><td></td><td></td><td></td></tr>" +
         "</tbody>" +
         "</table>");
-      var df = DataFrame.parse_dom_table(dom);
-      var array = df.getObjects();
+      df = DataFrame.parse_dom_table(dom);
+      array = df.getObjects();
       assert.equal(5,array.length);
       assert.deepEqual({
         "col name 1":"ABC",

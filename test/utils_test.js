@@ -100,7 +100,7 @@ describe( 'wdf/utils',function(){
     assert.equal(5,len({len: 5}));
     assert.equal(undefined,len(a));
     assert.deepEqual({a:a,$_a:$_a},
-        u$.convertListToObject([a,$_a],u$.extractFunctionName) )
+        u$.convertListToObject([a,$_a],u$.extractFunctionName) );
   });
   it( '#join', function() {
     assert.equal(u$.join([ 1, 2, 3 ]), "1,2,3");
@@ -274,7 +274,7 @@ describe( 'wdf/utils',function(){
     }
     var values = [
       undefined, null, 0, 1, 1.5, " ", "", "a",
-      new Date, false, true, function(){}, {x:0} ,[1] ];
+      new Date(), false, true, function(){}, {x:0} ,[1] ];
 
     function test(f,condition,predicates){
       values.forEach(function(v){
@@ -355,6 +355,18 @@ describe( 'wdf/utils',function(){
             '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),  },
           '20150915170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
           '20150915-170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+          negative: ['3a', 's' , '5', '2.7', '2015-09-15T17:00:14.023Z' ,'2015-09-15T17:00:14.023' ]
+        },
+        timestamp : {
+          positive: {
+            '2015-09-15T17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
+            '2015-09-15 17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
+            '2015-09-15' : new Date(Date.UTC(2015,8,15,0,0,0)),
+            '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),  },
+          '20150915170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+          '20150915-170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+          '2015-09-15T17:00:14.023' : new Date(Date.UTC(2015,8,15,17,0,14,23)),
+          '2015-09-15T17:00:14.023Z' : new Date(Date.UTC(2015,8,15,17,0,14,23)),
           negative: ['3a', 's' , '5', '2.7']
         },
       };

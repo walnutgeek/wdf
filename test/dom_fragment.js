@@ -1,6 +1,6 @@
 // ```
 // var dom_fragment = require("./dom_fragment");
-// dom_fragment(
+// dom_fragment('<div>hello</div>')
 // ```
 //
 try{

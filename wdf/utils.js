@@ -479,6 +479,8 @@
 
 // define supported date patterns
   var DATE_PATTERNS = {
+    YYYY_MM_DDThh_mm_ss_zzzZ: { delims: ['-','-','T',':',':','.','Z'] }, //ISO-8601
+    YYYY_MM_DDThh_mm_ss_zzz: { delims: ['-','-','T',':',':','.'] },
     YYYY_MM_DDThh_mm_ss: { delims: ['-','-','T',':',':'] },
     YYYY_MM_DD_hh_mm_ss: { delims: ['-','-',' ',':',':'] },
     YYYYMMDD_hhmmss: { delims: ['','','-','',''] },
@@ -488,7 +490,7 @@
   };
 
 //prepare text for regexp
-  var DATE_FIELD_SIZES = [4,2,2,2,2,2];
+  var DATE_FIELD_SIZES = [4,2,2,2,2,2,3];
   var pattern_texts = DATE_FIELD_SIZES.map(function(n){
     var s='(';
     while(n--){
@@ -525,8 +527,12 @@
     for(var pkey in DATE_PATTERNS){
       var m = DATE_PATTERNS[pkey].regexp.exec(s);
       if(m){
-        return new_date(in_utc, (m.length === 4) ? [+m[1],m[2]-1,+m[3]] :
-            [+m[1],m[2]-1,+m[3],+m[4],+m[5],+m[6]] );
+        var args = [];
+        for(var i = 1 ; i < m.length ;i++){
+          args[i-1] = +m[i] ;
+        }
+        args[1]--;
+        return new_date(in_utc, args);
       }
     }
     return undefined;
@@ -534,13 +540,20 @@
 
 //### Public Date stuff
 
+//** isUtcDateWithZeroTime(dt) **
+//
+// check if `dt` has no time component in UTC timezone
+  u$.isUtcDateWithZeroTime=function(dt,mod){
+    mod = mod || (24 * 60 * 60 * 1000) ;
+    return  _.isDate(dt) && 0 === (dt.getTime() % mod)  ;
+  };
 
 //** date_from_string(s)**
 //
 //  parse string into date assumning UTC timezone
-  u$.date_from_string=function(s){
+  u$.date_from_string=function(s,mod){
     var dt = parse_date(true, s);
-    return  dt && 0 === dt.getTime() % (24 * 60 * 60 * 1000 ) ? dt : undefined ;
+    return  u$.isUtcDateWithZeroTime(dt,mod) ? dt : undefined ;
   };
 
 //** datetime_from_string(s)**
@@ -549,7 +562,6 @@
   u$.datetime_from_string=function(s){
     return parse_date(true,s);
   };
-
 
 //**date_components(d)**
 //
@@ -560,7 +572,6 @@
     return [d.getFullYear(),d.getMonth() + 1,d.getDate(),
       d.getHours(),d.getMinutes(),d.getSeconds()];
   };
-
 
 //**utc_components(d)**
 //
@@ -838,23 +849,6 @@
     return a === b ? null : a < b ? -1 : 1 ;
   }
 
-  u$.types = {} ;
-
-  function Type(name, props) {
-    this.name = name ;
-    this.is = props.is ;
-    this.from_string = props.from_string ;
-    this.notnull_to_string = props.notnull_to_string || u$.ensureString ;
-    this.to_string = props.to_string || function (v){
-          return u$.isNullish(v) ? "" : this.notnull_to_string(v) ;
-        };
-    this.missing = props.missing || _.isNull;
-    this.order = props.order || generic_order;
-    this.compare = u$.orderNullsFirst(this.order);
-    u$.types[name] = this;
-  }
-
-  u$.Type = Type;
 
 // ** orderChain(array) **
 //
@@ -930,6 +924,25 @@
     funcs.splice(1,0,u$.orderPredicateFirst(_.isNull));
     return u$.orderChain(funcs);
   };
+
+  u$.types = {} ;
+
+  function Type(name, props) {
+    this.name = name ;
+    this.is = props.is ;
+    this.from_string = props.from_string ;
+    this.notnull_to_string = props.notnull_to_string || u$.ensureString ;
+    this.to_string = props.to_string || function (v){
+          return u$.isNullish(v) ? "" : this.notnull_to_string(v) ;
+        };
+    this.missing = props.missing || _.isNull;
+    this.order = props.order || generic_order;
+    this.compare = u$.orderNullsFirst(this.order);
+    u$.types[name] = this;
+  }
+
+  u$.Type = Type;
+
 // ** addTypes(typesMap) **
 //
 //    add types
@@ -983,6 +996,17 @@
     },
 // ** datetime ** type
     datetime: {
+      is: function(dt){ return u$.isUtcDateWithZeroTime(dt,1000);},
+      from_string: function (v) {
+        return v === '' ? null : u$.date_from_string(v,1000);
+      },
+      notnull_to_string: u$.date_to_string_fn("YYYY_MM_DD_hh_mm_ss"),
+      order: function(a, b) {
+        return generic_order( a.valueOf(), b.valueOf());
+      }
+    },
+// ** timestamp ** type
+    timestamp: {
       is: _.isDate,
       from_string: function (v) {
         return v === '' ? null : u$.datetime_from_string(v);
@@ -994,7 +1018,7 @@
     },
 // ** date ** type
     date: {
-      is: _.isDate,
+      is: u$.isUtcDateWithZeroTime,
       from_string: function (v) {
         return v === '' ? null : u$.date_from_string(v);
       },
@@ -1044,7 +1068,7 @@
     return options;
   };
 
-  var PRIORITIES = [ 'number', 'date', 'datetime', 'boolean', 'string' ];
+  var PRIORITIES = [ 'number', 'date', 'datetime', 'timestamp', 'boolean', 'string' ];
 
   u$.choose_column_type=function(ops){
     var keys = Object.keys(ops);

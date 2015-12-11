@@ -21,6 +21,9 @@
   };
 
   Column.prototype.set = function (row, v) {
+    if(this.type && !this.type.is(v)){
+      v = this.type.coerce(v);
+    }
     //TODO add logic to detect `type` or coerce `v`
     this.data[row] = v;
   };
