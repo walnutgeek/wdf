@@ -402,6 +402,7 @@ describe( 'wdf/utils',function(){
         boolean : [ [true,'true'],[false,'false'],[null,'']],
         date : [ [new Date(Date.UTC(2015,8,15,17,0,14)),'2015-09-15'],[null,""]],
         datetime : [ [new Date(Date.UTC(2015,8,15,17,0,14)),'2015-09-15 17:00:14'],[null,""]],
+        timestamp : [ [new Date(Date.UTC(2015,8,15,17,0,14,134)),'2015-09-15 17:00:14.134'],[null,""]],
       };
       var input, out, expected, msg ;
       for(var t in  cases){
@@ -409,8 +410,8 @@ describe( 'wdf/utils',function(){
           input = cases[t][i][0];
           out = u$.types[t].to_string(input);
           expected = cases[t][i][1];
-          msg = t+' in:'+input+' expected:'+expected;
-          assert.equal(out, expected,msg );
+          msg = t+' result:'+out+' expected:'+expected;
+          assert.equal(out, expected, msg );
         }
       }
 

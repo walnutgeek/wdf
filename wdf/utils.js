@@ -481,6 +481,7 @@
   var DATE_PATTERNS = {
     YYYY_MM_DDThh_mm_ss_zzzZ: { delims: ['-','-','T',':',':','.','Z'] }, //ISO-8601
     YYYY_MM_DDThh_mm_ss_zzz: { delims: ['-','-','T',':',':','.'] },
+    YYYY_MM_DD_hh_mm_ss_zzz: { delims: ['-','-',' ',':',':','.'] },
     YYYY_MM_DDThh_mm_ss: { delims: ['-','-','T',':',':'] },
     YYYY_MM_DD_hh_mm_ss: { delims: ['-','-',' ',':',':'] },
     YYYYMMDD_hhmmss: { delims: ['','','-','',''] },
@@ -570,7 +571,7 @@
 // in local time
   u$.date_components=function(d){
     return [d.getFullYear(),d.getMonth() + 1,d.getDate(),
-      d.getHours(),d.getMinutes(),d.getSeconds()];
+      d.getHours(),d.getMinutes(),d.getSeconds(),d.getMilliseconds()];
   };
 
 //**utc_components(d)**
@@ -580,7 +581,7 @@
 // in UTC time
   u$.utc_components=function(d){
     return [d.getUTCFullYear(),d.getUTCMonth() + 1,d.getUTCDate(),
-      d.getUTCHours(),d.getUTCMinutes(),d.getUTCSeconds()];
+      d.getUTCHours(),d.getUTCMinutes(),d.getUTCSeconds(),d.getUTCMilliseconds()];
   };
 
 //**SUPPORTED_DATE_FORMATS**
@@ -612,7 +613,9 @@
         if(i > 0){
           s += delims[i-1];
         }
-        s += pad_with_zeros(d_values[i],DATE_FIELD_SIZES[i]);
+        if( i < d_values.length ){
+          s += pad_with_zeros(d_values[i],DATE_FIELD_SIZES[i]);
+        }
       }
       return s;
     };
@@ -931,13 +934,16 @@
     this.name = name ;
     this.is = props.is ;
     this.from_string = props.from_string ;
-    this.notnull_to_string = props.notnull_to_string || u$.ensureString ;
+    this._to_string = props._to_string || u$.ensureString ;
     this.to_string = props.to_string || function (v){
-          return u$.isNullish(v) ? "" : this.notnull_to_string(v) ;
+          return u$.isNullish(v) ? "" : this._to_string(v) ;
         };
     this.missing = props.missing || _.isNull;
     this.order = props.order || generic_order;
     this.compare = u$.orderNullsFirst(this.order);
+    this.coerce= function(value,from_type){
+
+    };
     u$.types[name] = this;
   }
 
@@ -960,6 +966,9 @@
     "0","1","n","y","f","t",
     "no","yes","false","true"];
 
+  function date_order(a, b) {
+    return generic_order( a.getTime(), b.getTime());
+  }
   u$.addTypes({
 // ** string ** type
     string: {
@@ -976,7 +985,7 @@
       from_string: function(v){
         return NANs.indexOf(v) > -1 ? NaN :  u$.numDefault(+v,undefined);
       },
-      notnull_to_string: function(v){
+      _to_string: function(v){
         return isNaN(v)? '' : v;
       },
     },
@@ -1000,10 +1009,8 @@
       from_string: function (v) {
         return v === '' ? null : u$.date_from_string(v,1000);
       },
-      notnull_to_string: u$.date_to_string_fn("YYYY_MM_DD_hh_mm_ss"),
-      order: function(a, b) {
-        return generic_order( a.valueOf(), b.valueOf());
-      }
+      _to_string: u$.date_to_string_fn("YYYY_MM_DD_hh_mm_ss"),
+      order: date_order
     },
 // ** timestamp ** type
     timestamp: {
@@ -1011,10 +1018,8 @@
       from_string: function (v) {
         return v === '' ? null : u$.datetime_from_string(v);
       },
-      notnull_to_string: u$.date_to_string_fn("YYYY_MM_DD_hh_mm_ss"),
-      order: function(a, b) {
-        return generic_order( a.valueOf(), b.valueOf());
-      }
+      _to_string: u$.date_to_string_fn("YYYY_MM_DD_hh_mm_ss_zzz"),
+      order: date_order
     },
 // ** date ** type
     date: {
@@ -1022,10 +1027,8 @@
       from_string: function (v) {
         return v === '' ? null : u$.date_from_string(v);
       },
-      notnull_to_string: u$.date_to_string_fn("YYYY_MM_DD"),
-      order: function(a, b) {
-        return generic_order( a.valueOf(), b.valueOf());
-      }
+      _to_string: u$.date_to_string_fn("YYYY_MM_DD"),
+      order: date_order
     }
   });
 
@@ -1069,6 +1072,18 @@
   };
 
   var PRIORITIES = [ 'number', 'date', 'datetime', 'timestamp', 'boolean', 'string' ];
+
+  u$.findTypeByValue=function(v){
+    for(var typeName in u$.types){
+      if(u$.hasOwnProperty(typeName)){
+        var type = u$.types[typeName];
+        if (type.is(v)) {
+          return type;
+        }
+      }
+    }
+    return undefined;
+  };
 
   u$.choose_column_type=function(ops){
     var keys = Object.keys(ops);
