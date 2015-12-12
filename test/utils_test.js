@@ -168,7 +168,7 @@ describe( 'wdf/utils',function(){
   });
   it( '#parseDateUTC', function() {
     var isoDate = u$.parseDateUTC('2014-09-08 17:00:00');
-    assert.equal('2014-09-08T17:00:00.000Z', u$.dateToIsoString(isoDate),isoDate.toString());
+    assert.equal('2014-09-08T17:00:00.000Z', isoDate.toISOString(),isoDate.toString());
   });
   it( '#relativeDateString', function() {
     var s = u$.relativeDateString(
@@ -192,9 +192,9 @@ describe( 'wdf/utils',function(){
     assert.equal(s, '2014-09-08 18:01');
   });
   it( '#dateToIsoString', function() {
-    var isoDate = u$.dateToIsoString(new Date(Date.UTC(1980, 0, 1)));
+    var isoDate = new Date(Date.UTC(1980, 0, 1)).toISOString();
     assert.equal(isoDate, '1980-01-01T00:00:00.000Z');
-    assert.equal(u$.dateToIsoString(new Date(isoDate)),
+    assert.equal(new Date(isoDate).toISOString(),
         '1980-01-01T00:00:00.000Z');
   });
   it( '#binarySearch', function() {

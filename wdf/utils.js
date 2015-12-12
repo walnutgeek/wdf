@@ -480,14 +480,14 @@
 // define supported date patterns
   var DATE_PATTERNS = {
     YYYY_MM_DDThh_mm_ss_zzzZ: { delims: ['-','-','T',':',':','.','Z'] }, //ISO-8601
-    YYYY_MM_DDThh_mm_ss_zzz: { delims: ['-','-','T',':',':','.'] },
-    YYYY_MM_DD_hh_mm_ss_zzz: { delims: ['-','-',' ',':',':','.'] },
-    YYYY_MM_DDThh_mm_ss: { delims: ['-','-','T',':',':'] },
-    YYYY_MM_DD_hh_mm_ss: { delims: ['-','-',' ',':',':'] },
-    YYYYMMDD_hhmmss: { delims: ['','','-','',''] },
-    YYYYMMDDhhmmss: { delims: ['','','','',''] },
-    YYYY_MM_DD: { delims: ['-','-'] },
-    YYYYMMDD: { delims: ['',''] },
+    YYYY_MM_DDThh_mm_ss_zzz:  { delims: ['-','-','T',':',':','.'] },
+    YYYY_MM_DD_hh_mm_ss_zzz:  { delims: ['-','-',' ',':',':','.'] },
+    YYYY_MM_DDThh_mm_ss:      { delims: ['-','-','T',':',':'] },
+    YYYY_MM_DD_hh_mm_ss:      { delims: ['-','-',' ',':',':'] },
+    YYYYMMDD_hhmmss:          { delims: ['','','-','',''] },
+    YYYYMMDDhhmmss:           { delims: ['','','','',''] },
+    YYYY_MM_DD:               { delims: ['-','-'] },
+    YYYYMMDD:                 { delims: ['',''] },
   };
 
 //prepare text for regexp
@@ -541,11 +541,25 @@
 
 //### Public Date stuff
 
+var MILLS_IN_DAY = 24 * 60 * 60 * 1000;
+var MILLS_IN_SEC = 1000;
+
+//** drop_hours(dt) **
+  u$.drop_hours = function(dt){
+    var t  = dt.getTime();
+    return new Date( t - t % MILLS_IN_DAY);
+  };
+//** drop_mills(dt) **
+  u$.drop_mills = function(dt){
+    var t  = dt.getTime();
+    return new Date( t - t % MILLS_IN_SEC);
+  };
+
 //** isUtcDateWithZeroTime(dt) **
 //
 // check if `dt` has no time component in UTC timezone
   u$.isUtcDateWithZeroTime=function(dt,mod){
-    mod = mod || (24 * 60 * 60 * 1000) ;
+    mod = mod || MILLS_IN_DAY ;
     return  _.isDate(dt) && 0 === (dt.getTime() % mod)  ;
   };
 
@@ -620,22 +634,7 @@
       return s;
     };
   };
-//**dateToIsoString(date)**
-//
-// date to ISO-2601 string. deprecated in favor
-// of `Date.prototype.toISOString`. will be removed soon.
-//
-//
-  u$.dateToIsoString=function(date) {
-    return date.toISOString();
-    /*return date.getUTCFullYear() +  '-' +
-     pad_with(date.getUTCMonth() + 1, '00') + '-' +
-     pad_with(date.getUTCDate(), '00') + 'T' +
-     pad_with(date.getUTCHours(), '00') + ':' +
-     pad_with(date.getUTCMinutes(), '00') + ':' +
-     pad_with(date.getUTCSeconds(), '00') + '.' +
-     pad_with(date.getUTCMilliseconds(), '000') + 'Z';*/
-  };
+
 //** parseDateUTC(s) **
 //
 // parse date using on of `SUPPORTED_DATE_FORMATS`
