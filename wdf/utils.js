@@ -544,17 +544,6 @@
 var MILLS_IN_DAY = 24 * 60 * 60 * 1000;
 var MILLS_IN_SEC = 1000;
 
-//** drop_hours(dt) **
-  u$.drop_hours = function(dt){
-    var t  = dt.getTime();
-    return new Date( t - t % MILLS_IN_DAY);
-  };
-//** drop_mills(dt) **
-  u$.drop_mills = function(dt){
-    var t  = dt.getTime();
-    return new Date( t - t % MILLS_IN_SEC);
-  };
-
 //** isUtcDateWithZeroTime(dt) **
 //
 // check if `dt` has no time component in UTC timezone
@@ -916,6 +905,13 @@ var MILLS_IN_SEC = 1000;
       return f(b, a);
     };
   };
+
+  function build_to_string_fn(_to_string){
+    return function (v){
+      return u$.isNullish(v) ? "" : _to_string(v) ;
+    };
+  }
+
 //** orderNullsFirst(orderFuncArray) **
 //
 // Create order function that sort `undefined` - first, `null` - second
@@ -930,22 +926,40 @@ var MILLS_IN_SEC = 1000;
   u$.types = {} ;
 
   function Type(name, props) {
-    this.name = name ;
-    this.is = props.is ;
-    this.from_string = props.from_string ;
-    this._to_string = props._to_string || u$.ensureString ;
-    this.to_string = props.to_string || function (v){
-          return u$.isNullish(v) ? "" : this._to_string(v) ;
-        };
-    this.missing = props.missing || _.isNull;
-    this.order = props.order || generic_order;
-    this.compare = u$.orderNullsFirst(this.order);
-    this.coerce= function(value,from_type){
-
+    _.assign(this,props);
+    this.mixin_type = function(){
+      return this.mixin ? this.mixin.type : undefined;
     };
-    u$.types[name] = this;
+    var mixin = this.mixin_type();
+    if(mixin){
+      _.defaults(this,mixin);
+    }
+    this.name = name ;
+    _.defaults(this, {
+        order:      generic_order,
+        missing:    _.isNull,
+        coerce:     function(value,from_type){
+          var mixin = this.mixin_type();
+          if( mixin && mixin == from_type.mixin_type() ){
+            return this.mixin_coerce(value,from_type);
+          }
+          return this.from_string(from_type.to_string(value));
+        },
+        _to_string: u$.ensureString,
+        to_string: function (v){
+          return _.isNull(v) ? "" : this._to_string(v);
+        }
+    });
+    this.compare = u$.orderNullsFirst(this.order);
   }
 
+  // reevaluate type conversion graph.
+  // called everytime when `addTypes()` called.
+  Type.prototype.init=function(){
+    this.to = {};
+    this.from = {};
+
+  };
   u$.Type = Type;
 
 // ** addTypes(typesMap) **
@@ -954,7 +968,12 @@ var MILLS_IN_SEC = 1000;
   u$.addTypes=function(typesMap){
     for(var typeName in typesMap){
       if( typesMap.hasOwnProperty(typeName) ){
-        new Type(typeName,typesMap[typeName]);
+        u$.types[typeName] = new Type(typeName,typesMap[typeName]);
+      }
+    }
+    for(typeName in u$.types){
+      if( u$.types.hasOwnProperty(typeName) ){
+        u$.types[typeName].init();
       }
     }
   };
@@ -965,9 +984,30 @@ var MILLS_IN_SEC = 1000;
     "0","1","n","y","f","t",
     "no","yes","false","true"];
 
-  function date_order(a, b) {
-    return generic_order( a.getTime(), b.getTime());
-  }
+  var date_mixin = {
+    is: function(v){
+      return _.isDate(v) && (v.getTime() % this.mixin.precision) === 0 ;
+    },
+    from_string: function (v) {
+      return v === '' ? null : u$.date_from_string(v,this.mixin.precision);
+    },
+    _to_string: function(dt){
+      return u$.date_to_string_fn(this.mixin.pattern)(dt);
+    },
+    from_number: function (v) {
+      return new Date( v - v % this.mixin.precisionv);
+    },
+    to_number: function(dt){
+      return dt.getTime();
+    },
+    order: function (a, b) {
+      return generic_order( a.getTime(), b.getTime());
+    },
+    mixin_coerce: function(value,from_type){
+      return this.from_number(from_type.to_number(v));
+    }
+  };
+
   u$.addTypes({
 // ** string ** type
     string: {
@@ -1002,32 +1042,29 @@ var MILLS_IN_SEC = 1000;
         return a ? (b ? null : 1) : (b ? -1 : null);
       }
     },
-// ** datetime ** type
-    datetime: {
-      is: function(dt){ return u$.isUtcDateWithZeroTime(dt,1000);},
-      from_string: function (v) {
-        return v === '' ? null : u$.date_from_string(v,1000);
-      },
-      _to_string: u$.date_to_string_fn("YYYY_MM_DD_hh_mm_ss"),
-      order: date_order
-    },
 // ** timestamp ** type
     timestamp: {
-      is: _.isDate,
-      from_string: function (v) {
-        return v === '' ? null : u$.datetime_from_string(v);
+      mixin:{
+        type: date_mixin,
+        precision: 1,
+        pattern: "YYYY_MM_DD_hh_mm_ss_zzz",
       },
-      _to_string: u$.date_to_string_fn("YYYY_MM_DD_hh_mm_ss_zzz"),
-      order: date_order
+    },
+// ** datetime ** type
+    datetime: {
+      mixin:{
+        type: date_mixin,
+        precision: MILLS_IN_SEC,
+        pattern: "YYYY_MM_DD_hh_mm_ss",
+      },
     },
 // ** date ** type
     date: {
-      is: u$.isUtcDateWithZeroTime,
-      from_string: function (v) {
-        return v === '' ? null : u$.date_from_string(v);
+      mixin:{
+        type: date_mixin,
+        precision: MILLS_IN_DAY,
+        pattern: "YYYY_MM_DD",
       },
-      _to_string: u$.date_to_string_fn("YYYY_MM_DD"),
-      order: date_order
     }
   });
 
