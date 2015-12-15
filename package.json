@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist coverage",
-    "test": "mocha && webpack --config webpack.mocha.js",
-    "build": "webpack && webpack --config webpack.uglified.js",
+    "test": "mocha",
+    "build": "webpack",
     "zip": "cd dist && zip wdf.zip wdf*",
     "copy_public": "docco ./docs/*md -o dist && cp ./node_modules/mocha/mocha.css dist/ ",
     "cover": "istanbul cover _mocha -- -R spec",
@@ -14,7 +14,6 @@
     "docs": "docco ./wdf/*js ./docs/*md -t docs/docco.jst -c docs/docco.css -o dist",
     "gh": "npm run docs && gh-pages -d dist/",
     "dev": "webpack-dev-server --config webpack.config.js",
-    "devserver": "webpack-dev-server --config webpack.mocha.js",
     "debug": "node-debug -p 3333 ./node_modules/.bin/_mocha",
     "all": "npm-run-all clean build test zip copy_public docs cover",
     "travis": "npm-run-all clean build test cover codecov"

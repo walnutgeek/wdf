@@ -11,23 +11,37 @@ function output_fn(name, dirname){
   return { path: dir, filename: name, publicPath: "/" + dirname, library: 'wdf' };
 }
 
+function cfg(entry_point, out_file, customizer){
+  var c = {
+    entry: entry_point,
+    output: output_fn(out_file),
+    devtool: "source-map",
+    module: {
+      preLoaders: [
+        {
+          test: /\.js$/,
+          loaders: ['jshint'],
+          // define an include so we check just the files we need
+          include: ["wdf", "test"].map(absdir)
+        }
+      ],
+      loaders: [],
+    },
+    plugins: [
+      new webpack.IgnorePlugin(/jsdom/)
+    ]
+  };
+  if(customizer)customizer(c);
+  return c;
+}
 
-module.exports = {
-  _output_fn: output_fn,
-  entry: absdir("index.js"),
-  output: output_fn('wdf.js'),
-  devtool: "source-map",
-  module: {
-    preLoaders: [
-      { test: /\.js$/,
-        loaders: ['jshint'],
-        // define an include so we check just the files we need
-        include: [ "wdf", "test"].map(absdir)
-      }
-    ],
-    loaders: [],
-  },
-  plugins: [
-    new webpack.IgnorePlugin(/jsdom/)
-  ],
-};
+module.exports = [
+  cfg("./index.js","wdf.js"),
+  cfg("./index.js","wdf.min.js",function(c){
+    c.module.loaders.push({
+      test: /\.js$/,
+      loader: "uglify"
+    });
+  }),
+  cfg("mocha!./test/index.js","testBundle.js")
+];
