@@ -665,6 +665,7 @@ describe( 'wdf/utils',function(){
     test_find(new Date(Date.UTC(2015,8,15,17,22,42,432)), 'timestamp');
     test_find(new Date(Date.UTC(2015,8,15,17,22,42)), 'datetime');
     test_find(new Date(Date.UTC(2015,8,15)), 'date');
+    test_find('2015-09-15', 'string');
     test_find('ddll', 'string');
     test_find(NaN, 'number');
     test_find(false, 'boolean');

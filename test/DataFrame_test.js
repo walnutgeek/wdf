@@ -142,6 +142,12 @@ describe( 'wdf/DataFrame', function(){
       assert.equal( df4.get(1,"a") , ''  );
       assert.equal( df4.get(1,"c") , '2\n2,3' );
       assert.equal( df4.getRowCount() , 2 ,  'header provided - quoted field' );
+      var df5 = DataFrame.parse_csv('abc,cdx\n,"2\n""a""\n2,3"\n',{columns:['a','c']});
+      assert.equal( df5.get(0,"a") , 'abc'  );
+      assert.equal( df5.get(0,"c") , 'cdx'  );
+      assert.equal( df5.get(1,"a") , ''  );
+      assert.equal( df5.get(1,"c") , '2\n"a"\n2,3' );
+      assert.equal( df5.getRowCount() , 2 ,  'header provided - quoted field' );
 
     });
 
