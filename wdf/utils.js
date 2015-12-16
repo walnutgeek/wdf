@@ -504,13 +504,16 @@
   for(var name in DATE_PATTERNS){
     var o = DATE_PATTERNS[name];
     var n = o.delims.length+1;
-    var s = '';
+    var s = '^';
     for (var i = 0; i < n; i++) {
       if(i>0){
         s += o.delims[i-1];
       }
-      s += pattern_texts[i];
+      var p = pattern_texts[i];
+      if( p )
+        s += p;
     }
+    s+='$';
     o.regexp=new RegExp(s);
   }
 
@@ -541,31 +544,31 @@
 
 //### Public Date stuff
 
-var MILLS_IN_DAY = 24 * 60 * 60 * 1000;
-var MILLS_IN_SEC = 1000;
 
-//** isUtcDateWithZeroTime(dt) **
-//
-// check if `dt` has no time component in UTC timezone
-  u$.isUtcDateWithZeroTime=function(dt,mod){
-    mod = mod || MILLS_IN_DAY ;
-    return  _.isDate(dt) && 0 === (dt.getTime() % mod)  ;
-  };
 
 //** date_from_string(s)**
 //
-//  parse string into date assumning UTC timezone
-  u$.date_from_string=function(s,mod){
+// parse string into date assuming UTC timezone
+//   * `s` -
+//   * `precision` -  date precision in mills
+//   * `strict` - if true, dates that does not
+//      exactly match precision will be undefined
+
+  u$.date_from_string=function(s,precision,strict){
+    precision = precision || 1;
     var dt = parse_date(true, s);
-    return  u$.isUtcDateWithZeroTime(dt,mod) ? dt : undefined ;
+    if( _.isDate(dt) ){
+      var v = dt.getTime();
+      var d = v % precision ;
+      if ( d === 0 ) {
+        return dt;
+      }else if( !strict ){
+        return new Date(v-d);
+      }
+    }
+    return undefined;
   };
 
-//** datetime_from_string(s)**
-//
-//  parse string into date assumning UTC timezone
-  u$.datetime_from_string=function(s){
-    return parse_date(true,s);
-  };
 
 //**date_components(d)**
 //
@@ -886,7 +889,7 @@ var MILLS_IN_SEC = 1000;
 
 // ** extractValuesByIndex (indexArray, valueArray)**
 //
-// extract values out of `valueArray` usinf `indexArray`
+// extract values out of `valueArray` using `indexArray`
   u$.extractValuesByIndex = function (indexArray, valueArray) {
     return indexArray.map(function(idx){return valueArray[idx];});
   };
@@ -939,11 +942,25 @@ var MILLS_IN_SEC = 1000;
         order:      generic_order,
         missing:    _.isNull,
         coerce:     function(value,from_type){
+          if(this.is(value)){
+            return value;
+          }
+          from_type = from_type || u$.findTypeByValue(value);
+          var propname_to = "to_" + this.name;
+          if( from_type.hasOwnProperty(propname_to) ){
+            return from_type[propname_to](value);
+          }
+
+          var propname_from = "from_" + from_type.name;
+          if( this.hasOwnProperty(propname_from) ){
+            return this[propname_from](value);
+          }
           var mixin = this.mixin_type();
-          if( mixin && mixin == from_type.mixin_type() ){
+          if( mixin && mixin === from_type.mixin_type() ){
             return this.mixin_coerce(value,from_type);
           }
-          return this.from_string(from_type.to_string(value));
+          var s = from_type.to_string(value);
+          return this.from_string(s);
         },
         _to_string: u$.ensureString,
         to_string: function (v){
@@ -978,33 +995,36 @@ var MILLS_IN_SEC = 1000;
     }
   };
 
-  var NANs = ["","NaN","null"];
+  var NANs = [null,"","NaN","null"];
 
   var BOOLEAN_STRINGS = [
     "0","1","n","y","f","t",
     "no","yes","false","true"];
 
+  var MILLS_IN_DAY = 24 * 60 * 60 * 1000;
+  var MILLS_IN_SEC = 1000;
+
   var date_mixin = {
     is: function(v){
       return _.isDate(v) && (v.getTime() % this.mixin.precision) === 0 ;
     },
-    from_string: function (v) {
-      return v === '' ? null : u$.date_from_string(v,this.mixin.precision);
+    from_string: function (v,strict) {
+      return u$.isNullish(v) || v === '' ? null : u$.date_from_string(v,this.mixin.precision,strict);
     },
     _to_string: function(dt){
       return u$.date_to_string_fn(this.mixin.pattern)(dt);
     },
     from_number: function (v) {
-      return new Date( v - v % this.mixin.precisionv);
+      return isNaN(v) || u$.isNullish(v) ? null : new Date( v - v % this.mixin.precision);
     },
     to_number: function(dt){
-      return dt.getTime();
+      return u$.isNullish(dt) ? NaN : dt.getTime();
     },
     order: function (a, b) {
       return generic_order( a.getTime(), b.getTime());
     },
     mixin_coerce: function(value,from_type){
-      return this.from_number(from_type.to_number(v));
+      return this.from_number(from_type.to_number(value));
     }
   };
 
@@ -1025,21 +1045,51 @@ var MILLS_IN_SEC = 1000;
         return NANs.indexOf(v) > -1 ? NaN :  u$.numDefault(+v,undefined);
       },
       _to_string: function(v){
-        return isNaN(v)? '' : v;
+        return isNaN(v)? '' : String(v);
       },
     },
 // ** boolean ** type
     boolean: {
       is: _.isBoolean,
-      from_string: function(v){
-        if(''===v){
+      from_string: function(v,strict){
+        if(_.isNull(v) || ''===v){
           return null;
         }
-        var idx = BOOLEAN_STRINGS.indexOf(v.toLowerCase());
-        return idx < 0 ? undefined : idx % 2 === 1 ;
+        if(_.isString(v)) {
+          var idx = BOOLEAN_STRINGS.indexOf(v.toLowerCase());
+          if (idx >= 0) {
+            return idx % 2 === 1;
+          }
+        }
+        if(!strict){
+          var n = +v;
+          if( !isNaN(n) ) {
+            return Math.abs(n) > 1e-8;
+          }
+        }
+        return undefined;
+      },
+      to_number: function(b){
+        return u$.isNullish(b) ? NaN : +b;
       },
       order: function(a, b) {
         return a ? (b ? null : 1) : (b ? -1 : null);
+      }
+    },
+// ** date ** type
+    date: {
+      mixin: {
+        type: date_mixin,
+        precision: MILLS_IN_DAY,
+        pattern: "YYYY_MM_DD"
+      }
+    },
+// ** datetime ** type
+    datetime: {
+      mixin:{
+        type: date_mixin,
+        precision: MILLS_IN_SEC,
+        pattern: "YYYY_MM_DD_hh_mm_ss"
       }
     },
 // ** timestamp ** type
@@ -1047,24 +1097,8 @@ var MILLS_IN_SEC = 1000;
       mixin:{
         type: date_mixin,
         precision: 1,
-        pattern: "YYYY_MM_DD_hh_mm_ss_zzz",
-      },
-    },
-// ** datetime ** type
-    datetime: {
-      mixin:{
-        type: date_mixin,
-        precision: MILLS_IN_SEC,
-        pattern: "YYYY_MM_DD_hh_mm_ss",
-      },
-    },
-// ** date ** type
-    date: {
-      mixin:{
-        type: date_mixin,
-        precision: MILLS_IN_DAY,
-        pattern: "YYYY_MM_DD",
-      },
+        pattern: "YYYY_MM_DD_hh_mm_ss_zzz"
+      }
     }
   });
 
@@ -1091,7 +1125,7 @@ var MILLS_IN_SEC = 1000;
       for(var i = 0 ; i < eligible_types.length ; ){
         var typeName = eligible_types[i];
         var opt = options[typeName];
-        var parsed = opt.type.from_string(v);
+        var parsed = opt.type.from_string(v,true /*strict*/);
         if( opt.type.missing(parsed) ){
           opt.hasMissing = true;
         }
@@ -1111,14 +1145,14 @@ var MILLS_IN_SEC = 1000;
 
   u$.findTypeByValue=function(v){
     for(var typeName in u$.types){
-      if(u$.hasOwnProperty(typeName)){
+      if(u$.types.hasOwnProperty(typeName)){
         var type = u$.types[typeName];
         if (type.is(v)) {
           return type;
         }
       }
     }
-    return undefined;
+    return u$.types.string;
   };
 
   u$.choose_column_type=function(ops){

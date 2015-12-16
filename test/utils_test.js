@@ -11,6 +11,19 @@ function testArrays(expected, actual) {
 var u$ = require("../wdf/utils");
 
 
+function smartAssert(expected, result, msg) {
+  if (isNaN(expected)){
+    assert.ok(isNaN(result), msg);
+  } else if (_.isDate(expected)){
+    var r = result && result.valueOf();
+    var e =expected.valueOf() ;
+    assert.equal(e, r, msg + ' e:'+e+ ' r:'+r);
+  } else {
+    assert.equal(result, expected, msg);
+
+  }
+}
+
 describe( 'wdf/utils',function(){
   it( '#assert', function() {
     u$.assert("aa", "aa");
@@ -335,63 +348,86 @@ describe( 'wdf/utils',function(){
         boolean : {
           positive: {
             '' : null, 'null': null, '1' : true, '0' : false,
+            'Y' : true, 'true' : true, 'no' : false ,
+            '.0001':true , '2.7':true, '5':true, '1e-10':false },
+          negative: ['3a', 's' ],
+          positive_strict: {
+            '' : null, 'null': null, '1' : true, '0' : false,
             'Y' : true, 'true' : true, 'no' : false },
-          negative: ['3a', 's' , '5', '2.7']
+          negative_strict: ['3a', 's' , '5', '2.7']
         },
         date : {
+          positive_strict: {
+            '' : null ,
+            '2015-09-15' : new Date(Date.UTC(2015,8,15,0,0,0)),
+            '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),
+          },
+          negative_strict: ['3a', 's' , '5', '2.7', '2015-09-15T17:00:14','2015-09-15 17:00:14'],
           positive: {
             '' : null ,
             '2015-09-15' : new Date(Date.UTC(2015,8,15,0,0,0)),
-            '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),  },
-            '20150915170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
-            '20150915-170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
-          negative: ['3a', 's' , '5', '2.7', '2015-09-15T17:00:14','2015-09-15 17:00:14']
+            '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),
+            '20150915170014' : new Date(Date.UTC(2015,8,15)),
+            '20150915-170014' : new Date(Date.UTC(2015,8,15)),
+          },
+          negative: ['3a', 's' , '5', '2.7']
         },
         datetime : {
+          positive_strict: {
+            '2015-09-15T17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
+            '2015-09-15 17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
+            '2015-09-15' : new Date(Date.UTC(2015,8,15,0,0,0)),
+            '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),
+            '20150915170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+            '20150915-170014' : new Date(Date.UTC(2015,8,15,17,0,14)),},
+          negative_strict: ['3a', 's' , '5', '2.7', '2015-09-15T17:00:14.023Z' ,'2015-09-15T17:00:14.023' ],
           positive: {
             '2015-09-15T17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
             '2015-09-15 17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
             '2015-09-15' : new Date(Date.UTC(2015,8,15,0,0,0)),
-            '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),  },
-          '20150915170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
-          '20150915-170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
-          negative: ['3a', 's' , '5', '2.7', '2015-09-15T17:00:14.023Z' ,'2015-09-15T17:00:14.023' ]
+            '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),
+            '20150915170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+            '2015-09-15 17:00:14.345' : new Date(Date.UTC(2015,8,15,17,0,14)),},
+          negative: ['3a', 's' , '5', '2.7' ,'2015-09-15-17:00:14.345']
         },
         timestamp : {
           positive: {
             '2015-09-15T17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
             '2015-09-15 17:00:14' : new Date(Date.UTC(2015,8,15,17,0,14)),
             '2015-09-15' : new Date(Date.UTC(2015,8,15,0,0,0)),
-            '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),  },
-          '20150915170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
-          '20150915-170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
-          '2015-09-15T17:00:14.023' : new Date(Date.UTC(2015,8,15,17,0,14,23)),
-          '2015-09-15T17:00:14.023Z' : new Date(Date.UTC(2015,8,15,17,0,14,23)),
+            '20150915' : new Date(Date.UTC(2015,8,15,0,0,0)),
+            '20150915170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+            '20150915-170014' : new Date(Date.UTC(2015,8,15,17,0,14)),
+            '2015-09-15T17:00:14.023' : new Date(Date.UTC(2015,8,15,17,0,14,23)),
+            '2015-09-15T17:00:14.023Z' : new Date(Date.UTC(2015,8,15,17,0,14,23)), },
           negative: ['3a', 's' , '5', '2.7']
         },
       };
       var input, out, expected, msg ;
+
+      function test_fromstring(t,strict) {
+        var c = cases[t];
+        var suffix = strict ? '_strict' : '';
+        var positive_cases = c['positive'+suffix];
+        var negative_cases = c['negative'+suffix];
+        for (input in positive_cases) {
+          out = u$.types[t].from_string(input, strict);
+          expected = positive_cases[input];
+          msg = t + suffix + ' in:' + input + ' expected:' + expected;
+          smartAssert(expected, out, msg);
+        }
+        for (var i in negative_cases) {
+          input = negative_cases[i];
+          out = u$.types[t].from_string(input, strict);
+          msg = t +suffix+ ' in:' + input + ' should be undefined:' + out;
+          assert.ok(undefined === out, msg);
+        }
+      }
+
+      //test_fromstring('datetime',false);
       for(var t in  cases){
-        for(input in cases[t].positive){
-          out=u$.types[t].from_string(input);
-          expected = cases[t].positive[input];
-          msg = t+' in:'+input+' expected:'+expected;
-          if( !isNaN(expected) ){
-            if(_.isDate(expected) && _.isDate(out)){
-              assert.equal(out.valueOf(), expected.valueOf(), msg );
-            }else{
-              assert.equal(out, expected,msg );
-            }
-          }else{
-            assert.ok( isNaN(out), msg);
-          }
-        }
-        for(var i in cases[t].negative){
-          input = cases[t].negative[i] ;
-          out = u$.types[t].from_string(input) ;
-          msg =  t+' in:'+input+' should be undefined:'+out ;
-          assert.ok( undefined === out, msg);
-        }
+        test_fromstring(t,false);
+        test_fromstring(t,true);
       }
 
     });
@@ -425,13 +461,7 @@ describe( 'wdf/utils',function(){
       assert.ok(_.isArray(b));
       assert.equal(a.length,b.length);
       for(var i = 0 ; i < a.length ; i++){
-        if( isNaN(a[i]) && isNaN(b[i]) ){
-          continue;
-        }else if(_.isDate(a[i]) && _.isDate(b[i])){
-          assert.equal(a[i].getTime(),b[i].getTime());
-        }else{
-          assert.ok(a[i]===b[i],JSON.stringify([a[i],b[i]]) );
-        }
+        smartAssert( a[i], b[i], JSON.stringify([a[i],b[i]]) );
       }
     }
     function match(a,b,selected){
@@ -526,6 +556,120 @@ describe( 'wdf/utils',function(){
             u$.detect_possible_array_types(['1994-10-17','2015'] ),'string');
       });
     });
+  });
+  it('types.coerce', function() {
+    var cases = {
+      string: {
+        number: [[null, NaN], ['a', undefined], ['3', 3]],
+        boolean: [[null, null],['',null], ['0',false],
+          ['1',true], ['n',false],['Y',true],['yes',true],['true',true],
+          ['yada sddfs',null],['nada sddfs',null]],
+        date: [[null,null],['flkdjflk',undefined],
+          ['1995-12-17',new Date(Date.UTC(1995,11,17))],
+          ['1995-12-17 18:30:45',new Date(Date.UTC(1995,11,17))],
+        ],
+        datetime: [[null,null],['flkdjflk',undefined],
+          ['1995-12-17',new Date(Date.UTC(1995,11,17))],
+          ['1995-12-17 18:30:45',new Date(Date.UTC(1995,11,17,18,30,45))],
+          ['1995-12-17 18:30:45.345',new Date(Date.UTC(1995,11,17,18,30,45))],
+        ],
+        timestamp: [[null,null],['flkdjflk',undefined],
+          ['1995-12-17',new Date(Date.UTC(1995,11,17))],
+          ['1995-12-17 18:30:45',new Date(Date.UTC(1995,11,17,18,30,45))],
+          ['1995-12-17 18:30:45.345',new Date(Date.UTC(1995,11,17,18,30,45,345))],
+        ]
+      },
+      number: {
+        string: [[NaN, ''], [5, '5'], [null, '']],
+        boolean: [[null, null],[1,true], [0,false], [0.5,true],[NaN,null]],
+        date: [[null,null],[NaN,null],
+          [Date.UTC(2015,7,17), new Date(Date.UTC(2015,7,17))],
+          [Date.UTC(2015,7,17,12,5,13), new Date(Date.UTC(2015,7,17))],
+          [Date.UTC(2015,7,17,12,5,13,345), new Date(Date.UTC(2015,7,17))],
+        ],
+        datetime: [[null,null],[NaN,null],
+          [Date.UTC(2015,7,17), new Date(Date.UTC(2015,7,17))],
+          [Date.UTC(2015,7,17,12,5,13), new Date(Date.UTC(2015,7,17,12,5,13))],
+          [Date.UTC(2015,7,17,12,5,13,345), new Date(Date.UTC(2015,7,17,12,5,13))],
+        ],
+        timestamp: [[null,null],[NaN,null],
+          [Date.UTC(2015,7,17), new Date(Date.UTC(2015,7,17))],
+          [Date.UTC(2015,7,17,12,5,13), new Date(Date.UTC(2015,7,17,12,5,13))],
+          [Date.UTC(2015,7,17,12,5,13,345), new Date(Date.UTC(2015,7,17,12,5,13,345))],
+        ]
+      },
+      boolean: {
+        string: [[null, ''], [false, 'false'], [true, 'true']],
+        number: [[null, NaN],[true,1], [false,0], ],
+        date: [[null,null],[false,null],[true,null]],
+        datetime: [[null,null],[false,null],[true,null]],
+        timestamp: [[null,null],[false,null],[true,null]]
+      },
+      date: {
+        string: [[null, ''],[new Date(Date.UTC(2015,8,15)), '2015-09-15']] ,
+        number: [[null, NaN],[new Date(Date.UTC(2015,8,15)), Date.UTC(2015,8,15) ]] ,
+        boolean: [[null,null],[new Date(Date.UTC(2015,8,15)),null]],
+        datetime: [[null,null],[new Date(Date.UTC(2015,8,15)),new Date(Date.UTC(2015,8,15))]],
+        timestamp: [[null,null],[new Date(Date.UTC(2015,8,15)),new Date(Date.UTC(2015,8,15))]]
+      },
+      datetime: {
+        string: [[null, ''],[new Date(Date.UTC(2015,8,15,17,22,42)), '2015-09-15 17:22:42']] ,
+        number: [[null, NaN],[new Date(Date.UTC(2015,8,15,17,22,42)), Date.UTC(2015,8,15,17,22,42) ]] ,
+        boolean: [[null,null],[new Date(Date.UTC(2015,8,15,17,22,42)),null]],
+        date: [[null,null],[new Date(Date.UTC(2015,8,15,17,22,42)),new Date(Date.UTC(2015,8,15))]],
+        timestamp: [[null,null],[new Date(Date.UTC(2015,8,15,17,22,42)),new Date(Date.UTC(2015,8,15,17,22,42))]]
+      },
+      timestamp: {
+        string: [[null, ''],[new Date(Date.UTC(2015,8,15,17,22,42,432)), '2015-09-15 17:22:42.432']] ,
+        number: [[null, NaN],[new Date(Date.UTC(2015,8,15,17,22,42,432)), Date.UTC(2015,8,15,17,22,42,432) ]] ,
+        boolean: [[null,null],[new Date(Date.UTC(2015,8,15,17,22,42,432)),null]],
+        date: [[null,null],[new Date(Date.UTC(2015,8,15,17,22,42,432)),new Date(Date.UTC(2015,8,15))]],
+        datetime: [[null,null],[new Date(Date.UTC(2015,8,15,17,22,42,432)),new Date(Date.UTC(2015,8,15,17,22,42))]]
+      },
+      unknown:{
+        string: [[null, ''],[new Date(Date.UTC(2015,8,15,17,22,42,432)), '2015-09-15 17:22:42.432']] ,
+        number: [[null, NaN],[new Date(Date.UTC(2015,8,15,17,22,42,432)), Date.UTC(2015,8,15,17,22,42,432) ]] ,
+        boolean: [[null,null],[new Date(Date.UTC(2015,8,15,17,22,42,432)),null]],
+        date: [[null,null],[new Date(Date.UTC(2015,8,15,17,22,42,432)),new Date(Date.UTC(2015,8,15))]],
+        datetime: [[null,null],[new Date(Date.UTC(2015,8,15,17,22,42,432)),new Date(Date.UTC(2015,8,15,17,22,42))]],
+        timestamp: [[null,null],[new Date(Date.UTC(2015,8,15,17,22,42,432)),new Date(Date.UTC(2015,8,15,17,22,42,432))]]
+      }
+    };
+
+    function test_coerceFromTo(tf,tt) {
+      var input, result, expected, msg;
+      var type_from = u$.types[tf];
+      var type_to = u$.types[tt];
+      var from_to = tf + '->' + type_to.name;
+      for (var i in cases[tf][tt]) {
+        var c = cases[tf][tt][i];
+        input = c[0];
+        result = type_to.coerce(input, type_from);
+        expected = c[1];
+        msg = from_to + ' input:'+input+' result:' + result + ' expected:' + expected;
+        smartAssert(expected, result, msg);
+      }
+    }
+    //test_coerceFromTo('unknown','boolean');
+    for(var tf in  cases){
+      for(var tt in cases[tf]) {
+        test_coerceFromTo(tf,tt);
+      }
+    }
+  });
+  it('findTypeByValue',function(){
+    function test_find(v, typeName) {
+      assert.equal(u$.findTypeByValue(v).name, typeName);
+    }
+    test_find(null, 'string');
+    test_find(new Date(Date.UTC(2015,8,15,17,22,42,432)), 'timestamp');
+    test_find(new Date(Date.UTC(2015,8,15,17,22,42)), 'datetime');
+    test_find(new Date(Date.UTC(2015,8,15)), 'date');
+    test_find('ddll', 'string');
+    test_find(NaN, 'number');
+    test_find(false, 'boolean');
+    test_find(undefined, 'string');
+    test_find(3, 'number');
   });
 });
 
