@@ -1037,14 +1037,6 @@
   };
 
   u$.addTypes({
-// ** string ** type
-    string: {
-      is: _.isString,
-      missing: function(s) { return u$.isNullish(s) || s === '' ; },
-      from_string: function(v){
-        return "" === v ? null : v ;
-      }
-    },
 // ** number ** type
     number: {
       is: _.isNumber,
@@ -1055,6 +1047,30 @@
       _to_string: function(v){
         return isNaN(v)? '' : String(v);
       },
+    },
+// ** date ** type
+    date: {
+      mixin: {
+        type: date_mixin,
+        precision: MILLS_IN_DAY,
+        pattern: "YYYY_MM_DD"
+      }
+    },
+// ** datetime ** type
+    datetime: {
+      mixin:{
+        type: date_mixin,
+        precision: MILLS_IN_SEC,
+        pattern: "YYYY_MM_DD_hh_mm_ss"
+      }
+    },
+// ** timestamp ** type
+    timestamp: {
+      mixin:{
+        type: date_mixin,
+        precision: 1,
+        pattern: "YYYY_MM_DD_hh_mm_ss_zzz"
+      }
     },
 // ** boolean ** type
     boolean: {
@@ -1084,30 +1100,14 @@
         return a ? (b ? null : 1) : (b ? -1 : null);
       }
     },
-// ** date ** type
-    date: {
-      mixin: {
-        type: date_mixin,
-        precision: MILLS_IN_DAY,
-        pattern: "YYYY_MM_DD"
+// ** string ** type
+    string: {
+      is: _.isString,
+      missing: function(s) { return u$.isNullish(s) || s === '' ; },
+      from_string: function(v){
+        return "" === v ? null : v ;
       }
     },
-// ** datetime ** type
-    datetime: {
-      mixin:{
-        type: date_mixin,
-        precision: MILLS_IN_SEC,
-        pattern: "YYYY_MM_DD_hh_mm_ss"
-      }
-    },
-// ** timestamp ** type
-    timestamp: {
-      mixin:{
-        type: date_mixin,
-        precision: 1,
-        pattern: "YYYY_MM_DD_hh_mm_ss_zzz"
-      }
-    }
   });
 
 // ** detect_possible_array_types(str_array) **
@@ -1149,8 +1149,6 @@
     return options;
   };
 
-  var PRIORITIES = [ 'number', 'date', 'datetime', 'timestamp', 'boolean', 'string' ];
-
   u$.findTypeByValue=function(v){
     for(var typeName in u$.types){
       if(u$.types.hasOwnProperty(typeName)){
@@ -1168,15 +1166,13 @@
     if(keys.length == 1){
       return ops[keys[0]];
     }else{
-      for(var i = 0 ; i < PRIORITIES.length ; i++) {
-        if (ops.hasOwnProperty(PRIORITIES[i])) {
-          return ops[PRIORITIES[i]];
+      for(var typeName in u$.types){
+        if (ops.hasOwnProperty(typeName)) {
+          return ops[typeName];
         }
       }
     }
   };
-
-
 
 // **ensureType(typeOrName)**
 //
