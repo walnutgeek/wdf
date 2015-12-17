@@ -1,6 +1,8 @@
 describe( 'wdf/DataFrame', function(){
   var DataFrame = require("../wdf/DataFrame");
   var assert = require("assert");
+  var smartAssert = require("./smart_assert");
+
 
   var rows = [{ abc: 1, cdx: 2},{ abc: 2, cdx: 3}];
   var config = {
@@ -149,6 +151,22 @@ describe( 'wdf/DataFrame', function(){
       assert.equal( df5.get(1,"c") , '2\n"a"\n2,3' );
       assert.equal( df5.getRowCount() , 2 ,  'header provided - quoted field' );
 
+    });
+    it( 'parse_wdf', function() {
+      var df = DataFrame.parse_wdf(
+          '{"columns":[ {"name":"s","type":"string"},{"name":"n","type":"number"},{"name":"b","type":"boolean"},{"name":"d","type":"date"},{"name":"dt","type":"datetiem"},{"name":"ts","type":"timestamp"}]}\n' +
+          '["hello",2,true,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n'+
+          '["hello",3,true,"2015-09-18","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n'+
+          '["hello",4,true,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n'+
+          '["hello",5,true,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n'+
+          '[null,null,true,"2015-09-11","2015-09-17 17:18:19",null]\n'+
+          '["hello",2,true,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n'+
+          '["hello",2,true,"2015-09-13",null,"2015-09-17 17:18:19.345"]\n'
+      );
+      assert.equal( df.getRowCount(), 7  );
+      assert.equal( df.get(0,'n'),2 );
+      smartAssert( df.get(4,1) , NaN );
+      smartAssert( df.get(6,'ts'), new Date(Date.UTC(2015,8,17,17,18,19,345)) );
     });
 
     it('parse_dom_table', function () {

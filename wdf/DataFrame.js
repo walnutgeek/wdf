@@ -70,7 +70,7 @@
       var name = cols[i], type;
       if (_.isPlainObject(cols[i])) {
         name = cols[i].name;
-        type = cols[i].type;
+        type = u$.ensureType(cols[i].type);
       }
       this.enforceColumn(name, n_rows, type);
     }
@@ -157,6 +157,12 @@
     }
     return arr;
   }
+
+  DataFrame.parse_wdf=function(str) {
+    var arr = str.split('\n');
+    var config = JSON.parse(arr.shift());
+    return new DataFrame(arr.filter(u$.isStringNotEmpty).map(JSON.parse),config);
+  };
 
   function parse_dom_table_to_array_of_rows(dom_table) {
     return [].map.call(dom_table.rows, function (dom_row) {

@@ -10,19 +10,7 @@ function testArrays(expected, actual) {
 
 var u$ = require("../wdf/utils");
 
-
-function smartAssert(expected, result, msg) {
-  if (isNaN(expected)){
-    assert.ok(isNaN(result), msg);
-  } else if (_.isDate(expected)){
-    var r = result && result.valueOf();
-    var e =expected.valueOf() ;
-    assert.equal(e, r, msg + ' e:'+e+ ' r:'+r);
-  } else {
-    assert.equal(result, expected, msg);
-
-  }
-}
+var smartAssert = require("./smart_assert");
 
 describe( 'wdf/utils',function(){
   it( '#assert', function() {

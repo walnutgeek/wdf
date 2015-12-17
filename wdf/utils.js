@@ -62,6 +62,14 @@
     return u$.isNullish(s) || ( _.isString(s) && s.trim().length === 0);
   };
 
+// **isStringNotEmpty(s)**
+//
+// returns `true` if `s` contains some non-whitespace charcters
+  u$.isStringNotEmpty=function(s){
+    return _.isString(s) &&  s.trim().length > 0;
+  };
+
+
 
 // **numDefault(v,default_v)**
 //
@@ -1167,6 +1175,16 @@
       }
     }
   };
+
+
+
+// **ensureType(typeOrName)**
+//
+// returns type for name, or pass through type
+  u$.ensureType=function(typeOrName){
+    return typeOrName instanceof Type ? typeOrName : u$.types[typeOrName];
+  };
+
 })();
 
 
