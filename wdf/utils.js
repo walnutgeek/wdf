@@ -949,19 +949,20 @@
     _.defaults(this, {
         order:      generic_order,
         missing:    _.isNull,
+        to_json:    _.identity,
         coerce:     function(value,from_type){
           if(this.is(value)){
             return value;
           }
           from_type = from_type || u$.findTypeByValue(value);
-          var propname_to = "to_" + this.name;
-          if( from_type.hasOwnProperty(propname_to) ){
-            return from_type[propname_to](value);
+          var property_to = "to_" + this.name;
+          if( from_type.hasOwnProperty(property_to) ){
+            return from_type[property_to](value);
           }
 
-          var propname_from = "from_" + from_type.name;
-          if( this.hasOwnProperty(propname_from) ){
-            return this[propname_from](value);
+          var property_from = "from_" + from_type.name;
+          if( this.hasOwnProperty(property_from) ){
+            return this[property_from](value);
           }
           var mixin = this.mixin_type();
           if( mixin && mixin === from_type.mixin_type() ){
@@ -1033,7 +1034,10 @@
     },
     mixin_coerce: function(value,from_type){
       return this.from_number(from_type.to_number(value));
-    }
+    },
+    to_json: function(v){
+      return _.isNull(v) ? null : this.to_string(v);
+    },
   };
 
   u$.addTypes({

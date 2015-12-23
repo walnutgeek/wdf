@@ -17,16 +17,28 @@
     if (len) {
       this.data.length = len;
     }
-    this.type = type;
+    this.setType = function(type){
+      this.type = type;
+      this.to_json = _.identity ;
+      this.set = function(row,v){
+        this.data[row] = v;
+      };
+      if( this.type ){
+        this.to_json = this.type.to_json.bind(this.type) ;
+        this.set = function(row,v){
+          this.data[row] = this.type.coerce(v);
+        };
+      }
+    };
+    this.setType(type);
   };
 
-  Column.prototype.set = function (row, v) {
-    if(this.type && !this.type.is(v)){
-      v = this.type.coerce(v);
-    }
-    //TODO add logic to detect `type` or coerce `v`
-    this.data[row] = v;
+
+
+  Column.prototype.get = function (row) {
+    return this.data[row];
   };
+
 
 // ColumnSet - store all columns `byIndex` in array and  `byName` in hashtable.
   var ColumnSet = function () {
@@ -164,6 +176,17 @@
     return new DataFrame(arr.filter(u$.isStringNotEmpty).map(JSON.parse),config);
   };
 
+  DataFrame.prototype.to_wdf=function(){
+    var s = '';
+    s+=JSON.stringify(this.getConfig());
+    s+='\n';
+    this.apply(function(df,row){
+      s+=JSON.stringify(df.getRow(row,[],true));
+      s+='\n';
+    });
+    return s;
+  };
+
   function parse_dom_table_to_array_of_rows(dom_table) {
     return [].map.call(dom_table.rows, function (dom_row) {
       return [].map.call(dom_row.cells, function (c) {
@@ -189,18 +212,19 @@
 //    - `result` - object or array to be filled in. **@optional**
 //       if not provided empty object is assumed.
 
-  DataFrame.prototype.getRow = function (row_num, result) {
+  DataFrame.prototype.getRow = function (row_num, result, json) {
     var ph_row = this.index[row_num];
     result = result || {};
     this.columnSet.byIndex.forEach(_.isArray(result) ?
         function (c, col_idx) {
-          result[col_idx] = c.data[ph_row];
+          result[col_idx] = json ? c.to_json(c.get(ph_row)) : c.get(ph_row);
         } :
         function (c) {
-          result[c.name] = c.data[ph_row];
+          result[c.name] = json ? c.to_json(c.get(ph_row)) : c.get(ph_row);
         });
     return result;
   };
+
 // **get(row,col)**
 //
 // get one value out of DataFrame
@@ -293,19 +317,23 @@
 //   - rows - array of rows. each row array of values.
 //
 
-  DataFrame.prototype.getData = function () {
-    var r = {columns: [], rows: []};
-    var columns = this.columnSet.byIndex;
-    for (var col = 0; col < columns.length; col++) {
-      var column = columns[col];
+  DataFrame.prototype.getConfig=function () {
+    var config = { columns : []};
+    for (var col = 0; col < this.columnSet.byIndex.length; col++) {
+      var column = this.columnSet.byIndex[col];
       var col_def = {name: column.name};
       if (column.type) {
         col_def.type = column.type.name;
       }
-      r.columns.push(col_def);
+      config.columns.push(col_def);
     }
+    return config;
+  };
+
+  DataFrame.prototype.getData = function (json) {
+    var r = { config: this.getConfig(), rows: []};
     r.rows = this.map(function (df, row_num) {
-      return df.getRow(row_num, []);
+      return df.getRow(row_num, [],json);
     });
     return r;
   };
