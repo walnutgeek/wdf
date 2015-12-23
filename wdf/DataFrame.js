@@ -19,14 +19,20 @@
     }
     this.setType = function(type){
       this.type = type;
-      this.to_json = _.identity ;
-      this.set = function(row,v){
-        this.data[row] = v;
+      this.get = function (row) {
+        return this.data[row];
       };
       if( this.type ){
-        this.to_json = this.type.to_json.bind(this.type) ;
+        this.to_json = function(row){
+           return this.type.to_json(this.data[row]);
+        };
         this.set = function(row,v){
           this.data[row] = this.type.coerce(v);
+        };
+      }else{
+        this.to_json = this.get ;
+        this.set = function(row,v){
+          this.data[row] = v;
         };
       }
     };
@@ -35,9 +41,7 @@
 
 
 
-  Column.prototype.get = function (row) {
-    return this.data[row];
-  };
+
 
 
 // ColumnSet - store all columns `byIndex` in array and  `byName` in hashtable.
@@ -181,7 +185,7 @@
     s+=JSON.stringify(this.getConfig());
     s+='\n';
     this.apply(function(df,row){
-      s+=JSON.stringify(df.getRow(row,[],true));
+      s+=JSON.stringify(df.getJsonRow(row));
       s+='\n';
     });
     return s;
@@ -212,16 +216,32 @@
 //    - `result` - object or array to be filled in. **@optional**
 //       if not provided empty object is assumed.
 
-  DataFrame.prototype.getRow = function (row_num, result, json) {
+  DataFrame.prototype.getRow = function (row_num, result) {
     var ph_row = this.index[row_num];
     result = result || {};
     this.columnSet.byIndex.forEach(_.isArray(result) ?
         function (c, col_idx) {
-          result[col_idx] = json ? c.to_json(c.get(ph_row)) : c.get(ph_row);
+          result[col_idx] = c.get(ph_row);
         } :
         function (c) {
-          result[c.name] = json ? c.to_json(c.get(ph_row)) : c.get(ph_row);
+          result[c.name] = c.get(ph_row);
         });
+    return result;
+  };
+// **getRow(row_num,result)**
+//
+// get data row out of DataFrame.
+//    - `row_num` - row number
+//    - `result` - object or array to be filled in. **@optional**
+//       if not provided empty object is assumed.
+
+  DataFrame.prototype.getJsonRow = function (row_num) {
+    var ph_row = this.index[row_num];
+    var result = [] ;
+    result.length = this.columnSet.byIndex.length;
+    this.columnSet.byIndex.forEach(function (c, col_idx) {
+      result[col_idx] = c.to_json(ph_row);
+    });
     return result;
   };
 
