@@ -97,14 +97,14 @@ describe( 'wdf/DataFrame', function(){
   });
   it( 'apply', function() {
     var df = DataFrame.parse_csv("abc,cdx\n1,2\n2,3\n");
-    df.apply(function(df,rowidx){
-      assert.deepEqual(df.getRow(rowidx,[]), rowidx ? ['2','3'] : ['1','2'] );
+    df.apply(function(rowidx){
+      assert.deepEqual(this.getArrayRow(rowidx), rowidx ? ['2','3'] : ['1','2'] );
     });
   });
   it( 'deleteRow', function() {
     var df = DataFrame.parse_csv("abc,cdx\n1,2\n2,3\n");
     df.deleteRow(0);
-    assert.deepEqual(df.getRow(0),  {abc:'2',cdx:'3'} , 'getRow' );
+    assert.deepEqual(df.getObjectRow(0),  {abc:'2',cdx:'3'} , 'getObjectRow' );
     assert.equal(df.getRowCount() ,  1);
     df.deleteRow(0);
     assert.equal(df.getRowCount() ,  0);

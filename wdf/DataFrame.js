@@ -177,15 +177,16 @@
   DataFrame.parse_wdf=function(str) {
     var arr = str.split('\n');
     var config = JSON.parse(arr.shift());
-    return new DataFrame(arr.filter(u$.isStringNotEmpty).map(JSON.parse),config);
+    var rows = arr.filter(u$.isStringNotEmpty).map(JSON.parse);
+    return new DataFrame(rows,config);
   };
 
   DataFrame.prototype.to_wdf=function(){
     var s = '';
     s+=JSON.stringify(this.getConfig());
     s+='\n';
-    this.apply(function(df,row){
-      s+=JSON.stringify(df.getJsonRow(row));
+    this.apply(function(row){
+      s+=JSON.stringify(this.getJsonRow(row));
       s+='\n';
     });
     return s;
@@ -209,40 +210,42 @@
     return make_df_from_(parse_dom_table_to_array_of_rows(dom_table), config);
   };
 
-// **getRow(row_num,result)**
+// **getObjectRow(row_num,result)**
 //
-// get data row out of DataFrame.
+// get row out of DataFrame as plain object.
 //    - `row_num` - row number
-//    - `result` - object or array to be filled in. **@optional**
-//       if not provided empty object is assumed.
 
-  DataFrame.prototype.getRow = function (row_num, result) {
+  DataFrame.prototype.getObjectRow = function (row_num) {
     var ph_row = this.index[row_num];
-    result = result || {};
-    this.columnSet.byIndex.forEach(_.isArray(result) ?
-        function (c, col_idx) {
-          result[col_idx] = c.get(ph_row);
-        } :
-        function (c) {
+    var result =  {};
+    this.columnSet.byIndex.forEach(function (c) {
           result[c.name] = c.get(ph_row);
         });
     return result;
   };
-// **getRow(row_num,result)**
+// **getObjectRow(row_num,result)**
 //
-// get data row out of DataFrame.
+// get row out of DataFrame as array (no type conversion).
 //    - `row_num` - row number
-//    - `result` - object or array to be filled in. **@optional**
-//       if not provided empty object is assumed.
+//    - `fn` - how to extract value: `get()` or `to_json()`
+  DataFrame.prototype.getArrayRow = function (row_num,fn) {
+    fn = fn || 'get';
+    var ph_row = this.index[row_num];
+    var result = [];
+    result.length = this.columnSet.byIndex.length ;
+    this.columnSet.byIndex.forEach( function (c, col_idx) {
+          result[col_idx] = c[fn](ph_row);
+        });
+    return result;
+  };
+// **getJsonRow(row_num)**
+//
+// get data row as array with dates converted to string
+// for json
+//    - `row_num` - row number
 
   DataFrame.prototype.getJsonRow = function (row_num) {
-    var ph_row = this.index[row_num];
-    var result = [] ;
-    result.length = this.columnSet.byIndex.length;
-    this.columnSet.byIndex.forEach(function (c, col_idx) {
-      result[col_idx] = c.to_json(ph_row);
-    });
-    return result;
+    return this.getArrayRow(row_num,'to_json');
   };
 
 // **get(row,col)**
@@ -254,7 +257,7 @@
   DataFrame.prototype.get = function (row_num, col) {
     var ph_row = this.index[row_num];
     var c = this.columnSet.getColumn(col);
-    return c.data[ph_row];
+    return c.get(ph_row);
   };
 // **set(row_num,col,v)**
 //
@@ -265,8 +268,9 @@
   DataFrame.prototype.set = function (row_num, col, v) {
     var ph_row = this.index[row_num];
     var c = this.columnSet.getColumn(col);
-    c.data[ph_row] = v;
+    c.set(ph_row,v);
   };
+
 // **getRowCount()**
 //
 // get row count
@@ -307,7 +311,7 @@
 //
   DataFrame.prototype.apply = function (logic) {
     for (var row_num = 0; row_num < this.index.length; row_num++) {
-      logic(this, row_num);
+      logic.call(this, row_num);
     }
   };
 // ** map(logic) **
@@ -320,7 +324,7 @@
   DataFrame.prototype.map = function (logic) {
     var collector = [], r;
     for (var row_num = 0; row_num < this.index.length; row_num++) {
-      r = logic(this, row_num);
+      r = logic.call(this, row_num);
       if (r !== undefined) {
         collector.push(r);
       }
@@ -331,9 +335,10 @@
 //
 // Get all data in structure:
 // returns {Object}
-//   - columns - columns array
-//     - name - column name
-//     - type - column type, if defined
+//   - config :
+//     - columns - columns array
+//       - name - column name
+//       - type - column type, if defined
 //   - rows - array of rows. each row array of values.
 //
 
@@ -350,11 +355,9 @@
     return config;
   };
 
-  DataFrame.prototype.getData = function (json) {
+  DataFrame.prototype.getData = function () {
     var r = { config: this.getConfig(), rows: []};
-    r.rows = this.map(function (df, row_num) {
-      return df.getRow(row_num, [],json);
-    });
+    r.rows = this.map( this.getArrayRow ) ;
     return r;
   };
 
@@ -365,9 +368,7 @@
 //
 
   DataFrame.prototype.getObjects = function () {
-    return this.map(function (df, row_num) {
-      return df.getRow(row_num);
-    });
+    return this.map( this.getObjectRow );
   };
 
   module.exports = DataFrame;
