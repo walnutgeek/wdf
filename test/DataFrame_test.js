@@ -23,7 +23,12 @@ describe( 'wdf/DataFrame', function(){
     // jshint +W064 
     assert.ok( new DataFrame(rows,config).constructor === DataFrame ,  'Initialiesd with new.' );
     assert.ok( new DataFrame(objectRows).constructor === DataFrame ,  'Initialiesd with new.' );
-
+    try{
+      new DataFrame('x');
+      assert.fail("supposed to throw exception");
+    }catch(e){
+      assert.ok(true,'exception is thrown');
+    }
   });
   it( 'arrayRows', function() {
     var df = new DataFrame(arrayRows);
@@ -76,6 +81,7 @@ describe( 'wdf/DataFrame', function(){
     assert.deepEqual( df.getColumn("a") , [2,3]  );
     assert.deepEqual( df.getColumn("b") , [undefined,'x'] );
     assert.deepEqual( df.getColumn("d") , ['20150716','20130710'] );
+    assert.deepEqual( df.getColumn("x") , undefined );
   });
   it( 'construct from scratch', function() {
     var df = new DataFrame();
@@ -100,6 +106,12 @@ describe( 'wdf/DataFrame', function(){
     df.apply(function(rowidx){
       assert.deepEqual(this.getArrayRow(rowidx), rowidx ? ['2','3'] : ['1','2'] );
     });
+  });
+  it( 'map', function() {
+    var df = DataFrame.parse_csv("abc,cdx\n1,2\n2,3\n");
+    assert.deepEqual(df.map(function(rowidx){
+      return rowidx ? undefined : this.get(rowidx,0);
+    }),['1']);
   });
   it( 'deleteRow', function() {
     var df = DataFrame.parse_csv("abc,cdx\n1,2\n2,3\n");

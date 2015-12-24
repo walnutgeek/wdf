@@ -299,7 +299,7 @@
     var c = this.columnSet.getColumn(col);
     if (c) {
       return this.index.map(function (idx) {
-        return c.data[idx];
+        return c.get(idx);
       });
     }
     return undefined;
