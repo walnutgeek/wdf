@@ -134,35 +134,47 @@ describe( 'wdf/DataFrame', function(){
   describe('parse', function () {
 
     it( 'parse_csv', function() {
-      var df = DataFrame.parse_csv("abc,cdx\n1,2\n2,3\n");
+      var csv, df;
+      csv = "abc,cdx\n1,2\n2,3\n" ;
+      df = DataFrame.parse_csv(csv);
       assert.equal( df.get(0,"abc"), '1' ,  'get(0,abc)' );
       assert.equal( df.get(0,"cdx"), '2' ,  'get(0,cdx)' );
       assert.equal( df.get(1,"abc"), '2' ,  'get(1,abc)' );
       assert.equal( df.get(1,"cdx"), '3' ,  'get(1,cdx)' );
       assert.equal( df.getRowCount(), 2 ,  'simple case' );
+      assert.equal(csv,df.to_csv());
 
-      var df2 = DataFrame.parse_csv('abc,cdx\n1,"2\n2,3"\n');
-      assert.equal( df2.get(0,"abc"), '1' ,  'get(0,abc)' );
-      assert.equal( df2.get(0,"cdx"), '2\n2,3' ,  'get(0,cdx)' );
-      assert.equal( df2.getRowCount(), 1 ,  'no header - quoted field' );
-      var df3 = DataFrame.parse_csv('abc,cdx\n1,"2\n2,3"\n',{columns:['a','c']});
-      assert.equal( df3.get(0,"a") , 'abc'  );
-      assert.equal( df3.get(0,"c") , 'cdx'  );
-      assert.equal( df3.get(1,"a") , '1'  );
-      assert.equal( df3.get(1,"c") , '2\n2,3' );
-      assert.equal( df3.getRowCount() , 2 ,  'header provided - quoted field' );
-      var df4 = DataFrame.parse_csv('abc,cdx\n,"2\n2,3"\n',{columns:['a','c']});
-      assert.equal( df4.get(0,"a") , 'abc'  );
-      assert.equal( df4.get(0,"c") , 'cdx'  );
-      assert.equal( df4.get(1,"a") , ''  );
-      assert.equal( df4.get(1,"c") , '2\n2,3' );
-      assert.equal( df4.getRowCount() , 2 ,  'header provided - quoted field' );
-      var df5 = DataFrame.parse_csv('abc,cdx\n,"2\n""a""\n2,3"\n',{columns:['a','c']});
-      assert.equal( df5.get(0,"a") , 'abc'  );
-      assert.equal( df5.get(0,"c") , 'cdx'  );
-      assert.equal( df5.get(1,"a") , ''  );
-      assert.equal( df5.get(1,"c") , '2\n"a"\n2,3' );
-      assert.equal( df5.getRowCount() , 2 ,  'header provided - quoted field' );
+      csv = 'abc,cdx\n1,"2\n2,3"\n' ;
+      df = DataFrame.parse_csv(csv);
+      assert.equal( df.get(0,"abc"), '1' ,  'get(0,abc)' );
+      assert.equal( df.get(0,"cdx"), '2\n2,3' ,  'get(0,cdx)' );
+      assert.equal( df.getRowCount(), 1 ,  'no header - quoted field' );
+      assert.equal(csv,df.to_csv());
+
+      csv = 'abc,cdx\n1,"2\n2,3"\n' ;
+      df = DataFrame.parse_csv(csv,{columns:['a','c']});
+      assert.equal( df.get(0,"a") , 'abc'  );
+      assert.equal( df.get(0,"c") , 'cdx'  );
+      assert.equal( df.get(1,"a") , '1'  );
+      assert.equal( df.get(1,"c") , '2\n2,3' );
+      assert.equal( df.getRowCount() , 2 ,  'header provided - quoted field' );
+      assert.equal('a,c\nabc,cdx\n1,"2\n2,3"\n',df.to_csv());
+
+      df = DataFrame.parse_csv('abc,cdx\n,"2\n2,3"\n',{columns:['a','c']});
+      assert.equal( df.get(0,"a") , 'abc'  );
+      assert.equal( df.get(0,"c") , 'cdx'  );
+      assert.equal( df.get(1,"a") , ''  );
+      assert.equal( df.get(1,"c") , '2\n2,3' );
+      assert.equal( df.getRowCount() , 2 ,  'header provided - quoted field' );
+      assert.equal('a,c\nabc,cdx\n,"2\n2,3"\n',df.to_csv());
+
+      df = DataFrame.parse_csv('abc,cdx\n,"2\n""a""\n2,3"\n',{columns:['a','c']});
+      assert.equal( df.get(0,"a") , 'abc'  );
+      assert.equal( df.get(0,"c") , 'cdx'  );
+      assert.equal( df.get(1,"a") , ''  );
+      assert.equal( df.get(1,"c") , '2\n"a"\n2,3' );
+      assert.equal( df.getRowCount() , 2 ,  'header provided - quoted field' );
+      assert.equal('a,c\nabc,cdx\n,"2\n""a""\n2,3"\n',df.to_csv());
 
     });
     it( 'parse_wdf', function() {

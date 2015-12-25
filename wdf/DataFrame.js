@@ -23,14 +23,20 @@
         return this.data[row];
       };
       if( this.type ){
-        this.to_json = function(row){
+        this.as_json = function(row){
            return this.type.to_json(this.data[row]);
+        };
+        this.as_string = function(row) {
+          return this.type.to_string(this.data[row]);
         };
         this.set = function(row,v){
           this.data[row] = this.type.coerce(v);
         };
       }else{
-        this.to_json = this.get ;
+        this.as_json = this.get ;
+        this.as_string = function(row) {
+          return u$.ensureString(this.data[row]) ;
+        };
         this.set = function(row,v){
           this.data[row] = v;
         };
@@ -132,16 +138,6 @@
     config = config || {columns: array_of_rows.shift()};
     return new DataFrame(array_of_rows, config);
   }
-
-// **parse_csv(str,header)**
-//
-// parse comma separated values (CSV) format  provided in string `str`.
-// `header` is array with column names, if omitted first line of  CSV  in `str` considered header .
-
-  DataFrame.parse_csv = function (str, config) {
-    return make_df_from_(parse_csv_to_array_of_rows(str), config);
-  };
-
   function parse_csv_to_array_of_rows(str) {
     var arr = [];
     var quote = false;  // true means we're inside a quoted field
@@ -173,6 +169,52 @@
     }
     return arr;
   }
+  DataFrame.prototype.to_csv = function() {
+    var s = '' , col,row, v, cc;
+    for (col = 0; col < this.columnSet.byIndex.length; col++) {
+      if (col > 0 ) {
+        s+= ',' ;
+      }
+      s+= this.columnSet.byIndex[col].name;
+    }
+    s+= '\n';
+    for (row = 0; row < this.getRowCount(); row++) {
+      for (col = 0; col < this.columnSet.byIndex.length; col++) {
+        if (col > 0 ) {
+          s+= ',' ;
+        }
+        v = this.get(row,col,'as_string');
+        if( v.indexOf('"') >= 0 ||
+            v.indexOf(',') >= 0 ||
+            v.indexOf('\n') >= 0 ){
+          s+='"';
+          for (var i = 0; i < v.length; i++) {
+            cc = v[i];
+            if(cc==='"') {
+              s += cc;
+            }
+            s+= cc;
+          }
+          s+='"';
+        }else{
+          s+= v;
+        }
+      }
+      s+= '\n';
+    }
+    return s;
+  };
+
+
+// **parse_csv(str,header)**
+//
+// parse comma separated values (CSV) format  provided in string `str`.
+// `header` is array with column names, if omitted first line of  CSV  in `str` considered header .
+
+  DataFrame.parse_csv = function (str, config) {
+    return make_df_from_(parse_csv_to_array_of_rows(str), config);
+  };
+
 
   DataFrame.parse_wdf=function(str) {
     var arr = str.split('\n');
@@ -227,7 +269,7 @@
 //
 // get row out of DataFrame as array (no type conversion).
 //    - `row_num` - row number
-//    - `fn` - how to extract value: `get()` or `to_json()`
+//    - `fn` - how to extract value: `get()` or `as_json()`
   DataFrame.prototype.getArrayRow = function (row_num,fn) {
     fn = fn || 'get';
     var ph_row = this.index[row_num];
@@ -245,7 +287,7 @@
 //    - `row_num` - row number
 
   DataFrame.prototype.getJsonRow = function (row_num) {
-    return this.getArrayRow(row_num,'to_json');
+    return this.getArrayRow(row_num,'as_json');
   };
 
 // **get(row,col)**
@@ -254,10 +296,11 @@
 //   - `row_num` - row number
 //   - `col` - column index or column name
 //
-  DataFrame.prototype.get = function (row_num, col) {
+  DataFrame.prototype.get = function (row_num, col,fn) {
+    fn = fn || 'get' ;
     var ph_row = this.index[row_num];
     var c = this.columnSet.getColumn(col);
-    return c.get(ph_row);
+    return c[fn](ph_row);
   };
 // **set(row_num,col,v)**
 //

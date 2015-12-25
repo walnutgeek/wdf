@@ -403,7 +403,7 @@
 // ensure String object
 
   u$.ensureString=function(a) {
-    return _.isString(a) ? a : String(a);
+    return u$.isNullish(a) ? "" : _.isString(a) ? a : String(a);
   };
 
 
