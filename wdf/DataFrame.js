@@ -18,7 +18,8 @@
       this.data.length = len;
     }
     this.setType = function(type){
-      this.type = type;
+      var coerce_from = this.type;
+      this.type = u$.ensureType(type);
       this.get = function (row) {
         return this.data[row];
       };
@@ -32,6 +33,11 @@
         this.set = function(row,v){
           this.data[row] = this.type.coerce(v);
         };
+        if(!u$.isNullish(coerce_from)){
+          for(var row = 0 ; row < this.data.length ; row++ ){
+            this.data[row] = this.type.coerce(this.data[row],coerce_from);
+          }
+        }
       }else{
         this.as_json = this.get ;
         this.as_string = function(row) {
@@ -402,6 +408,10 @@
     var r = { config: this.getConfig(), rows: []};
     r.rows = this.map( this.getArrayRow ) ;
     return r;
+  };
+
+  DataFrame.prototype.setColumnType = function (col,new_type) {
+    this.columnSet.getColumn(col).setType(new_type);
   };
 
 // **getObjects()**

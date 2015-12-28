@@ -17,6 +17,16 @@ describe( 'wdf/DataFrame', function(){
     { a: 2 , d: '20150716'},
     { a: 3 ,b: 'x', d: '20130710'}
   ];
+
+  var ALL_TYPES_WDF = '{"columns":[{"name":"s","type":"string"},{"name":"n","type":"number"},{"name":"b","type":"boolean"},{"name":"d","type":"date"},{"name":"dt","type":"datetime"},{"name":"ts","type":"timestamp"}]}\n' +
+      '["hello",2,true,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n' +
+      '["hello",3,true,"2015-09-18","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n' +
+      '["hello",4,true,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n' +
+      '["hello",5,false,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n' +
+      '["",null,true,"2015-09-11","2015-09-17 17:18:19",null]\n' +
+      '["hello",2,false,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n' +
+      '["hello",2,true,"2015-09-13",null,"2015-09-17 17:18:19.345"]\n';
+
   it( 'Initialization', function() {
     // jshint -W064 
     assert.ok( DataFrame(rows,config).constructor === DataFrame , 'Initialiesd wit hout new.' );
@@ -83,6 +93,13 @@ describe( 'wdf/DataFrame', function(){
     assert.deepEqual( df.getColumn("d") , ['20150716','20130710'] );
     assert.deepEqual( df.getColumn("x") , undefined );
   });
+  it( 'setColumnType', function() {
+    var df = DataFrame.parse_wdf( ALL_TYPES_WDF );
+    assert.deepEqual(df.getColumn("b"),[true,true,true,false,true,false,true]);
+    df.setColumnType("b", "number");
+    assert.deepEqual(df.getColumn("b"),[1,1,1,0,1,0,1]);
+  });
+
   it( 'construct from scratch', function() {
     var df = new DataFrame();
     df.columnSet.enforceColumn("a");
@@ -178,14 +195,6 @@ describe( 'wdf/DataFrame', function(){
 
     });
     it( 'parse_wdf', function() {
-      var str = '{"columns":[{"name":"s","type":"string"},{"name":"n","type":"number"},{"name":"b","type":"boolean"},{"name":"d","type":"date"},{"name":"dt","type":"datetime"},{"name":"ts","type":"timestamp"}]}\n' +
-          '["hello",2,true,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n' +
-          '["hello",3,true,"2015-09-18","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n' +
-          '["hello",4,true,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n' +
-          '["hello",5,true,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n' +
-          '["",null,true,"2015-09-11","2015-09-17 17:18:19",null]\n' +
-          '["hello",2,true,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n' +
-          '["hello",2,true,"2015-09-13",null,"2015-09-17 17:18:19.345"]\n';
       function test_df(df) {
         assert.equal(df.getRowCount(), 7);
         assert.equal(df.get(0, 'n'), 2);
@@ -194,17 +203,18 @@ describe( 'wdf/DataFrame', function(){
         assert.equal(df.get(4, 'ts'), null);
         assert.equal(df.get(6, 'dt'), null);
       }
-      var df = DataFrame.parse_wdf( str );
+      var df = DataFrame.parse_wdf( ALL_TYPES_WDF );
       test_df(df);
       var wdf_str = df.to_wdf();
       var lines = {
-        orig: str.split('\n'),
+        orig: ALL_TYPES_WDF.split('\n'),
         to_wdf: wdf_str.split('\n')};
       for(var i = 0 ; i < lines.orig.length; i++){
         assert.equal(lines.orig[i],lines.to_wdf[i]);
       }
       test_df(DataFrame.parse_wdf(wdf_str));
     });
+
 
     it('parse_dom_table', function () {
       var dom_fragment = require("./dom_fragment");
