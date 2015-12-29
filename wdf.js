@@ -459,7 +459,7 @@ var wdf =
 	// ensure String object
 	
 	  u$.ensureString=function(a) {
-	    return _.isString(a) ? a : String(a);
+	    return u$.isNullish(a) ? "" : _.isString(a) ? a : String(a);
 	  };
 	
 	
@@ -1005,19 +1005,20 @@ var wdf =
 	    _.defaults(this, {
 	        order:      generic_order,
 	        missing:    _.isNull,
+	        to_json:    _.identity,
 	        coerce:     function(value,from_type){
 	          if(this.is(value)){
 	            return value;
 	          }
 	          from_type = from_type || u$.findTypeByValue(value);
-	          var propname_to = "to_" + this.name;
-	          if( from_type.hasOwnProperty(propname_to) ){
-	            return from_type[propname_to](value);
+	          var property_to = "to_" + this.name;
+	          if( from_type.hasOwnProperty(property_to) ){
+	            return from_type[property_to](value);
 	          }
 	
-	          var propname_from = "from_" + from_type.name;
-	          if( this.hasOwnProperty(propname_from) ){
-	            return this[propname_from](value);
+	          var property_from = "from_" + from_type.name;
+	          if( this.hasOwnProperty(property_from) ){
+	            return this[property_from](value);
 	          }
 	          var mixin = this.mixin_type();
 	          if( mixin && mixin === from_type.mixin_type() ){
@@ -1089,18 +1090,13 @@ var wdf =
 	    },
 	    mixin_coerce: function(value,from_type){
 	      return this.from_number(from_type.to_number(value));
-	    }
+	    },
+	    to_json: function(v){
+	      return _.isNull(v) ? null : this.to_string(v);
+	    },
 	  };
 	
 	  u$.addTypes({
-	// ** string ** type
-	    string: {
-	      is: _.isString,
-	      missing: function(s) { return u$.isNullish(s) || s === '' ; },
-	      from_string: function(v){
-	        return "" === v ? null : v ;
-	      }
-	    },
 	// ** number ** type
 	    number: {
 	      is: _.isNumber,
@@ -1111,6 +1107,30 @@ var wdf =
 	      _to_string: function(v){
 	        return isNaN(v)? '' : String(v);
 	      },
+	    },
+	// ** date ** type
+	    date: {
+	      mixin: {
+	        type: date_mixin,
+	        precision: MILLS_IN_DAY,
+	        pattern: "YYYY_MM_DD"
+	      }
+	    },
+	// ** datetime ** type
+	    datetime: {
+	      mixin:{
+	        type: date_mixin,
+	        precision: MILLS_IN_SEC,
+	        pattern: "YYYY_MM_DD_hh_mm_ss"
+	      }
+	    },
+	// ** timestamp ** type
+	    timestamp: {
+	      mixin:{
+	        type: date_mixin,
+	        precision: 1,
+	        pattern: "YYYY_MM_DD_hh_mm_ss_zzz"
+	      }
 	    },
 	// ** boolean ** type
 	    boolean: {
@@ -1140,30 +1160,14 @@ var wdf =
 	        return a ? (b ? null : 1) : (b ? -1 : null);
 	      }
 	    },
-	// ** date ** type
-	    date: {
-	      mixin: {
-	        type: date_mixin,
-	        precision: MILLS_IN_DAY,
-	        pattern: "YYYY_MM_DD"
+	// ** string ** type
+	    string: {
+	      is: _.isString,
+	      missing: function(s) { return u$.isNullish(s) || s === '' ; },
+	      from_string: function(v){
+	        return "" === v ? null : v ;
 	      }
 	    },
-	// ** datetime ** type
-	    datetime: {
-	      mixin:{
-	        type: date_mixin,
-	        precision: MILLS_IN_SEC,
-	        pattern: "YYYY_MM_DD_hh_mm_ss"
-	      }
-	    },
-	// ** timestamp ** type
-	    timestamp: {
-	      mixin:{
-	        type: date_mixin,
-	        precision: 1,
-	        pattern: "YYYY_MM_DD_hh_mm_ss_zzz"
-	      }
-	    }
 	  });
 	
 	// ** detect_possible_array_types(str_array) **
@@ -1175,7 +1179,9 @@ var wdf =
 	    var options={
 	      string: { array: str_array, hasMissing: false , type: u$.types.string}
 	    };
-	    var eligible_types = ['date','datetime','boolean','number'] ;
+	    var eligible_types = Object.keys(u$.types).filter(function(n){
+	      return !options.hasOwnProperty(n);
+	    });
 	    eligible_types.forEach(function(typeName){
 	      options[typeName] = {
 	        array: new Array(str_array.length) ,
@@ -1205,8 +1211,6 @@ var wdf =
 	    return options;
 	  };
 	
-	  var PRIORITIES = [ 'number', 'date', 'datetime', 'timestamp', 'boolean', 'string' ];
-	
 	  u$.findTypeByValue=function(v){
 	    for(var typeName in u$.types){
 	      if(u$.types.hasOwnProperty(typeName)){
@@ -1224,15 +1228,13 @@ var wdf =
 	    if(keys.length == 1){
 	      return ops[keys[0]];
 	    }else{
-	      for(var i = 0 ; i < PRIORITIES.length ; i++) {
-	        if (ops.hasOwnProperty(PRIORITIES[i])) {
-	          return ops[PRIORITIES[i]];
+	      for(var typeName in u$.types){
+	        if (ops.hasOwnProperty(typeName)) {
+	          return ops[typeName];
 	        }
 	      }
 	    }
 	  };
-	
-	
 	
 	// **ensureType(typeOrName)**
 	//
@@ -13643,15 +13645,54 @@ var wdf =
 	    if (len) {
 	      this.data.length = len;
 	    }
-	    this.type = type;
+	    this.setType(type,false);
 	  };
 	
-	  Column.prototype.set = function (row, v) {
-	    if(this.type && !this.type.is(v)){
-	      v = this.type.coerce(v);
+	  Column.prototype.coerceData = function(from_type){
+	    for(var row = 0 ; row < this.data.length ; row++ ){
+	      this.data[row] = this.type.coerce(this.data[row],from_type);
 	    }
-	    //TODO add logic to detect `type` or coerce `v`
-	    this.data[row] = v;
+	  };
+	
+	  Column.prototype.detectData = function(){
+	    if( u$.isNullish(this.type) || this.type.name === "string" ){
+	      var options = u$.detect_possible_array_types(this.data);
+	      var option = u$.choose_column_type(options);
+	      if(option.type !== this.type){
+	        this.setType(option.type,false);
+	        this.data = option.array;
+	      }
+	    }
+	  };
+	
+	  Column.prototype.setType = function(type,if_coerce){
+	    var coerce_from = this.type;
+	    this.type = u$.ensureType(type);
+	    this.get = function (row) {
+	      return this.data[row];
+	    };
+	    if( this.type ){
+	      this.as_json = function(row){
+	        return this.type.to_json(this.data[row]);
+	      };
+	      this.as_string = function(row) {
+	        return this.type.to_string(this.data[row]);
+	      };
+	      this.set = function(row,v){
+	        this.data[row] = this.type.coerce(v);
+	      };
+	      if(if_coerce && !u$.isNullish(coerce_from) ){
+	        this.coerceData(coerce_from);
+	      }
+	    }else{
+	      this.as_json = this.get ;
+	      this.as_string = function(row) {
+	        return u$.ensureString(this.data[row]) ;
+	      };
+	      this.set = function(row,v){
+	        this.data[row] = v;
+	      };
+	    }
 	  };
 	
 	// ColumnSet - store all columns `byIndex` in array and  `byName` in hashtable.
@@ -13703,6 +13744,7 @@ var wdf =
 	    return this;
 	  };
 	
+	
 	// ## <section id='DataFrame'>Dataframe</section>
 	//
 	// **new Dataframe(rows,columns)**:
@@ -13742,16 +13784,6 @@ var wdf =
 	    config = config || {columns: array_of_rows.shift()};
 	    return new DataFrame(array_of_rows, config);
 	  }
-	
-	// **parse_csv(str,header)**
-	//
-	// parse comma separated values (CSV) format  provided in string `str`.
-	// `header` is array with column names, if omitted first line of  CSV  in `str` considered header .
-	
-	  DataFrame.parse_csv = function (str, config) {
-	    return make_df_from_(parse_csv_to_array_of_rows(str), config);
-	  };
-	
 	  function parse_csv_to_array_of_rows(str) {
 	    var arr = [];
 	    var quote = false;  // true means we're inside a quoted field
@@ -13784,10 +13816,69 @@ var wdf =
 	    return arr;
 	  }
 	
+	  DataFrame.prototype.to_csv = function() {
+	    var s = '' , col,row, v, cc;
+	    for (col = 0; col < this.columnSet.byIndex.length; col++) {
+	      if (col > 0 ) {
+	        s+= ',' ;
+	      }
+	      s+= this.columnSet.byIndex[col].name;
+	    }
+	    s+= '\n';
+	    for (row = 0; row < this.getRowCount(); row++) {
+	      for (col = 0; col < this.columnSet.byIndex.length; col++) {
+	        if (col > 0 ) {
+	          s+= ',' ;
+	        }
+	        v = this.get(row,col,'as_string');
+	        if( v.indexOf('"') >= 0 ||
+	            v.indexOf(',') >= 0 ||
+	            v.indexOf('\n') >= 0 ){
+	          s+='"';
+	          for (var i = 0; i < v.length; i++) {
+	            cc = v[i];
+	            if(cc==='"') {
+	              s += cc;
+	            }
+	            s+= cc;
+	          }
+	          s+='"';
+	        }else{
+	          s+= v;
+	        }
+	      }
+	      s+= '\n';
+	    }
+	    return s;
+	  };
+	
+	
+	// **parse_csv(str,header)**
+	//
+	// parse comma separated values (CSV) format  provided in string `str`.
+	// `header` is array with column names, if omitted first line of  CSV  in `str` considered header .
+	
+	  DataFrame.parse_csv = function (str, config) {
+	    return make_df_from_(parse_csv_to_array_of_rows(str), config);
+	  };
+	
+	
 	  DataFrame.parse_wdf=function(str) {
 	    var arr = str.split('\n');
 	    var config = JSON.parse(arr.shift());
-	    return new DataFrame(arr.filter(u$.isStringNotEmpty).map(JSON.parse),config);
+	    var rows = arr.filter(u$.isStringNotEmpty).map(JSON.parse);
+	    return new DataFrame(rows,config);
+	  };
+	
+	  DataFrame.prototype.to_wdf=function(){
+	    var s = '';
+	    s+=JSON.stringify(this.getConfig());
+	    s+='\n';
+	    this.apply(function(row){
+	      s+=JSON.stringify(this.getJsonRow(row));
+	      s+='\n';
+	    });
+	    return s;
 	  };
 	
 	  function parse_dom_table_to_array_of_rows(dom_table) {
@@ -13797,6 +13888,14 @@ var wdf =
 	      });
 	    });
 	  }
+	
+	  DataFrame.prototype.detectColumnTypes=function(list_of_columns){
+	    list_of_columns = list_of_columns || this.getColumnNames();
+	    for(var i = 0 ; i < list_of_columns.length ; i++){
+	      var col = this.columnSet.byName[list_of_columns[i]];
+	      col.detectData();
+	    }
+	  };
 	
 	// **parse_dom_table(dom_table, header)**
 	//
@@ -13808,35 +13907,60 @@ var wdf =
 	    return make_df_from_(parse_dom_table_to_array_of_rows(dom_table), config);
 	  };
 	
-	// **getRow(row_num,result)**
-	//
-	// get data row out of DataFrame.
-	//    - `row_num` - row number
-	//    - `result` - object or array to be filled in. **@optional**
-	//       if not provided empty object is assumed.
+	  DataFrame.prototype.getColumnNames=function(){
+	    return Object.keys(this.columnSet.byName);
+	  };
 	
-	  DataFrame.prototype.getRow = function (row_num, result) {
+	
+	// **getObjectRow(row_num,result)**
+	//
+	// get row out of DataFrame as plain object.
+	//    - `row_num` - row number
+	
+	  DataFrame.prototype.getObjectRow = function (row_num) {
 	    var ph_row = this.index[row_num];
-	    result = result || {};
-	    this.columnSet.byIndex.forEach(_.isArray(result) ?
-	        function (c, col_idx) {
-	          result[col_idx] = c.data[ph_row];
-	        } :
-	        function (c) {
-	          result[c.name] = c.data[ph_row];
+	    var result =  {};
+	    this.columnSet.byIndex.forEach(function (c) {
+	          result[c.name] = c.get(ph_row);
 	        });
 	    return result;
 	  };
+	// **getObjectRow(row_num,result)**
+	//
+	// get row out of DataFrame as array (no type conversion).
+	//    - `row_num` - row number
+	//    - `fn` - how to extract value: `get()` or `as_json()`
+	  DataFrame.prototype.getArrayRow = function (row_num,fn) {
+	    fn = fn || 'get';
+	    var ph_row = this.index[row_num];
+	    var result = [];
+	    result.length = this.columnSet.byIndex.length ;
+	    this.columnSet.byIndex.forEach( function (c, col_idx) {
+	          result[col_idx] = c[fn](ph_row);
+	        });
+	    return result;
+	  };
+	// **getJsonRow(row_num)**
+	//
+	// get data row as array with dates converted to string
+	// for json
+	//    - `row_num` - row number
+	
+	  DataFrame.prototype.getJsonRow = function (row_num) {
+	    return this.getArrayRow(row_num,'as_json');
+	  };
+	
 	// **get(row,col)**
 	//
 	// get one value out of DataFrame
 	//   - `row_num` - row number
 	//   - `col` - column index or column name
 	//
-	  DataFrame.prototype.get = function (row_num, col) {
+	  DataFrame.prototype.get = function (row_num, col,fn) {
+	    fn = fn || 'get' ;
 	    var ph_row = this.index[row_num];
 	    var c = this.columnSet.getColumn(col);
-	    return c.data[ph_row];
+	    return c[fn](ph_row);
 	  };
 	// **set(row_num,col,v)**
 	//
@@ -13847,8 +13971,9 @@ var wdf =
 	  DataFrame.prototype.set = function (row_num, col, v) {
 	    var ph_row = this.index[row_num];
 	    var c = this.columnSet.getColumn(col);
-	    c.data[ph_row] = v;
+	    c.set(ph_row,v);
 	  };
+	
 	// **getRowCount()**
 	//
 	// get row count
@@ -13877,7 +14002,7 @@ var wdf =
 	    var c = this.columnSet.getColumn(col);
 	    if (c) {
 	      return this.index.map(function (idx) {
-	        return c.data[idx];
+	        return c.get(idx);
 	      });
 	    }
 	    return undefined;
@@ -13889,7 +14014,7 @@ var wdf =
 	//
 	  DataFrame.prototype.apply = function (logic) {
 	    for (var row_num = 0; row_num < this.index.length; row_num++) {
-	      logic(this, row_num);
+	      logic.call(this, row_num);
 	    }
 	  };
 	// ** map(logic) **
@@ -13902,7 +14027,7 @@ var wdf =
 	  DataFrame.prototype.map = function (logic) {
 	    var collector = [], r;
 	    for (var row_num = 0; row_num < this.index.length; row_num++) {
-	      r = logic(this, row_num);
+	      r = logic.call(this, row_num);
 	      if (r !== undefined) {
 	        collector.push(r);
 	      }
@@ -13913,27 +14038,34 @@ var wdf =
 	//
 	// Get all data in structure:
 	// returns {Object}
-	//   - columns - columns array
-	//     - name - column name
-	//     - type - column type, if defined
+	//   - config :
+	//     - columns - columns array
+	//       - name - column name
+	//       - type - column type, if defined
 	//   - rows - array of rows. each row array of values.
 	//
 	
-	  DataFrame.prototype.getData = function () {
-	    var r = {columns: [], rows: []};
-	    var columns = this.columnSet.byIndex;
-	    for (var col = 0; col < columns.length; col++) {
-	      var column = columns[col];
+	  DataFrame.prototype.getConfig=function () {
+	    var config = { columns : []};
+	    for (var col = 0; col < this.columnSet.byIndex.length; col++) {
+	      var column = this.columnSet.byIndex[col];
 	      var col_def = {name: column.name};
 	      if (column.type) {
 	        col_def.type = column.type.name;
 	      }
-	      r.columns.push(col_def);
+	      config.columns.push(col_def);
 	    }
-	    r.rows = this.map(function (df, row_num) {
-	      return df.getRow(row_num, []);
-	    });
+	    return config;
+	  };
+	
+	  DataFrame.prototype.getData = function () {
+	    var r = { config: this.getConfig(), rows: []};
+	    r.rows = this.map( this.getArrayRow ) ;
 	    return r;
+	  };
+	
+	  DataFrame.prototype.setColumnType = function (col,new_type) {
+	    this.columnSet.getColumn(col).setType(new_type);
 	  };
 	
 	// **getObjects()**
@@ -13943,9 +14075,7 @@ var wdf =
 	//
 	
 	  DataFrame.prototype.getObjects = function () {
-	    return this.map(function (df, row_num) {
-	      return df.getRow(row_num);
-	    });
+	    return this.map( this.getObjectRow );
 	  };
 	
 	  module.exports = DataFrame;

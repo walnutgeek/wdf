@@ -793,7 +793,7 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
             
                  <div class="content"><div class='highlight'><pre>
   u$.ensureString=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a</span>) </span>{
-    <span class="hljs-keyword">return</span> _.isString(a) ? a : <span class="hljs-built_in">String</span>(a);
+    <span class="hljs-keyword">return</span> u$.isNullish(a) ? <span class="hljs-string">""</span> : _.isString(a) ? a : <span class="hljs-built_in">String</span>(a);
   };</pre></div></div>
             
         </li>
@@ -1872,19 +1872,20 @@ and then according to order functions provided in argument.</p>
     _.defaults(<span class="hljs-keyword">this</span>, {
         order:      generic_order,
         missing:    _.isNull,
+        to_json:    _.identity,
         coerce:     <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value,from_type</span>)</span>{
           <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.is(value)){
             <span class="hljs-keyword">return</span> value;
           }
           from_type = from_type || u$.findTypeByValue(value);
-          <span class="hljs-keyword">var</span> propname_to = <span class="hljs-string">"to_"</span> + <span class="hljs-keyword">this</span>.name;
-          <span class="hljs-keyword">if</span>( from_type.hasOwnProperty(propname_to) ){
-            <span class="hljs-keyword">return</span> from_type[propname_to](value);
+          <span class="hljs-keyword">var</span> property_to = <span class="hljs-string">"to_"</span> + <span class="hljs-keyword">this</span>.name;
+          <span class="hljs-keyword">if</span>( from_type.hasOwnProperty(property_to) ){
+            <span class="hljs-keyword">return</span> from_type[property_to](value);
           }
 
-          <span class="hljs-keyword">var</span> propname_from = <span class="hljs-string">"from_"</span> + from_type.name;
-          <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.hasOwnProperty(propname_from) ){
-            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>[propname_from](value);
+          <span class="hljs-keyword">var</span> property_from = <span class="hljs-string">"from_"</span> + from_type.name;
+          <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.hasOwnProperty(property_from) ){
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>[property_from](value);
           }
           <span class="hljs-keyword">var</span> mixin = <span class="hljs-keyword">this</span>.mixin_type();
           <span class="hljs-keyword">if</span>( mixin &amp;&amp; mixin === from_type.mixin_type() ){
@@ -1983,7 +1984,10 @@ called everytime when <code>addTypes()</code> called.</p>
     },
     mixin_coerce: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value,from_type</span>)</span>{
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.from_number(from_type.to_number(value));
-    }
+    },
+    to_json: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v</span>)</span>{
+      <span class="hljs-keyword">return</span> _.isNull(v) ? <span class="hljs-literal">null</span> : <span class="hljs-keyword">this</span>.to_string(v);
+    },
   };
 
   u$.addTypes({</pre></div></div>
@@ -1996,27 +2000,6 @@ called everytime when <code>addTypes()</code> called.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-74">&#182;</a>
-              </div>
-              <p><strong> string </strong> type</p>
-
-            </div>
-            
-                 <div class="content"><div class='highlight'><pre>    string: {
-      is: _.isString,
-      missing: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>) </span>{ <span class="hljs-keyword">return</span> u$.isNullish(s) || s === <span class="hljs-string">''</span> ; },
-      from_string: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v</span>)</span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-string">""</span> === v ? <span class="hljs-literal">null</span> : v ;
-      }
-    },</pre></div></div>
-            
-        </li>
-        
-        <li id="section-75">
-
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
               <p><strong> number </strong> type</p>
 
@@ -2035,12 +2018,75 @@ called everytime when <code>addTypes()</code> called.</p>
             
         </li>
         
+        <li id="section-75">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-75">&#182;</a>
+              </div>
+              <p><strong> date </strong> type</p>
+
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>    date: {
+      mixin: {
+        type: date_mixin,
+        precision: MILLS_IN_DAY,
+        pattern: <span class="hljs-string">"YYYY_MM_DD"</span>
+      }
+    },</pre></div></div>
+            
+        </li>
+        
         <li id="section-76">
 
             <div class="annotation">
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-76">&#182;</a>
+              </div>
+              <p><strong> datetime </strong> type</p>
+
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>    datetime: {
+      mixin:{
+        type: date_mixin,
+        precision: MILLS_IN_SEC,
+        pattern: <span class="hljs-string">"YYYY_MM_DD_hh_mm_ss"</span>
+      }
+    },</pre></div></div>
+            
+        </li>
+        
+        <li id="section-77">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-77">&#182;</a>
+              </div>
+              <p><strong> timestamp </strong> type</p>
+
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>    timestamp: {
+      mixin:{
+        type: date_mixin,
+        precision: <span class="hljs-number">1</span>,
+        pattern: <span class="hljs-string">"YYYY_MM_DD_hh_mm_ss_zzz"</span>
+      }
+    },</pre></div></div>
+            
+        </li>
+        
+        <li id="section-78">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
               <p><strong> boolean </strong> type</p>
 
@@ -2076,48 +2122,6 @@ called everytime when <code>addTypes()</code> called.</p>
             
         </li>
         
-        <li id="section-77">
-
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
-              </div>
-              <p><strong> date </strong> type</p>
-
-            </div>
-            
-                 <div class="content"><div class='highlight'><pre>    date: {
-      mixin: {
-        type: date_mixin,
-        precision: MILLS_IN_DAY,
-        pattern: <span class="hljs-string">"YYYY_MM_DD"</span>
-      }
-    },</pre></div></div>
-            
-        </li>
-        
-        <li id="section-78">
-
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
-              </div>
-              <p><strong> datetime </strong> type</p>
-
-            </div>
-            
-                 <div class="content"><div class='highlight'><pre>    datetime: {
-      mixin:{
-        type: date_mixin,
-        precision: MILLS_IN_SEC,
-        pattern: <span class="hljs-string">"YYYY_MM_DD_hh_mm_ss"</span>
-      }
-    },</pre></div></div>
-            
-        </li>
-        
         <li id="section-79">
 
             <div class="annotation">
@@ -2125,17 +2129,17 @@ called everytime when <code>addTypes()</code> called.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
-              <p><strong> timestamp </strong> type</p>
+              <p><strong> string </strong> type</p>
 
             </div>
             
-                 <div class="content"><div class='highlight'><pre>    timestamp: {
-      mixin:{
-        type: date_mixin,
-        precision: <span class="hljs-number">1</span>,
-        pattern: <span class="hljs-string">"YYYY_MM_DD_hh_mm_ss_zzz"</span>
+                 <div class="content"><div class='highlight'><pre>    string: {
+      is: _.isString,
+      missing: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>) </span>{ <span class="hljs-keyword">return</span> u$.isNullish(s) || s === <span class="hljs-string">''</span> ; },
+      from_string: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v</span>)</span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-string">""</span> === v ? <span class="hljs-literal">null</span> : v ;
       }
-    }
+    },
   });</pre></div></div>
             
         </li>
@@ -2160,7 +2164,9 @@ types from values</p>
     <span class="hljs-keyword">var</span> options={
       string: { array: str_array, hasMissing: <span class="hljs-literal">false</span> , type: u$.types.string}
     };
-    <span class="hljs-keyword">var</span> eligible_types = [<span class="hljs-string">'date'</span>,<span class="hljs-string">'datetime'</span>,<span class="hljs-string">'boolean'</span>,<span class="hljs-string">'number'</span>] ;
+    <span class="hljs-keyword">var</span> eligible_types = <span class="hljs-built_in">Object</span>.keys(u$.types).filter(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>)</span>{
+      <span class="hljs-keyword">return</span> !options.hasOwnProperty(n);
+    });
     eligible_types.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">typeName</span>)</span>{
       options[typeName] = {
         array: <span class="hljs-keyword">new</span> <span class="hljs-built_in">Array</span>(str_array.length) ,
@@ -2190,8 +2196,6 @@ types from values</p>
     <span class="hljs-keyword">return</span> options;
   };
 
-  <span class="hljs-keyword">var</span> PRIORITIES = [ <span class="hljs-string">'number'</span>, <span class="hljs-string">'date'</span>, <span class="hljs-string">'datetime'</span>, <span class="hljs-string">'timestamp'</span>, <span class="hljs-string">'boolean'</span>, <span class="hljs-string">'string'</span> ];
-
   u$.findTypeByValue=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v</span>)</span>{
     <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> typeName <span class="hljs-keyword">in</span> u$.types){
       <span class="hljs-keyword">if</span>(u$.types.hasOwnProperty(typeName)){
@@ -2209,9 +2213,9 @@ types from values</p>
     <span class="hljs-keyword">if</span>(keys.length == <span class="hljs-number">1</span>){
       <span class="hljs-keyword">return</span> ops[keys[<span class="hljs-number">0</span>]];
     }<span class="hljs-keyword">else</span>{
-      <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span> ; i &lt; PRIORITIES.length ; i++) {
-        <span class="hljs-keyword">if</span> (ops.hasOwnProperty(PRIORITIES[i])) {
-          <span class="hljs-keyword">return</span> ops[PRIORITIES[i]];
+      <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> typeName <span class="hljs-keyword">in</span> u$.types){
+        <span class="hljs-keyword">if</span> (ops.hasOwnProperty(typeName)) {
+          <span class="hljs-keyword">return</span> ops[typeName];
         }
       }
     }
