@@ -17,44 +17,55 @@
     if (len) {
       this.data.length = len;
     }
-    this.setType = function(type){
-      var coerce_from = this.type;
-      this.type = u$.ensureType(type);
-      this.get = function (row) {
-        return this.data[row];
-      };
-      if( this.type ){
-        this.as_json = function(row){
-           return this.type.to_json(this.data[row]);
-        };
-        this.as_string = function(row) {
-          return this.type.to_string(this.data[row]);
-        };
-        this.set = function(row,v){
-          this.data[row] = this.type.coerce(v);
-        };
-        if(!u$.isNullish(coerce_from)){
-          for(var row = 0 ; row < this.data.length ; row++ ){
-            this.data[row] = this.type.coerce(this.data[row],coerce_from);
-          }
-        }
-      }else{
-        this.as_json = this.get ;
-        this.as_string = function(row) {
-          return u$.ensureString(this.data[row]) ;
-        };
-        this.set = function(row,v){
-          this.data[row] = v;
-        };
-      }
-    };
-    this.setType(type);
+    this.setType(type,false);
   };
 
+  Column.prototype.coerceData = function(from_type){
+    for(var row = 0 ; row < this.data.length ; row++ ){
+      this.data[row] = this.type.coerce(this.data[row],from_type);
+    }
+  };
 
+  Column.prototype.detectData = function(){
+    if( u$.isNullish(this.type) || this.type.name === "string" ){
+      var options = u$.detect_possible_array_types(this.data);
+      var option = u$.choose_column_type(options);
+      if(option.type !== this.type){
+        this.setType(option.type,false);
+        this.data = option.array;
+      }
+    }
+  };
 
-
-
+  Column.prototype.setType = function(type,if_coerce){
+    var coerce_from = this.type;
+    this.type = u$.ensureType(type);
+    this.get = function (row) {
+      return this.data[row];
+    };
+    if( this.type ){
+      this.as_json = function(row){
+        return this.type.to_json(this.data[row]);
+      };
+      this.as_string = function(row) {
+        return this.type.to_string(this.data[row]);
+      };
+      this.set = function(row,v){
+        this.data[row] = this.type.coerce(v);
+      };
+      if(if_coerce && !u$.isNullish(coerce_from) ){
+        this.coerceData(coerce_from);
+      }
+    }else{
+      this.as_json = this.get ;
+      this.as_string = function(row) {
+        return u$.ensureString(this.data[row]) ;
+      };
+      this.set = function(row,v){
+        this.data[row] = v;
+      };
+    }
+  };
 
 // ColumnSet - store all columns `byIndex` in array and  `byName` in hashtable.
   var ColumnSet = function () {
@@ -104,6 +115,7 @@
     }
     return this;
   };
+
 
 // ## <section id='DataFrame'>Dataframe</section>
 //
@@ -175,6 +187,7 @@
     }
     return arr;
   }
+
   DataFrame.prototype.to_csv = function() {
     var s = '' , col,row, v, cc;
     for (col = 0; col < this.columnSet.byIndex.length; col++) {
@@ -248,6 +261,14 @@
     });
   }
 
+  DataFrame.prototype.detectColumnTypes=function(list_of_columns){
+    list_of_columns = list_of_columns || this.getColumnNames();
+    for(var i = 0 ; i < list_of_columns.length ; i++){
+      var col = this.columnSet.byName[list_of_columns[i]];
+      col.detectData();
+    }
+  };
+
 // **parse_dom_table(dom_table, header)**
 //
 // parse comma separated values (CSV) format  provided in string `dom_table`.
@@ -257,6 +278,11 @@
   DataFrame.parse_dom_table = function (dom_table, config) {
     return make_df_from_(parse_dom_table_to_array_of_rows(dom_table), config);
   };
+
+  DataFrame.prototype.getColumnNames=function(){
+    return Object.keys(this.columnSet.byName);
+  };
+
 
 // **getObjectRow(row_num,result)**
 //

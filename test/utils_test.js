@@ -484,6 +484,7 @@ describe( 'wdf/utils',function(){
         match(  {
               string:{ array:['1994-10-17','2015-02-03',''],hasMissing:true},
               date:{ array:[ new Date(Date.UTC(1994,9,17)),new Date(Date.UTC(2015,1,3)),null],hasMissing:true},
+              timestamp:{ array:[ new Date(Date.UTC(1994,9,17)),new Date(Date.UTC(2015,1,3)),null],hasMissing:true},
               datetime:{ array:[new Date(Date.UTC(1994,9,17)),new  Date(Date.UTC(2015,1,3)),null],hasMissing:true},
             },
             u$.detect_possible_array_types(['1994-10-17','2015-02-03',''] ),
@@ -518,6 +519,7 @@ describe( 'wdf/utils',function(){
         match(  {
               string:{ array:['1994-10-17','2015-02-03'],hasMissing:false},
               date:{ array:[ new Date(Date.UTC(1994,9,17)),new Date(Date.UTC(2015,1,3))],hasMissing:false},
+              timestamp:{ array:[ new Date(Date.UTC(1994,9,17)),new Date(Date.UTC(2015,1,3))],hasMissing:false},
               datetime:{ array:[new Date(Date.UTC(1994,9,17)),new  Date(Date.UTC(2015,1,3))],hasMissing:false},
             },
             u$.detect_possible_array_types(['1994-10-17','2015-02-03'] ),'date');
@@ -525,6 +527,7 @@ describe( 'wdf/utils',function(){
       it('datetime', function() {
         match(  {
               string:{ array:['1994-10-17','2015-02-03'],hasMissing:false},
+              timestamp:{ array:[new Date(Date.UTC(1994,9,17,17,3,5)),new  Date(Date.UTC(2015,1,3))],hasMissing:false},
               datetime:{ array:[new Date(Date.UTC(1994,9,17,17,3,5)),new  Date(Date.UTC(2015,1,3))],hasMissing:false},
             },
             u$.detect_possible_array_types(['1994-10-17 17:03:05','2015-02-03']),'datetime');
@@ -533,6 +536,7 @@ describe( 'wdf/utils',function(){
         match(  {
               string:{ array:['19941017170305','20150203'],hasMissing:false},
               number:{ array:[19941017170305,20150203],hasMissing:false},
+              timestamp:{ array:[new Date(Date.UTC(1994,9,17,17,3,5)),new  Date(Date.UTC(2015,1,3))],hasMissing:false},
               datetime:{ array:[new Date(Date.UTC(1994,9,17,17,3,5)),new  Date(Date.UTC(2015,1,3))],hasMissing:false},
             },
             u$.detect_possible_array_types(['19941017170305','20150203']), 'number');

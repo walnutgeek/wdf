@@ -1123,7 +1123,9 @@
     var options={
       string: { array: str_array, hasMissing: false , type: u$.types.string}
     };
-    var eligible_types = ['date','datetime','boolean','number'] ;
+    var eligible_types = Object.keys(u$.types).filter(function(n){
+      return !options.hasOwnProperty(n);
+    });
     eligible_types.forEach(function(typeName){
       options[typeName] = {
         array: new Array(str_array.length) ,

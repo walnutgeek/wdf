@@ -1,6 +1,7 @@
 
 describe( 'wdf/DataFrame', function(){
   var DataFrame = require("../wdf/DataFrame");
+  var u$ = require("../wdf/utils");
   var assert = require("assert");
   var smartAssert = require("./smart_assert");
 
@@ -194,6 +195,18 @@ describe( 'wdf/DataFrame', function(){
       assert.equal('a,c\nabc,cdx\n,"2\n""a""\n2,3"\n',df.to_csv());
 
     });
+
+    function assert_towdf(df) {
+      var wdf_str = df.to_wdf();
+      var lines = {
+        orig: ALL_TYPES_WDF.split('\n'),
+        to_wdf: wdf_str.split('\n')
+      };
+      for (var i = 0; i < lines.orig.length; i++) {
+        assert.equal(lines.orig[i], lines.to_wdf[i]);
+      }
+      return wdf_str;
+    }
     it( 'parse_wdf', function() {
       function test_df(df) {
         assert.equal(df.getRowCount(), 7);
@@ -205,16 +218,19 @@ describe( 'wdf/DataFrame', function(){
       }
       var df = DataFrame.parse_wdf( ALL_TYPES_WDF );
       test_df(df);
-      var wdf_str = df.to_wdf();
-      var lines = {
-        orig: ALL_TYPES_WDF.split('\n'),
-        to_wdf: wdf_str.split('\n')};
-      for(var i = 0 ; i < lines.orig.length; i++){
-        assert.equal(lines.orig[i],lines.to_wdf[i]);
-      }
+      var wdf_str = assert_towdf(df);
       test_df(DataFrame.parse_wdf(wdf_str));
     });
 
+    it( 'detectColumnTypes', function() {
+      var df = DataFrame.parse_wdf( ALL_TYPES_WDF );
+      df = DataFrame.parse_csv( df.to_csv() );
+      var ts = df.getColumn('ts');
+      var d = u$.detect_possible_array_types(ts);
+      assert.deepEqual( ["s","n","b","d","dt","ts"], df.getColumnNames() );
+      df.detectColumnTypes();
+      assert_towdf(df);
+    });
 
     it('parse_dom_table', function () {
       var dom_fragment = require("./dom_fragment");
