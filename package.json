@@ -1,6 +1,6 @@
 {
   "name": "wdf",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Web data frame",
   "main": "index.js",
   "scripts": {
@@ -43,6 +43,7 @@
   },
   "homepage": "https://github.com/walnutgeek/wdf#readme",
   "devDependencies": {
+    "jsdom": "^3.1.2",
     "codecov": "^1.0.1",
     "docco": "^0.7.0",
     "gh-pages": "^0.5.0",
@@ -61,7 +62,6 @@
     "webpack-dev-server": "^1.12.1"
   },
   "dependencies": {
-    "jsdom": "^3.1.2",
     "lodash": "^3.10.1"
   }
 }
