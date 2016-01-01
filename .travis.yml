@@ -1,6 +1,6 @@
 node_js:
-- "4.x"
-- "5.x"
+- "4.2.x"
+- "5.3.x"
 language: node_js
 before_script: npm install
 script: npm run travis
