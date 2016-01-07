@@ -986,6 +986,44 @@
     this.from = {};
 
   };
+  // Link object, associate name with resource location
+  //   * `href` - url or path
+  //   * `name` - name of resource
+  function Link(href,text){
+    this.text = text || '';
+    this.href = href ;
+  }
+
+
+  // convert into string using markdown sintax
+  // like `[This link](http://example.net/)`
+  Link.prototype.toString = function(){
+    return "["+this.text+"]("+this.href+")" ;
+  };
+
+  Link.parse=function(md_link){
+    if(md_link === null || md_link === ''){
+      return null;
+    }
+    var position = 1;
+    if(md_link[0] === '['){
+      var l = md_link.length - 1 ;
+      if( md_link[l] === ')' ){
+        while( position < l ){
+          if( md_link[position] === ']' &&
+              md_link[position+1] === '(' ){
+            return new Link( md_link.substring(position+2,l),
+                md_link.substring(1,position));
+          }
+          position++;
+        }
+      }
+    }
+    return undefined;
+  };
+
+  u$.Link = Link;
+
   u$.Type = Type;
 
 // ** addTypes(typesMap) **
@@ -1051,6 +1089,18 @@
       _to_string: function(v){
         return isNaN(v)? '' : String(v);
       },
+    },
+// ** link ** type
+// `[This link](http://example.net/)`
+    link: {
+      is: function(l){ return l instanceof Link; },
+      missing: _.isNull,
+      from_string: Link.parse,
+      order: function(a, b) {
+        var rc = generic_order(a.href, b.href);
+        if( ! rc ) rc = generic_order(a.text, b.text);
+        return rc || 0;
+      }
     },
 // ** date ** type
     date: {

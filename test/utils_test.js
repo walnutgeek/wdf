@@ -301,6 +301,10 @@ describe( 'wdf/utils',function(){
 
   describe( 'types',function(){
 
+    it('Link', function() {
+      var s = '[a](b)';
+      assert.equal(new u$.Link.parse(s).toString(),s);
+    });
     it('Sort & Order', function() {
       var cmp = u$.types.string.compare;
       assert.equal(cmp(undefined,null),-1);
@@ -332,6 +336,13 @@ describe( 'wdf/utils',function(){
             '' : NaN, 'NaN': NaN, '3' : 3, '0' : 0,
             '0x15' : 21, '1e8' : 1e8, 'null' : NaN },
           negative: ['3a', 's']
+        },
+        link : {
+          positive: {
+            '' : null, '[](3)' : new u$.Link('3'),
+            '[a](/a)' : new u$.Link('/a','a'),
+            null : null },
+          negative: [ 'NaN' ,'3a', 's', '[)', '[](','[]','[])']
         },
         boolean : {
           positive: {
@@ -394,6 +405,7 @@ describe( 'wdf/utils',function(){
       var input, out, expected, msg ;
 
       function test_fromstring(t,strict) {
+
         var c = cases[t];
         var suffix = strict ? '_strict' : '';
         var positive_cases = c['positive'+suffix];
@@ -412,7 +424,7 @@ describe( 'wdf/utils',function(){
         }
       }
 
-      //test_fromstring('datetime',false);
+      //test_fromstring('link',false);
       for(var t in  cases){
         test_fromstring(t,false);
         test_fromstring(t,true);
@@ -423,6 +435,10 @@ describe( 'wdf/utils',function(){
       var cases = {
         string : [ [null , ''], ['a' , 'a'], [ '3' , '3'] ],
         number : [ [ NaN,''],[3,'3'],[null,''],[1e8,'100000000']],
+        link : [ [ null,''],
+          [new u$.Link('/a'),'[](/a)'],
+          [new u$.Link('/a','xx'),'[xx](/a)'],
+          ],
         boolean : [ [true,'true'],[false,'false'],[null,'']],
         date : [ [new Date(Date.UTC(2015,8,15,17,0,14)),'2015-09-15'],[null,""]],
         datetime : [ [new Date(Date.UTC(2015,8,15,17,0,14)),'2015-09-15 17:00:14'],[null,""]],
@@ -480,6 +496,14 @@ describe( 'wdf/utils',function(){
             u$.detect_possible_array_types(['1','0',''] ),
             'number');
       });
+      it('link', function() {
+        match(  {
+              string:{ array:['[rr](x)','[](/a)',''],hasMissing:true},
+              link:{ array:[new u$.Link('x','rr'),new u$.Link('/a',''),null],hasMissing:true},
+            },
+            u$.detect_possible_array_types(['[rr](x)','[](/a)',''] ),
+            'link');
+      });
       it('date', function() {
         match(  {
               string:{ array:['1994-10-17','2015-02-03',''],hasMissing:true},
@@ -514,6 +538,14 @@ describe( 'wdf/utils',function(){
               number:{ array:[1,0],hasMissing:false},
             },
             u$.detect_possible_array_types(['1','0'] ),'number');
+      });
+      it('link', function() {
+        match(  {
+              string:{ array:['[rr](x)','[](/a)'],hasMissing:false},
+              link:{ array:[new u$.Link('x','rr'),new u$.Link('/a','')],hasMissing:false},
+            },
+            u$.detect_possible_array_types(['[rr](x)','[](/a)'] ),
+            'link');
       });
       it('date', function() {
         match(  {
