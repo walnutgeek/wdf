@@ -6,12 +6,22 @@
 try{
   var jsdom = require('jsdom').jsdom;
   module.exports = function ( html){
-    return jsdom(html).body.firstChild;
+    var doc = jsdom(html);
+    return {
+      document: doc,
+      window: doc.defaultView,
+      element: doc.body.firstChild };
   };
 }catch(e){
-  module.exports = function ( html){
+  // jsdom is not available in browser so
+  // fall back to native DOM
+  module.exports = function (html){
     var elem = document.createElement("div");
     elem.innerHTML = html;
-    return elem.firstElementChild;
+    return {
+      document: document,
+      window: window,
+      element: elem.firstElementChild };
+    ;
   };
 }
