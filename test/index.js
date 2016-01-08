@@ -1,4 +1,3 @@
-module.exports = {
-  utils: require("./utils_test"),
-  DataFrame: require("./DataFrame_test"),
-};
+require("./utils_test");
+require("./DataFrame_test");
+require("./WebPath_test");
