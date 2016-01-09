@@ -22,6 +22,5 @@ try{
       document: document,
       window: window,
       element: elem.firstElementChild };
-    ;
   };
 }

@@ -55,10 +55,10 @@
             this.and_or = check(s[0],['A','O']);
             this.show_hide = check(s[1],['S','H']);
             var i = 2;
-            if(['A','D'].indexOf(s[i]) ){
+            if(['A','D'].indexOf(s[i]) > -1){
                 this.accending_descending = s[i];
                 while( ++i < s.length && s[i] >= '0' && s[i] <= '9');
-                this.sort_index = +s.substring(2,i)
+                this.sort_index = +s.substring(2,i);
             }
             var search_array = [] ;
             var next_search = '' ;
@@ -69,15 +69,15 @@
                         i++;
                         next_search+=c;
                     }else{
-                        search_array.push(new Search(next_search))
-                        next_search = ''
+                        search_array.push(new Search(next_search));
+                        next_search = '';
                     }
                 }else{
                     next_search+=c;
                 }
             }
             if(next_search.length){
-                search_array.push(new Search(next_search))
+                search_array.push(new Search(next_search));
             }
             if(search_array.length){
                 this.searches = search_array;
@@ -114,8 +114,30 @@
     };
 
     function Params(input){
-        this.decoded = decodeURI(input);
+      var fields={};
+      input.split('&').forEach(function(s){
+        if(s){
+          var key_val = s.split('=',2);
+          fields[key_val[0]] = new Field(decodeURI(key_val[1]));
+        }
+      });
+      this.fields = fields;
     }
+    Params.prototype.toString=function(){
+      var s = '';
+      for (var key in this.fields) {
+        if (!this.fields.hasOwnProperty(key) ) continue;
+        var v = this.fields[key].toString() ;
+
+        if( v ){
+          if( s ){
+            s += '&' ;
+          }
+          s += key + '=' +  encodeURIComponent(v) ;
+        }
+      }
+      return s;
+    };
 
     function WebPath(input){
         var array = input ;
@@ -171,6 +193,8 @@
     };
 
     WebPath.Search = Search ;
+    WebPath.Params = Params ;
+    WebPath.Field = Field ;
 
     module.exports = WebPath;
 })();

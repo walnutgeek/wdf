@@ -1,19 +1,10 @@
 var assert = require('assert');
 var _ = require("lodash");
 
-function testArrays(expected, actual) {
-  assert.equal(expected.length, actual.length );
-  for ( var i = 0; i < expected.length; i++) {
-    assert.equal(expected[i], actual[i]);
-  }
-}
-
 var WebPath = require("../wdf/WebPath");
 
-var smartAssert = require("./smart_assert");
-
 describe( 'WebPath',function() {
-  it('#Search', function () {
+  it('.Search', function () {
     var Search = WebPath.Search;
     var  s1 = new Search("Rhel+o");
     assert.ok(s1.matcher.test('hello'));
@@ -45,5 +36,17 @@ describe( 'WebPath',function() {
     assert.ok(s1.matcher.test('allo hello ale'));
     assert.ok(!s1.matcher.test('helo'));
     assert.ok(s1.matcher.test('heLlo'));
+  });
+  it('.Field', function () {
+  });
+  it('.Params', function () {
+  });
+  it('.path()/.isRoot()', function () {
+  });
+  it('.extension()', function () {
+  });
+  it('.enumerate()', function () {
+  });
+  it('all together', function () {
   });
 });
