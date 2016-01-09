@@ -240,7 +240,7 @@ describe( 'wdf/DataFrame', function(){
           '<tr><td>1 text 1</td><td>text 2</td><td>1</td></tr>' +
           '<tr><td>2 text 1</td><td>text 2</td><td>2</td></tr>' +
           '<tr><td>3 text 1</td><td>text 2</td><td>3</td></tr>' +
-          '<tr><td>4 text 1</td><td>text 2</td><td>4</td></tr></table>');
+          '<tr><td>4 text 1</td><td>text 2</td><td>4</td></tr></table>').element;
 
 
       var df = DataFrame.parse_dom_table(dom);
@@ -256,7 +256,7 @@ describe( 'wdf/DataFrame', function(){
         "<tr><td>ABC</td><td></td><td>52</td></tr>"+
         "<tr><td></td><td></td><td></td></tr>" +
         "</tbody>" +
-        "</table>");
+        "</table>").element;
       df = DataFrame.parse_dom_table(dom);
       array = df.getObjects();
       assert.equal(5,array.length);
