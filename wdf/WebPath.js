@@ -37,6 +37,9 @@
     Search.prototype.toString=function(){
         return this.type + this.pattern;
     };
+    Search.prototype.test=function(s){
+      return this.matcher.test(s);
+    };
 
     function check(c, allowed){
         if(allowed.indexOf(c) < 0){
@@ -58,7 +61,7 @@
             if(['A','D'].indexOf(s[i]) > -1){
                 this.accending_descending = s[i];
                 while( ++i < s.length && s[i] >= '0' && s[i] <= '9');
-                this.sort_index = +s.substring(2,i);
+                this.sort_index = +s.substring(3,i);
             }
             var search_array = [] ;
             var next_search = '' ;
@@ -99,12 +102,34 @@
         return copy;
     }
 
+    Field.prototype.test = function(s){
+      if( !this.searches ){
+        return true;
+      }
+      var i;
+      if(  this.and_or === 'A' ){
+        for(i = 0 ; i < this.searches.length; i++ ){
+          if( !this.searches[i].test(s) ){
+            return false;
+          }
+        }
+        return true ;
+      }else{
+        for(i = 0 ; i < this.searches.length; i++ ){
+          if( this.searches[i].test(s) ){
+            return true;
+          }
+        }
+        return false;
+      }
+    };
+
     Field.prototype.toString = function(){
         var s = this.and_or + this.show_hide;
         if( this.accending_descending && _.isNumber(this.sort_index) ){
             s += this.accending_descending + this.sort_index;
         }
-        if(this.searches.length){
+        if(this.searches && this.searches.length){
             for(var i = 0 ; i < this.searches.length; i++){
                 if(i) s += ',';
                 s += escape_commas(this.searches[i].toString());
@@ -114,21 +139,21 @@
     };
 
     function Params(input){
-      var fields={};
+      var self = this ;
+      input = input || '';
       input.split('&').forEach(function(s){
         if(s){
           var key_val = s.split('=',2);
-          fields[key_val[0]] = new Field(decodeURI(key_val[1]));
+          self[key_val[0]] = new Field(decodeURIComponent(key_val[1]));
         }
       });
-      this.fields = fields;
     }
+
     Params.prototype.toString=function(){
       var s = '';
-      for (var key in this.fields) {
-        if (!this.fields.hasOwnProperty(key) ) continue;
-        var v = this.fields[key].toString() ;
-
+      for (var key in this) {
+        if (!this.hasOwnProperty(key) ) continue;
+        var v = this[key].toString() ;
         if( v ){
           if( s ){
             s += '&' ;
@@ -136,7 +161,7 @@
           s += key + '=' +  encodeURIComponent(v) ;
         }
       }
-      return s;
+      return s ;
     };
 
     function WebPath(input){
@@ -190,6 +215,10 @@
             this.parent.enumerate(input);
         }
         return input;
+    };
+    WebPath.prototype.toString=function(){
+
+      return this.path();
     };
 
     WebPath.Search = Search ;
