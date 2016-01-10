@@ -87,6 +87,9 @@ describe( 'WebPath',function() {
     var f = new Field('AS');
     assert.ok(f.test('slkdlksj kl dlsk'));
     assert.ok(_.isUndefined(f.toString()));
+    f = new Field();
+    assert.ok(f.test('slkdlksj kl dlsk'));
+    assert.ok(_.isUndefined(f.toString()));
     f = new Field('ASSa,,a');
     assert.ok(f.test('ba,ab'));
     assert.equal(f.toString(),'ASSa,,a');
