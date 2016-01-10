@@ -181,22 +181,23 @@
         }else{
             // if it is not string that it is recursive call
             // to init parent chain
+            this.name = array.pop() ;
             this.dir = true;
         }
         this.parent = array.length > 0 ?  new WebPath(array) : null ;
     }
 
     WebPath.prototype.extension=function(){
-        if( this.ext !== undefined ){
-            return this.ext;
-        }
+      if( _.isUndefined(this.ext) ){
         for( var i = this.name.length - 1 ; i > 0 ; i-- ){
-            if(this.name[i] === '.' ){
-                this.ext = this.name.substr(i+1).toLowerCase();
-                return this.ext;
-            }
+          if(this.name[i] === '.' ){
+            this.ext = this.name.substr(i+1).toLowerCase();
+            return this.ext;
+          }
         }
-        return null;
+        this.ext = null ;
+      }
+      return this.ext;
     };
 
 
@@ -205,7 +206,10 @@
     };
 
     WebPath.prototype.path=function(){
-        return this.isRoot() ? this.name  : this.parent.path() + '/' + this.name;
+        if( _.isUndefined(this._path) ){
+            this._path = (this.isRoot() ? this.name  : this.parent.path() +  this.name) + (this.dir ? '/' : '');
+        }
+        return this._path;
     };
 
     WebPath.prototype.enumerate=function(input){
@@ -217,8 +221,10 @@
         return input;
     };
     WebPath.prototype.toString=function(){
-
-      return this.path();
+        if(this.params){
+            return this.path() + '?' + this.params.toString() ;
+        }
+        return this.path() ;
     };
 
     WebPath.Search = Search ;

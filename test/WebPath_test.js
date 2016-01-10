@@ -132,12 +132,38 @@ describe( 'WebPath',function() {
     assert.equal('',new Params().toString());
 
   });
-  it('.path()/.isRoot()', function () {
+  var path = new WebPath('/abc/o/x.csv?q=ASSa%2C%2Ca&O=OHSa%2CSb');
+  it('.isRoot()', function () {
+    assert.ok(!path.isRoot());
+    assert.equal(path.name,'x.csv');
+    assert.ok(!path.parent.isRoot());
+    assert.equal(path.parent.name,'o');
+    assert.ok(!path.parent.parent.isRoot());
+    assert.equal(path.parent.parent.name,'abc');
+    assert.ok(path.parent.parent.parent.isRoot());
+    assert.equal(path.parent.parent.parent.name,'');
   });
   it('.extension()', function () {
+    assert.equal('csv', path.extension());
+    assert.equal('csv', path.extension());
+    assert.equal(null, path.parent.extension());
+    assert.equal(null, path.parent.extension());
   });
   it('.enumerate()', function () {
+    var e = path.enumerate();
+    var paths = ['/', '/abc/', '/abc/o/', '/abc/o/x.csv'];
+    var names = ['', 'abc', 'o', 'x.csv'];
+    for( var i = 0 ; i < e.length ; i++ ){
+      assert.equal(e[i].path(),paths[i]);
+      assert.equal(e[i].path(),paths[i]);
+      assert.equal(e[i].name,names[i]);
+    }
   });
   it('all together', function () {
+    assert.equal(path.path(),'/abc/o/x.csv');
+    assert.equal(path.toString(),"/abc/o/x.csv?q=ASSa%2C%2Ca&O=OHSa%2CSb");
+    assert.equal(new WebPath('/abc/o/x.csv').toString(),'/abc/o/x.csv');
+    assert.equal(new WebPath('/abc/o').toString(),'/abc/o');
+    assert.equal(new WebPath('/abc/o/').toString(),'/abc/o/');
   });
 });
