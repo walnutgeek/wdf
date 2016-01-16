@@ -4,8 +4,8 @@ var u$ = require('../wdf/utils');
 
 module.exports = function(expected, result, msg) {
   if (expected instanceof u$.Link){
-    assert.equal(expected.href,result.href, msg + ' e:'+e+ ' r:'+r);
-    assert.equal(expected.text,result.text, msg + ' e:'+e+ ' r:'+r);
+    assert.equal(expected.href,result.href, msg + ' e:'+expected.href+ ' r:'+result.href);
+    assert.equal(expected.text,result.text, msg + ' e:'+expected.href+ ' r:'+result.href);
   } else if (_.isDate(expected)){
     var r = result && result.valueOf();
     var e =expected.valueOf() ;
