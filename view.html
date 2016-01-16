@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>viev</title>
+    <script src="dist/view.js"></script>
+</head>
+<body>
+<div id="header"></div>
+<div id="data"></div>
+<script>
+    document.getElementById("header").appendChild(wdf.header);
+    document.getElementById("data").appendChild(wdf.data);
+    wdf.setAllColumnWidths(wdf.getAllColumnWidths().map(
+            function(n){return n > 100 ? 100 : n;}
+    ));
+    console.log(wdf.getAllColumnWidths());
+    var interval = setInterval(function(){
+//        console.log(wdf.getAllColumnWidths());
+    },100);
+    setTimeout(function(){
+        clearInterval(interval);
+    },500);
+</script>
+</body>
+</html>

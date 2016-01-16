@@ -283,6 +283,10 @@
     return Object.keys(this.columnSet.byName);
   };
 
+  DataFrame.prototype.getColumnCount=function(){
+    return this.columnSet.byIndex.length;
+  };
+
 
 // **getObjectRow(row_num,result)**
 //
@@ -379,6 +383,14 @@
     }
     return undefined;
   };
+
+  DataFrame.prototype.getColumnIndex = function (name_or_idx) {
+    return this.columnSet.getColumn(name_or_idx).col_idx;
+  };
+  DataFrame.prototype.getColumnName = function (name_or_idx) {
+    return this.columnSet.getColumn(name_or_idx).name;
+  };
+
 // ** apply(logic) **
 //
 // run `logic(df,row_num)` function on all rows of DataFrame

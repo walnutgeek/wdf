@@ -25,7 +25,10 @@ function cfg(entry_point, out_file, customizer){
           include: ["wdf", "test"].map(absdir)
         }
       ],
-      loaders: [],
+      loaders: [
+        { test: /\.css$/,
+          loader: 'style?minimize!css' },
+      ],
     },
     plugins: [
       new webpack.IgnorePlugin(/jsdom/)
@@ -43,5 +46,6 @@ module.exports = [
       loader: "uglify"
     });
   }),
+  cfg("./test/view_entry.js","view.js"),
   cfg("mocha!./test/index.js","testBundle.js")
 ];
