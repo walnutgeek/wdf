@@ -156,25 +156,13 @@
     });
   };
 
-  // move to utils
-  function stats_handler(key, val, store){
-    if( store.hasOwnProperty(key) ){
-      var entry = store[key];
-      entry.count ++;
-      entry.sum += val;
-      if( entry.min > val ) entry.min = val ;
-      if( entry.max < val ) entry.max = val ;
-    }else{
-      store[key] = {count: 1 , sum:val , min: val, max: val};
-    }
-  }
 
   WdfView.prototype.markOverflownColumn = function(){
     var real_width_stats = {};
     this.applyToAllCells(function(row,col_name,cell){
       var real_w = cell.firstChild.scrollWidth ;
       var visual_w = cell.firstChild.offsetWidth ;
-      stats_handler(col_name,real_w,real_width_stats);
+      u$.collect_stats(col_name,real_w,real_width_stats);
       if( real_w > visual_w ){
         cell.classList.add('wdf_over');
       }else{

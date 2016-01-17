@@ -56,28 +56,9 @@ describe( 'wdf/utils',function(){
       }
     });
   });
-  it( '#Tokenizer', function() {
-    var tt = u$.Tokenizer("a/b/c//dd/x/v/l", "/?&=");
-    assert.equal(tt.nextDelimiter(), "");
-    assert.equal(tt.nextValue(), "a");
-    assert.equal(tt.nextDelimiter(), "/");
-    assert.equal(tt.nextValue(), "b");
-    assert.equal(tt.nextDelimiter(), "/");
-    assert.equal(tt.nextValue(), "c");
-    assert.equal(tt.nextDelimiter(), "//");
-    assert.equal(tt.nextValue(), "dd");
-    assert.equal(tt.nextDelimiter(), "/");
-    assert.equal(tt.nextValue(), "x");
-    assert.equal(tt.nextDelimiter(), "/");
-    assert.equal(tt.nextDelimiter(), "");
-    assert.equal(tt.nextValue(), "v");
-    assert.equal(tt.nextDelimiter(), "/");
-    assert.equal(tt.nextValue(), "l");
-    assert.equal(tt.nextValue(), "");
-    assert.equal(tt.nextDelimiter(), "");
-  });
   it( '#BiMap', function() {
     var m = u$.BiMap( { a: 1, b: 2} );
+    assert.deepEqual(m.values(),[1,2]);
     assert.equal(m.get('a'), 1);
     assert.equal(m.get('b'), 2);
     assert.equal(m.key(2), 'b');
@@ -131,23 +112,6 @@ describe( 'wdf/utils',function(){
     }, function(k, m) {
       return m[k];
     }), "[1,2,3]");
-  });
-  it( '#splitUrlPath', function() {
-    function test(path, compare_with){
-      assert.equal(JSON.stringify(u$.splitUrlPath(path)), compare_with );
-    }
-    test("abc",'{"path":["abc"],"variables":{}}');
-    test("http://abc.com/index.html",'{"path":["http:","","abc.com","index.html"],"variables":{}}');
-    test("/app.html?&_suid=141740660296307673981441184878",'{"path":["","app.html"],"variables":{"_suid":"141740660296307673981441184878"}}');
-    test("/events/T7?&_suid=141740833138706824455889873207",'{"path":["","events","T7"],"variables":{"_suid":"141740833138706824455889873207"}}');
-    test("",'{"path":[""],"variables":{}}');
-    test("/events/z3?q=askhsj%20hdjk&_suid=141749092391407243743964936584",'{"path":["","events","z3"],"variables":{"q":"askhsj hdjk","_suid":"141749092391407243743964936584"}}');
-    var split =u$.splitUrlPath("/events/z3?q=askhsj%20hdjk&_suid=141749092391407243743964936584");
-    assert.equal(split.toString(), "/events/z3?q=askhsj%20hdjk&_suid=141749092391407243743964936584" );
-    delete split.variables._suid;
-    assert.equal(split.toString(), "/events/z3?q=askhsj%20hdjk" );
-    delete split.variables.q;
-    assert.equal(split.toString(), "/events/z3" );
   });
   it( '#error', function() {
     var e = u$.error({
@@ -235,6 +199,13 @@ describe( 'wdf/utils',function(){
     var three = {};
     u$.brodcastCall([one,two,three] ,"f",[1]);
     testArrays([ "1", "2" ], array);
+    array = [ 'Nope', 'Nope' ];
+    try {
+      u$.brodcastCall([one, two, three], "f", [1], true);
+      assert.fail();
+    }catch(e){
+
+    }
   });
   it( '#isArrayEmpty', function() {
     var nope = [ 'Nope', 'Nope' ];
@@ -253,6 +224,16 @@ describe( 'wdf/utils',function(){
   it( '#repeat', function() {
     testArrays([ 0, 0, 0, 0 ], u$.repeat(4, 0));
     testArrays([ 1, 1, 1, 1 ], u$.repeat(4, 1));
+  });
+  it( '#collect_stats', function() {
+    var store = {};
+    u$.collect_stats('a', 2, store);
+    u$.collect_stats('a', 1, store);
+    u$.collect_stats('b', -1, store);
+    u$.collect_stats('a', 5, store);
+    u$.collect_stats('b', 1, store);
+    assert.deepEqual(store, { a: { count: 3, sum: 8, min: 1, max: 5 },
+       b: { count: 2, sum: 0, min: -1, max: 1 } } );
   });
   it( '#parse_date', function() {
     function test(to_s,to_d,s){
@@ -315,14 +296,16 @@ describe( 'wdf/utils',function(){
       assert.equal(cmp('z', undefined),1);
       assert.equal(cmp('z','a'),1);
       assert.equal(cmp('a','z'),-1);
-      var array = ['a',null,undefined,'z','r',undefined ] ;
+      var array = ['a','A',null,'z','r',undefined ] ;
       var index = u$.createIndex(array);
-      assert.deepEqual(array,['a',null,undefined,'z','r',undefined ],'sanity');
+      assert.deepEqual(array,['a','A',null,'z','r',undefined ],'sanity');
       assert.deepEqual(index,[0,1,2,3,4,5 ] , 'index');
       index.sort(u$.indexOrder(cmp,array));
-      assert.deepEqual(u$.extractValuesByIndex(index,array),[ undefined, undefined, null, "a", "r", "z" ],'check order');
-      assert.deepEqual(index,[ 2, 5, 1, 0, 4, 3 ],'check index');
-      assert.deepEqual(array,['a',null,undefined,'z','r',undefined ],'original array unchanged');
+      assert.deepEqual(u$.extractValuesByIndex(index,array),[ undefined, null, "A", "a", "r", "z" ],'check order');
+      assert.deepEqual(index,[ 5, 2, 1, 0, 4, 3 ],'check index');
+      assert.deepEqual(array,['a','A',null,'z','r',undefined ],'original array unchanged');
+      index.sort(u$.orderInverse(u$.indexOrder(cmp,array)));
+      assert.deepEqual(index,[ 3, 4, 0, 1, 2, 5 ]);
     });
 
     it('types[*].from_string', function() {

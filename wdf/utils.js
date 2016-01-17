@@ -758,82 +758,32 @@
     this.values = function() { return Object.keys(inverse()); };
   };
 
-// ## Stuff should be thrown away but I am reactant for  some reason
-
-// Tokenizer
-  u$.Tokenizer=function(s, delimiters) {
-    var i = 0;
-
-    function isValueChar() {
-      return delimiters.indexOf(s.charAt(i)) < 0;
+// Collect `sum`, `count`, `min` and `max` for multiple
+// sets of observations. Sets are identified  by `key` and maintainde
+// in `store` object during data collection.
+// ```
+// > store = {}
+// > collect_stats('a', 1, store)
+// > collect_stats('a', 2, store)
+// > collect_stats('b', -1, store)
+// > collect_stats('a', 5, store)
+// > collect_stats('b', 1, store)
+// > store
+// { a: { count: 3, sum: 8, min: 1, max: 5 },
+//   b: { count: 2, sum: 0, min: -1, max: 1 } }
+// > store.a.sum/store.a.count
+// 2.6666666666666665
+// ```
+  u$.collect_stats = function(key, val, store){
+    if( store.hasOwnProperty(key) ){
+      var entry = store[key];
+      entry.count ++;
+      entry.sum += val;
+      if( entry.min > val ) entry.min = val ;
+      if( entry.max < val ) entry.max = val ;
+    }else{
+      store[key] = {count: 1 , sum:val , min: val, max: val};
     }
-
-    function next(condition) {
-      var start = i;
-      while (i < s.length && condition()){
-        i++;
-      }
-      return s.substring(start, i);
-    }
-
-    return {
-      getText : function() {
-        return s;
-      },
-      nextValue : function() {
-        return next(isValueChar);
-      },
-      nextDelimiter : function() {
-        return next(function() {
-          return !isValueChar();
-        });
-      },
-      toString : function() {
-        return s.substring(0, i) + " <-i-> " + s.substring(i);
-      },
-      getPosition : function() {
-        return i;
-      },
-      setPosition : function(_i) {
-        i = _i;
-      }
-    };
-  };
-
-//** splitUrlPath(urlpath) **
-//
-// spit url path on path elements, and variables.
-//
-  u$.splitUrlPath=function(urlpath) {
-    var path = urlpath.split("/");
-    var last = path[path.length-1].split('?');
-    var result = {
-      path: path ,
-      variables: {},
-      toString: function(){
-        var vars = '' ;
-        var sep = '?' ;
-        for ( var k in this.variables) {
-          if (this.variables.hasOwnProperty(k)) {
-            vars += sep + k + '=' + encodeURI(this.variables[k]);
-            sep = '&';
-          }
-        }
-        return this.path.join('/') + vars;
-      }
-    };
-    if( last.length === 2 ){
-      path[path.length-1] = last[0];
-      last[1].split("&").forEach(function(part) {
-        var item = part.split("=");
-        if( item[0].length > 0 ){
-          result.variables[item[0]] = decodeURIComponent(item[1]);
-        }
-      });
-    }else if(last.length > 2){
-      throw 'Unexpected number of "?" in url :' + urlpath ;
-    }
-    return result;
   };
 
 // order functions take two arguments (let's say `a` and `b`)
@@ -916,12 +866,6 @@
       return f(b, a);
     };
   };
-
-  function build_to_string_fn(_to_string){
-    return function (v){
-      return u$.isNullish(v) ? "" : _to_string(v) ;
-    };
-  }
 
 //** orderNullsFirst(orderFuncArray) **
 //
