@@ -25,39 +25,31 @@
     }
   }
 
-  function elem(document, parent, tag , classes, attrs){
-    var e = document.createElement(tag);
-    if(classes){
-      classes.forEach(function(c){ e.classList.add(c); });
-    }
-    setAllAttributes(e,attrs);
-    if(parent) parent.appendChild(e);
-    return e;
-  }
 
-  function WdfView(document, df, format, webPath, widths,theme){
-    this.document = document;
-    this.df = df ;
-    this.webPath = webPath;
-    this.format =  format || {};
-    this.widths =  widths || {};
-    this.theme =   theme || default_theme ;
+  function WdfView(props){
+    this.document = props.document;
+    this.df = props.df ;
+    this.webPath = props.webPath;
+    this.subset = this.df;
+    this.format =  props.format || {};
+    this.widths =  props.widths || [];
+    this.theme =   props.theme || default_theme ;
     this.id = 'wdf_id_' + getUniqueId();
-    this.header =  elem(document, null, 'table', ['wdf','wdf_header', this.id]);
-    this.data =    elem(document, null, 'table', ['wdf','wdf_data',this.id]);
-    var head_tr = elem(document, this.header, 'tr',['wdf']);
+    this.header =  this._new_elem(null, 'table', ['wdf','wdf_header', this.id]);
+    this.data =    this._new_elem(null, 'table', ['wdf','wdf_data',this.id]);
+    var head_tr =  this._new_elem(this.header, 'tr',['wdf']);
     var header_cell_fn = this.theme.header_cell_fn(this.format) ;
-    var columnNames = df.getColumnNames();
+    var columnNames = this.df.getColumnNames();
     var cell_fns = [] ;
     this.width_pairs=[];
     var r, tr, th, td, div, col_name;
     for(var col_idx = 0 ; col_idx < columnNames.length; col_idx++ ){
       col_name = columnNames[col_idx];
-      cell_fns[col_idx]=this.theme.cell_fn(this.format,df.getColumn(col_idx));
-      th = elem(document,head_tr,'th',['wdf'],
+      cell_fns[col_idx]=this.theme.cell_fn(this.format,this.df.getColumn(col_idx));
+      th = this._new_elem(head_tr,'th',['wdf'],
           {'data-column':col_name});
       this.width_pairs[col_idx]=[th];
-      div = elem(document,th,'div',['wdf_masker']);
+      div = this._new_elem(th,'div',['wdf_masker']);
       r = header_cell_fn.call(th, this.df, col_idx, col_name);
       if( !_.isUndefined(r) ){
         if( _.isPlainObject(r) ){
@@ -70,25 +62,25 @@
       }
     }
 
-    r = this.theme.header_row_fn(this.format).call(head_tr,df);
+    r = this.theme.header_row_fn(this.format).call(head_tr,this.df);
     if( _.isPlainObject(r) ) {
       setAllAttributes(head_tr, r);
     }
 
     var row_fn = this.theme.row_fn(this.format);
-    for(var row_idx = 0 ; row_idx < df.getRowCount(); row_idx++ ){
+    for(var row_idx = 0 ; row_idx < this.df.getRowCount(); row_idx++ ){
       var odd_even = 'wdf_' + (row_idx % 2 ? 'even' : 'odd');
-      tr = elem(document,this.data,'tr',[ 'wdf',  odd_even ],
+      tr = this._new_elem(this.data,'tr',[ 'wdf',  odd_even ],
           {'data-row':row_idx});
       for( col_idx = 0 ; col_idx < columnNames.length; col_idx++ ){
 
         col_name = columnNames[col_idx];
-        td = elem(document,tr,'td',['wdf'],
+        td = this._new_elem(tr,'td',['wdf'],
             {'data-column':col_name});
         if( row_idx === 0 ){
           this.width_pairs[col_idx][1]=td;
         }
-        div = elem(document,td,'div',['wdf_masker']);
+        div = this._new_elem(td,'div',['wdf_masker']);
         r = cell_fns[col_idx].call(td, this.df, row_idx, col_idx, col_name);
         if( !_.isUndefined(r) ){
           if( _.isPlainObject(r) ){
@@ -106,6 +98,16 @@
       }
     }
   }
+
+  WdfView.prototype._new_elem = function (parent, tag , classes, attrs){
+    var e = this.document.createElement(tag);
+    if(classes){
+      classes.forEach(function(c){ e.classList.add(c); });
+    }
+    setAllAttributes(e,attrs);
+    if(parent) parent.appendChild(e);
+    return e;
+  };
 
   WdfView.prototype.applyToColumn = function(col,fn){
     var colName = this.df.getColumnName(col);

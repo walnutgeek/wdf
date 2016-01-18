@@ -13,9 +13,6 @@ td.wdf, th.wdf {
     padding: 2px;
     white-space: nowrap;
 }
-.wdf_over {
-    background-color: lightpink;
-}
 div.wdf_masker{
     overflow:hidden;
     width: 100%;
