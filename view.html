@@ -11,15 +11,14 @@
     <script src="dist/view.js"></script>
 </head>
 <body>
-<div id="header"></div>
-<div id="data"></div>
+<div id="table"></div>
 <script>
-    document.getElementById("header").appendChild(wdf.header);
-    document.getElementById("data").appendChild(wdf.data);
-    wdf.setAllColumnWidths(wdf.getAllColumnWidths().map(
+    var view = new wdf.WdfView({df: wdf.df,container:'#table'});
+
+    view.setAllColumnWidths(view.getAllColumnWidths().map(
             function(n){return n > 100 ? 100 : n;}
     ));
-    console.log(wdf.getAllColumnWidths());
+    console.log(view.getAllColumnWidths());
     var interval = setInterval(function(){
 //        console.log(wdf.getAllColumnWidths());
     },100);

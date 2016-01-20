@@ -2,10 +2,14 @@
   "use strict";
 
   var _ = require("lodash");
-
   var u$ = require("./utils");
   var DataFrame = require("./DataFrame");
-  var default_theme = require('./ViewTheme');
+
+  var defaults = {
+    format: {},
+    widths: {},
+    theme: require('./ViewTheme'),
+  } ;
 
   var getUniqueId =
       ( function () {
@@ -27,25 +31,45 @@
 
 
   function WdfView(props){
-    this.document = props.document;
-    this.df = props.df ;
-    this.webPath = props.webPath;
-    this.subset = this.df;
-    this.format =  props.format || {};
-    this.widths =  props.widths || [];
-    this.theme =   props.theme || default_theme ;
+    props = _.defaults(props,defaults);
+    this.props = props;
+    if(!this.props.df){
+      throw u$.error({msg: 'df parameter has to be defined'});
+    }
+    this.df = this.props.df ;
+    if(!this.props.document){
+      throw u$.error({msg: 'document parameter has to be defined'});
+    }
+    if( this.props.container ){
+      if( _.isString(this.props.container) ){
+        var queried = this.props.document.querySelector(this.props.container);
+        if(!queried){
+          throw u$.error({
+            msg:'container query does not match anything.',
+            query: this.props.container});
+        }
+        this.props.container = queried;
+      }
+      this.props.container.innerHTML='';
+      this.props.container.wdfView = this ;
+    }
     this.id = 'wdf_id_' + getUniqueId();
-    this.header =  this._new_elem(null, 'table', ['wdf','wdf_header', this.id]);
-    this.data =    this._new_elem(null, 'table', ['wdf','wdf_data',this.id]);
+    this.header =  this._new_elem(this.props.container, 'table', ['wdf','wdf_header', this.id]);
+    this.data =    this._new_elem(this.props.container, 'table', ['wdf','wdf_data',this.id]);
     var head_tr =  this._new_elem(this.header, 'tr',['wdf']);
-    var header_cell_fn = this.theme.header_cell_fn(this.format) ;
+
+    function get_formatter(name,arg){
+      return props.theme[name](props.format,arg);
+    }
+
+    var header_cell_fn = get_formatter('header_cell_fn');
     var columnNames = this.df.getColumnNames();
     var cell_fns = [] ;
     this.width_pairs=[];
     var r, tr, th, td, div, col_name;
     for(var col_idx = 0 ; col_idx < columnNames.length; col_idx++ ){
       col_name = columnNames[col_idx];
-      cell_fns[col_idx]=this.theme.cell_fn(this.format,this.df.getColumn(col_idx));
+      cell_fns[col_idx]=get_formatter('cell_fn',this.df.getColumn(col_idx));
       th = this._new_elem(head_tr,'th',['wdf'],
           {'data-column':col_name});
       this.width_pairs[col_idx]=[th];
@@ -62,12 +86,12 @@
       }
     }
 
-    r = this.theme.header_row_fn(this.format).call(head_tr,this.df);
+    r = get_formatter('header_row_fn').call(head_tr,this.df);
     if( _.isPlainObject(r) ) {
       setAllAttributes(head_tr, r);
     }
 
-    var row_fn = this.theme.row_fn(this.format);
+    var row_fn = get_formatter('row_fn');
     for(var row_idx = 0 ; row_idx < this.df.getRowCount(); row_idx++ ){
       var odd_even = 'wdf_' + (row_idx % 2 ? 'even' : 'odd');
       tr = this._new_elem(this.data,'tr',[ 'wdf',  odd_even ],
@@ -99,8 +123,40 @@
     }
   }
 
+  WdfView.setDefault=function(key,value){
+    defaults[key]=value;
+  };
+
+  WdfView.getDefault=function(key){
+    return defaults[key];
+  };
+
+  WdfView.hasDefault=function(key){
+    return defaults.hasOwnProperty(key);
+  };
+
+  try{
+    var d = document;
+    if(d) {
+      WdfView.setDefault('document', d);
+    }
+  }catch(e){}
+
+  try{
+    var jq = jquery;
+    if(jq) {
+      jq.fn.WdfView=function(props){
+        if (this && this[0]){
+          props = _.defaults(props,{container: this[0]});
+          new WdfView(props);
+        }
+      };
+      WdfView.setDefault('jquery', jq);
+    }
+  }catch(e){}
+
   WdfView.prototype._new_elem = function (parent, tag , classes, attrs){
-    var e = this.document.createElement(tag);
+    var e = this.props.document.createElement(tag);
     if(classes){
       classes.forEach(function(c){ e.classList.add(c); });
     }
@@ -112,7 +168,7 @@
   WdfView.prototype.applyToColumn = function(col,fn){
     var colName = this.df.getColumnName(col);
     var q = '.'+this.id+' [data-column='+ colName +']' ;
-    var elems = this.document.querySelectorAll(q);
+    var elems = this.props.document.querySelectorAll(q);
     for(var i = 0 ; i < elems.length; i++ ){
       var cell = elems[i] ;
       var row = cell.parentElement.getAttribute('wdf_row');
@@ -122,7 +178,7 @@
 
   WdfView.prototype.applyToAllCells = function(fn){
     var q = '.'+this.id+' tr' ;
-    var elems = this.document.querySelectorAll(q);
+    var elems = this.props.document.querySelectorAll(q);
     for(var i = 0 ; i < elems.length; i++ ){
       var tr = elems[i];
       var row = tr.getAttribute('wdf_row');
