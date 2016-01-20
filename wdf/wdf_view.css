@@ -1,5 +1,5 @@
 table.wdf{
-    table-layout:fixed;
+    table-layout: fixed;
     border-collapse: collapse;
 }
 
@@ -8,10 +8,7 @@ table.wdf,tr.wdf,td.wdf,th.wdf {
 }
 
 td.wdf, th.wdf {
-    overflow: hidden;
-    text-overflow: ellipsis;
     padding: 2px;
-    white-space: nowrap;
 }
 div.wdf_masker{
     overflow:hidden;

@@ -135,25 +135,19 @@
     return defaults.hasOwnProperty(key);
   };
 
-  try{
-    var d = document;
-    if(d) {
-      WdfView.setDefault('document', d);
-    }
-  }catch(e){}
+  u$.jail(function(){
+    WdfView.setDefault('document', document);
+  });
 
-  try{
-    var jq = jquery;
-    if(jq) {
-      jq.fn.WdfView=function(props){
-        if (this && this[0]){
-          props = _.defaults(props,{container: this[0]});
-          new WdfView(props);
-        }
-      };
-      WdfView.setDefault('jquery', jq);
-    }
-  }catch(e){}
+  u$.jail(function(){
+    WdfView.setDefault('jQuery', jQuery);
+    jQuery.fn.WdfView=function(props){
+      if (this && this[0]){
+        props = _.defaults(props,{container: this[0]});
+        new WdfView(props);
+      }
+    };
+  });
 
   WdfView.prototype._new_elem = function (parent, tag , classes, attrs){
     var e = this.props.document.createElement(tag);

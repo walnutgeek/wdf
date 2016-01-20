@@ -68,6 +68,23 @@ describe( 'wdf/utils',function(){
     m.del('b');
     assert.equal(""+m.keys(), "a,z");
   });
+  it( '#jail', function() {
+    var x = 7;
+    var r;
+    r = u$.jail( function(){
+      x = 5 ;
+      return 3;
+    } );
+    assert.equal(r , 3);
+    try{
+      r = u$.jail( function(){
+        throw 9;
+      } );
+    }catch(nine){
+      assert.fail('nine busted out of jail');
+    }
+    assert.equal(r , 9);
+  });
   it( '#extractArray', function() {
     assert.deepEqual([], u$.extractArray());
   });

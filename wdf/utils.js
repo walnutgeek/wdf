@@ -444,6 +444,15 @@
       });
     }
   };
+//jail(fn)
+//exception jail
+  u$.jail = function(fn){
+    try{
+      return fn();
+    }catch(ignored){
+      return ignored;
+    }
+  };
 
 //## Parsing dates
 

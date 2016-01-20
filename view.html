@@ -12,19 +12,5 @@
 </head>
 <body>
 <div id="table"></div>
-<script>
-    var view = new wdf.WdfView({df: wdf.df,container:'#table'});
-
-    view.setAllColumnWidths(view.getAllColumnWidths().map(
-            function(n){return n > 100 ? 100 : n;}
-    ));
-    console.log(view.getAllColumnWidths());
-    var interval = setInterval(function(){
-//        console.log(wdf.getAllColumnWidths());
-    },100);
-    setTimeout(function(){
-        clearInterval(interval);
-    },500);
-</script>
 </body>
 </html>
