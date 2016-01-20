@@ -46,15 +46,21 @@
   // `{ <name> : <value> ,...}`
 
 
+  function get_cell_as_string(df,row_idx,col_idx,col_name) {
+    return df.get(row_idx,col_idx, 'as_string');
+  }
+
+  function get_cell(df,row_idx,col_idx,col_name) {
+    return df.get(row_idx,col_idx);
+  }
   // formatters library
   var FORMATTERS = {
-    cell: {
-      types : {
-        any: function(df,row_idx,col_idx,col_name) {
-          return df.get(row_idx,col_idx);
-        }
-      },
+    cell_by_type: {
+      date: get_cell_as_string,
+      datetime: get_cell_as_string,
+      timestamp: get_cell_as_string,
     },
+    other_cell: get_cell,
     header_cell: function(df,col_idx,col_name){
       return col_name;
     },
@@ -68,26 +74,23 @@
     return format.header_cell || FORMATTERS.header_cell;
   };
 
-  exports.cell_fn=function(format, col){
+  function find_format_fn(format,col){
     var fn;
-    if(col){
-      if(format && format.cell){
-        fn = format.cell[col.name] ;
-        if(!fn){
-          if(col.type){
-            fn = format.cell[col.type];
-          }
-        }
+    if(col && format){
+      if(format.cell_by_name){
+        fn =  format.cell_by_name[col.name] ;
       }
-      if(!fn){
-        if(col.type){
-          fn = format.cell[col.type];
-        }
+      if(!fn && format.cell_by_type && col.type){
+        fn = format.cell_by_type[col.type.name];
       }
-      if(fn)
-        return fn;
     }
-    return FORMATTERS.cell.types.any;
+    if( !fn && format.other_cell ) {
+      fn = format.other_cell;
+    }
+    return fn;
+  }
+  exports.cell_fn=function(format, col){
+    return find_format_fn(format,col) || find_format_fn(FORMATTERS,col);
   };
 
   exports.row_fn=function(format){

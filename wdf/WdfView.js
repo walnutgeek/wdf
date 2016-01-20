@@ -69,7 +69,7 @@
     var r, tr, th, td, div, col_name;
     for(var col_idx = 0 ; col_idx < columnNames.length; col_idx++ ){
       col_name = columnNames[col_idx];
-      cell_fns[col_idx]=get_formatter('cell_fn',this.df.getColumn(col_idx));
+      cell_fns[col_idx]=get_formatter('cell_fn',this.df.columnSet.byIndex[col_idx]);
       th = this._new_elem(head_tr,'th',['wdf'],
           {'data-column':col_name});
       this.width_pairs[col_idx]=[th];

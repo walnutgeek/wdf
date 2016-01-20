@@ -234,7 +234,6 @@
     return make_df_from_(parse_csv_to_array_of_rows(str), config);
   };
 
-
   DataFrame.parse_wdf=function(str) {
     var arr = str.split('\n');
     var config = JSON.parse(arr.shift());
@@ -331,7 +330,7 @@
 // get one value out of DataFrame
 //   - `row_num` - row number
 //   - `col` - column index or column name
-//
+//   - `fn` -
   DataFrame.prototype.get = function (row_num, col,fn) {
     fn = fn || 'get' ;
     var ph_row = this.index[row_num];
