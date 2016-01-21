@@ -29,7 +29,13 @@
     }
   }
 
-
+  function render_value(div,v){
+    if( u$.isPrimitive(v) ){
+      div.innerText = v ;
+    }else{
+      div.appendChild(v);
+    }
+  }
   function WdfView(props){
     props = _.defaults(props,defaults);
     this.props = props;
@@ -65,35 +71,33 @@
     var header_cell_fn = get_formatter('header_cell_fn');
     var columnNames = this.df.getColumnNames();
     var cell_fns = [] ;
-    this.width_pairs=[];
     var r, tr, th, td, div, col_name;
     for(var col_idx = 0 ; col_idx < columnNames.length; col_idx++ ){
       col_name = columnNames[col_idx];
       cell_fns[col_idx]=get_formatter('cell_fn',this.df.columnSet.byIndex[col_idx]);
       th = this._new_elem(head_tr,'th',['wdf'],
           {'data-column':col_name});
-      this.width_pairs[col_idx]=[th];
       div = this._new_elem(th,'div',['wdf_masker']);
-      r = header_cell_fn.call(th, this.df, col_idx, col_name);
+      r = header_cell_fn.call(th, this, col_idx, col_name);
       if( !_.isUndefined(r) ){
         if( _.isPlainObject(r) ){
-          div.innerText = r.value;
+          render_value(div,r.value);
           setAllAttributes(div,r.div_attrs);
           setAllAttributes(th,r.th_attrs);
         }else{
-          div.innerText = r ;
+          render_value(div,r);
         }
       }
     }
 
-    r = get_formatter('header_row_fn').call(head_tr,this.df);
+    r = get_formatter('header_row_fn').call(head_tr,this);
     if( _.isPlainObject(r) ) {
       setAllAttributes(head_tr, r);
     }
 
     var row_fn = get_formatter('row_fn');
     for(var row_idx = 0 ; row_idx < this.df.getRowCount(); row_idx++ ){
-      var odd_even = 'wdf_' + (row_idx % 2 ? 'even' : 'odd');
+      var odd_even = 'wdf_' + (row_idx % 2 ? 'odd' : 'even');
       tr = this._new_elem(this.data,'tr',[ 'wdf',  odd_even ],
           {'data-row':row_idx});
       for( col_idx = 0 ; col_idx < columnNames.length; col_idx++ ){
@@ -101,26 +105,27 @@
         col_name = columnNames[col_idx];
         td = this._new_elem(tr,'td',['wdf'],
             {'data-column':col_name});
-        if( row_idx === 0 ){
-          this.width_pairs[col_idx][1]=td;
-        }
         div = this._new_elem(td,'div',['wdf_masker']);
-        r = cell_fns[col_idx].call(td, this.df, row_idx, col_idx, col_name);
+        r = cell_fns[col_idx].call(td, this, row_idx, col_idx, col_name);
+
         if( !_.isUndefined(r) ){
           if( _.isPlainObject(r) ){
-            div.innerText = r.value;
+            render_value(div,r.value);
             setAllAttributes(div,r.div_attrs);
             setAllAttributes(td,r.td_attrs);
           }else{
-            div.innerText = r ;
+            render_value(div,r);
           }
         }
-        r = row_fn.call(tr, this.df, row_idx);
+        r = row_fn.call(tr, this, row_idx);
         if( _.isPlainObject(r) ) {
           setAllAttributes(tr, r);
         }
       }
     }
+    this.widths = this.getColumnWidthStats();
+    this.setAllColumnWidths();
+    this.markOverflownColumn();
   }
 
   WdfView.setDefault=function(key,value){
@@ -187,39 +192,41 @@
   };
 
 
-  WdfView.prototype.getAllColumnWidths = function(from_where){
-    from_where = _.isUndefined(from_where) ? 1 : (from_where ? 1 : 0) ;
-    return this.width_pairs.map(function(pair){
-      return pair[from_where].offsetWidth;
-    });
-  };
-
   WdfView.prototype.setColumnWidth = function(col,width){
+    var colName = this.df.getColumnName(col);
+    this.widths[colName].current = width ;
     this.applyToColumn(col,function(row,col_name,cell){
       cell.firstChild.style.width = width + 'px';
     });
   };
 
-  WdfView.prototype.setAllColumnWidths = function(widths){
-    widths = widths || this.getAllColumnWidths();
+  WdfView.prototype.setAllColumnWidths = function(){
     this.applyToAllCells(function(row,col_name,cell){
-      var col_idx = this.df.columnSet.byName[col_name].col_idx;
-      cell.firstChild.style.width = widths[col_idx] + 'px';
+      var col_width = this.widths[col_name];
+      if( !col_width.current  ){
+        col_width.current = col_width.max > 300 ? 300 : col_width.max;
+      }
+      cell.firstChild.style.width = col_width.current + 'px';
     });
   };
 
 
   WdfView.prototype.markOverflownColumn = function(){
-    var real_width_stats = {};
     this.applyToAllCells(function(row,col_name,cell){
       var real_w = cell.firstChild.scrollWidth ;
       var visual_w = cell.firstChild.offsetWidth ;
-      u$.collect_stats(col_name,real_w,real_width_stats);
       if( real_w > visual_w ){
         cell.classList.add('wdf_over');
       }else{
         cell.classList.remove('wdf_over');
       }
+    });
+  };
+  WdfView.prototype.getColumnWidthStats = function(){
+    var real_width_stats = {};
+    this.applyToAllCells(function(row,col_name,cell){
+      var real_w = cell.firstChild.scrollWidth ;
+      u$.collect_stats(col_name,real_w,real_width_stats);
     });
     return real_width_stats;
   };

@@ -8,7 +8,7 @@
   //
   // when called `this` is `<td>` element
   //
-  // signature `function(df, row_idx, col_idx, col_name)`
+  // signature `function(view, row_idx, col_idx, col_name)`
   // returns:
   // `{ value: <cell value>,
   //    div_attrs: { <name> : <value> ,...}
@@ -22,7 +22,7 @@
   //
   // when called `this` is `<th>` element
   //
-  // signature `function(df, col_idx, col_name)`
+  // signature `function(view, col_idx, col_name)`
   // returns:
   // `{ value: <cell value>,
   //    div_attrs: { <name> : <value> ,...}
@@ -33,7 +33,7 @@
   //
   // when called `this` is `<tr>` element
   //
-  // signature `function(df, row_idx)`
+  // signature `function(view, row_idx)`
   // returns tr attributes:
   // `{ <name> : <value> ,...}`
 
@@ -41,17 +41,17 @@
   //
   // when called `this` is `<tr>` element
   //
-  // signature `function(df)`
+  // signature `function(view)`
   // returns tr attributes:
   // `{ <name> : <value> ,...}`
 
 
-  function get_cell_as_string(df,row_idx,col_idx,col_name) {
-    return df.get(row_idx,col_idx, 'as_string');
+  function get_cell_as_string(view,row_idx,col_idx,col_name) {
+    return view.df.get(row_idx,col_idx, 'as_string');
   }
 
-  function get_cell(df,row_idx,col_idx,col_name) {
-    return df.get(row_idx,col_idx);
+  function get_cell(view,row_idx,col_idx,col_name) {
+    return view.df.get(row_idx,col_idx);
   }
   // formatters library
   var FORMATTERS = {
@@ -59,13 +59,22 @@
       date: get_cell_as_string,
       datetime: get_cell_as_string,
       timestamp: get_cell_as_string,
+      link: function get_cell(view,row_idx,col_idx,col_name) {
+        var link = view.df.get(row_idx,col_idx);
+        if(link){
+          var a = view._new_elem(null,'a',['wdf_link'],{ href: link.href });
+          a.innerText = link.text || link.href;
+          return a;
+        }
+        return undefined;
+      }
     },
     other_cell: get_cell,
-    header_cell: function(df,col_idx,col_name){
+    header_cell: function(view,col_idx,col_name){
       return col_name;
     },
-    row: function(df,row_idx){},
-    header_row: function(df){}
+    row: function(view,row_idx){},
+    header_row: function(view){}
   };
 
   exports.FORMATTERS =FORMATTERS;
