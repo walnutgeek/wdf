@@ -1,6 +1,6 @@
 var assert = require('assert');
 var _ = require("lodash");
-var u$ = require("../wdf/utils")
+var u$ = require("../wdf/utils");
 
 var WdfView = require("../wdf/WdfView");
 var DataFrame = require("../wdf/DataFrame");
@@ -17,14 +17,30 @@ describe( 'WdfView',function() {
     var df = DataFrame.parse_wdf( require('./all_types_including_link'));
     new WdfView({document:document,df:df});
   });
-  function setUpJsdomDoc(){
+  function setUpDoc(){
     if(!WdfView.hasDefault('document') || !WdfView.getDefault('document')){
       var document = require("./dom_fragment")('<div id="x"></div>').document;
       WdfView.setDefault('document',document);
+    }else{
+      if( !WdfView.getDefault('document').querySelector('#x') ){
+        var doc = WdfView.getDefault('document');
+        var div = doc.createElement('div');
+        div.id = 'x';
+        doc.body.appendChild(div);
+      }
+    }
+  }
+  function cleanUpDoc(){
+    var doc = WdfView.getDefault('document');
+    if( doc ){
+      var div = doc.querySelector('#x');
+      if( div && div.remove ){
+        div.remove();
+      }
     }
   }
   it('defaults', function () {
-    setUpJsdomDoc();
+    setUpDoc();
     assert.equal(false, !WdfView.getDefault('document'));
 
     WdfView.setDefault('document', undefined);
@@ -40,7 +56,7 @@ describe( 'WdfView',function() {
     );
   });
   it('attach to container', function () {
-    setUpJsdomDoc();
+    setUpDoc();
 
     var df = DataFrame.parse_wdf( require('./all_types_wdf') );
     var get_cell = require("../wdf/ViewTheme").get_cell;
@@ -69,6 +85,7 @@ describe( 'WdfView',function() {
           });
         }).toString()
     );
+    cleanUpDoc();
   });
 
 });
