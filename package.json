@@ -1,6 +1,6 @@
 {
   "name": "wdf",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Web data frame",
   "main": "index.js",
   "scripts": {
@@ -34,7 +34,8 @@
   "files": [
     "README.md",
     "index.js",
-    "wdf/*.js"
+    "wdf/*.js",
+    "wdf/*.css"
   ],
   "author": "wg@walnutgeek.com",
   "license": "MIT",
