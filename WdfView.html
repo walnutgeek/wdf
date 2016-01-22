@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>WdfView.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+  
+</head>
+<head>
+</head>
+<body>
+  <div id="container">
+    
+      <div id="background"></div>
+    
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="index.html">
+                  index.md
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.md
+                </a>
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="ViewTheme.html">
+                  ViewTheme.js
+                </a>
+              
+                
+                <a class="source" href="WdfView.html">
+                  WdfView.js
+                </a>
+              
+                
+                <a class="source" href="WebPath.html">
+                  WebPath.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>WdfView.js</h1>
+              </div>
+          </li>
+        
+        
+        <li id="section-1">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+<span class="hljs-pi">  "use strict"</span>;
+
+  <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"lodash"</span>);
+  <span class="hljs-keyword">var</span> u$ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./utils"</span>);
+  <span class="hljs-keyword">var</span> DataFrame = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./DataFrame"</span>);
+
+  <span class="hljs-keyword">var</span> defaults = {
+    format: <span class="hljs-literal">null</span>,
+    widths: {},
+    theme: <span class="hljs-built_in">require</span>(<span class="hljs-string">'./ViewTheme'</span>),
+    max_width: <span class="hljs-number">300</span>,
+  } ;
+
+  <span class="hljs-keyword">var</span> getUniqueId =
+      ( <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+        <span class="hljs-keyword">var</span> incrementingId = <span class="hljs-number">0</span>;
+        <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+          <span class="hljs-keyword">return</span> incrementingId++;
+        };
+      })();
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">setAllAttributes</span>(<span class="hljs-params">elem, attrs</span>)</span>{
+    <span class="hljs-keyword">if</span>(attrs){
+      <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> k <span class="hljs-keyword">in</span> attrs){
+        <span class="hljs-keyword">if</span>(attrs.hasOwnProperty(k)){
+          elem.setAttribute(k,attrs[k]);
+        }
+      }
+    }
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render_value</span>(<span class="hljs-params">div,v</span>)</span>{
+    <span class="hljs-keyword">if</span>( u$.isPrimitive(v) ){
+      div.innerText = v ;
+    }<span class="hljs-keyword">else</span>{
+      div.appendChild(v);
+    }
+  }
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">WdfView</span>(<span class="hljs-params">props</span>)</span>{
+    props = _.defaults(props,defaults);
+    <span class="hljs-keyword">this</span>.props = props;
+    <span class="hljs-keyword">if</span>(!<span class="hljs-keyword">this</span>.props.df){
+      <span class="hljs-keyword">throw</span> u$.error({msg: <span class="hljs-string">'df parameter has to be defined'</span>});
+    }
+    <span class="hljs-keyword">this</span>.df = <span class="hljs-keyword">this</span>.props.df ;
+    <span class="hljs-keyword">if</span>(!<span class="hljs-keyword">this</span>.props.document){
+      <span class="hljs-keyword">throw</span> u$.error({msg: <span class="hljs-string">'document parameter has to be defined'</span>});
+    }
+    <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.props.container ){
+      <span class="hljs-keyword">if</span>( _.isString(<span class="hljs-keyword">this</span>.props.container) ){
+        <span class="hljs-keyword">var</span> queried = <span class="hljs-keyword">this</span>.props.document.querySelector(<span class="hljs-keyword">this</span>.props.container);
+        <span class="hljs-keyword">if</span>(!queried){
+          <span class="hljs-keyword">throw</span> u$.error({
+            msg:<span class="hljs-string">'container query does not match anything.'</span>,
+            query: <span class="hljs-keyword">this</span>.props.container});
+        }
+        <span class="hljs-keyword">this</span>.props.container = queried;
+      }
+      <span class="hljs-keyword">this</span>.props.container.innerHTML=<span class="hljs-string">''</span>;
+      <span class="hljs-keyword">this</span>.props.container.wdfView = <span class="hljs-keyword">this</span> ;
+    }
+    <span class="hljs-keyword">this</span>.id = <span class="hljs-string">'wdf_id_'</span> + getUniqueId();
+    <span class="hljs-keyword">this</span>.header =  <span class="hljs-keyword">this</span>.new_elem(<span class="hljs-keyword">this</span>.props.container, <span class="hljs-string">'table'</span>, [<span class="hljs-string">'wdf'</span>,<span class="hljs-string">'wdf_header'</span>, <span class="hljs-keyword">this</span>.id]);
+    <span class="hljs-keyword">this</span>.data =    <span class="hljs-keyword">this</span>.new_elem(<span class="hljs-keyword">this</span>.props.container, <span class="hljs-string">'table'</span>, [<span class="hljs-string">'wdf'</span>,<span class="hljs-string">'wdf_data'</span>,<span class="hljs-keyword">this</span>.id]);
+    <span class="hljs-keyword">var</span> head_tr =  <span class="hljs-keyword">this</span>.new_elem(<span class="hljs-keyword">this</span>.header, <span class="hljs-string">'tr'</span>,[<span class="hljs-string">'wdf'</span>]);
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">get_formatter</span>(<span class="hljs-params">name,arg</span>)</span>{
+      <span class="hljs-keyword">return</span> props.theme[name](props.format,arg);
+    }
+
+    <span class="hljs-keyword">var</span> header_cell_fn = get_formatter(<span class="hljs-string">'header_cell_fn'</span>);
+    <span class="hljs-keyword">var</span> columnNames = <span class="hljs-keyword">this</span>.df.getColumnNames();
+    <span class="hljs-keyword">var</span> cell_fns = [] ;
+    <span class="hljs-keyword">var</span> r, tr, th, td, div, col_name;
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> col_idx = <span class="hljs-number">0</span> ; col_idx &lt; columnNames.length; col_idx++ ){
+      col_name = columnNames[col_idx];
+      cell_fns[col_idx]=get_formatter(<span class="hljs-string">'cell_fn'</span>,<span class="hljs-keyword">this</span>.df.columnSet.byIndex[col_idx]);
+      th = <span class="hljs-keyword">this</span>.new_elem(head_tr,<span class="hljs-string">'th'</span>,[<span class="hljs-string">'wdf'</span>],
+          {<span class="hljs-string">'data-column'</span>:col_name});
+      div = <span class="hljs-keyword">this</span>.new_elem(th,<span class="hljs-string">'div'</span>,[<span class="hljs-string">'wdf_masker'</span>]);
+      r = header_cell_fn.call(th, <span class="hljs-keyword">this</span>, col_idx, col_name);
+      <span class="hljs-keyword">if</span>( !_.isUndefined(r) ){
+        <span class="hljs-keyword">if</span>( _.isPlainObject(r) ){
+          render_value(div,r.value);
+          setAllAttributes(div,r.div_attrs);
+          setAllAttributes(th,r.th_attrs);
+        }<span class="hljs-keyword">else</span>{
+          render_value(div,r);
+        }
+      }
+    }
+
+    r = get_formatter(<span class="hljs-string">'header_row_fn'</span>).call(head_tr,<span class="hljs-keyword">this</span>);
+    <span class="hljs-keyword">if</span>( _.isPlainObject(r) ) {
+      setAllAttributes(head_tr, r);
+    }
+
+    <span class="hljs-keyword">var</span> row_fn = get_formatter(<span class="hljs-string">'row_fn'</span>);
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> row_idx = <span class="hljs-number">0</span> ; row_idx &lt; <span class="hljs-keyword">this</span>.df.getRowCount(); row_idx++ ){
+      <span class="hljs-keyword">var</span> odd_even = <span class="hljs-string">'wdf_'</span> + (row_idx % <span class="hljs-number">2</span> ? <span class="hljs-string">'odd'</span> : <span class="hljs-string">'even'</span>);
+      tr = <span class="hljs-keyword">this</span>.new_elem(<span class="hljs-keyword">this</span>.data,<span class="hljs-string">'tr'</span>,[ <span class="hljs-string">'wdf'</span>,  odd_even ],
+          {<span class="hljs-string">'data-row'</span>:row_idx});
+      <span class="hljs-keyword">for</span>( col_idx = <span class="hljs-number">0</span> ; col_idx &lt; columnNames.length; col_idx++ ){
+
+        col_name = columnNames[col_idx];
+        td = <span class="hljs-keyword">this</span>.new_elem(tr,<span class="hljs-string">'td'</span>,[<span class="hljs-string">'wdf'</span>],
+            {<span class="hljs-string">'data-column'</span>:col_name});
+        div = <span class="hljs-keyword">this</span>.new_elem(td,<span class="hljs-string">'div'</span>,[<span class="hljs-string">'wdf_masker'</span>]);
+        r = cell_fns[col_idx].call(td, <span class="hljs-keyword">this</span>, row_idx, col_idx, col_name);
+
+        <span class="hljs-keyword">if</span>( !_.isUndefined(r) ){
+          <span class="hljs-keyword">if</span>( _.isPlainObject(r) ){
+            render_value(div,r.value);
+            setAllAttributes(div,r.div_attrs);
+            setAllAttributes(td,r.td_attrs);
+          }<span class="hljs-keyword">else</span>{
+            render_value(div,r);
+          }
+        }
+        r = row_fn.call(tr, <span class="hljs-keyword">this</span>, row_idx);
+        <span class="hljs-keyword">if</span>( _.isPlainObject(r) ) {
+          setAllAttributes(tr, r);
+        }
+      }
+    }
+    <span class="hljs-keyword">this</span>.widths = <span class="hljs-keyword">this</span>.getColumnWidthStats();
+    <span class="hljs-keyword">this</span>.setAllColumnWidths();
+    <span class="hljs-keyword">this</span>.markOverflownColumn();
+  }
+
+  WdfView.setDefault=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key,value</span>)</span>{
+    defaults[key]=value;
+  };
+
+  WdfView.getDefault=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key</span>)</span>{
+    <span class="hljs-keyword">return</span> defaults[key];
+  };
+
+  WdfView.hasDefault=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key</span>)</span>{
+    <span class="hljs-keyword">return</span> defaults.hasOwnProperty(key);
+  };
+
+  u$.jail(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    WdfView.setDefault(<span class="hljs-string">'document'</span>, <span class="hljs-built_in">document</span>);
+  });
+
+  u$.jail(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    WdfView.setDefault(<span class="hljs-string">'jQuery'</span>, jQuery);
+    jQuery.fn.WdfView=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">props</span>)</span>{
+      <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span> &amp;&amp; <span class="hljs-keyword">this</span>[<span class="hljs-number">0</span>]){
+        props = _.defaults(props,{container: <span class="hljs-keyword">this</span>[<span class="hljs-number">0</span>]});
+        <span class="hljs-keyword">new</span> WdfView(props);
+      }
+    };
+  });
+
+  WdfView.prototype.new_elem = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">parent, tag , classes, attrs</span>)</span>{
+    <span class="hljs-keyword">var</span> e = <span class="hljs-keyword">this</span>.props.document.createElement(tag);
+    <span class="hljs-keyword">if</span>(classes){
+      classes.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">c</span>)</span>{ e.classList.add(c); });
+    }
+    setAllAttributes(e,attrs);
+    <span class="hljs-keyword">if</span>(parent) parent.appendChild(e);
+    <span class="hljs-keyword">return</span> e;
+  };
+
+  WdfView.prototype.applyToColumn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col,fn</span>)</span>{
+    <span class="hljs-keyword">var</span> colName = <span class="hljs-keyword">this</span>.df.getColumnName(col);
+    <span class="hljs-keyword">var</span> q = <span class="hljs-string">'.'</span>+<span class="hljs-keyword">this</span>.id+<span class="hljs-string">' [data-column='</span>+ colName +<span class="hljs-string">']'</span> ;
+    <span class="hljs-keyword">var</span> elems = <span class="hljs-keyword">this</span>.props.document.querySelectorAll(q);
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span> ; i &lt; elems.length; i++ ){
+      <span class="hljs-keyword">var</span> cell = elems[i] ;
+      <span class="hljs-keyword">var</span> row = cell.parentElement.getAttribute(<span class="hljs-string">'wdf_row'</span>);
+      fn.call(<span class="hljs-keyword">this</span>,row,colName,cell);
+    }
+  };
+
+  WdfView.prototype.applyToAllCells = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fn</span>)</span>{
+    <span class="hljs-keyword">var</span> q = <span class="hljs-string">'.'</span>+<span class="hljs-keyword">this</span>.id+<span class="hljs-string">' tr'</span> ;
+    <span class="hljs-keyword">var</span> elems = <span class="hljs-keyword">this</span>.props.document.querySelectorAll(q);
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span> ; i &lt; elems.length; i++ ){
+      <span class="hljs-keyword">var</span> tr = elems[i];
+      <span class="hljs-keyword">var</span> row = tr.getAttribute(<span class="hljs-string">'wdf_row'</span>);
+      <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> j = <span class="hljs-number">0</span> ; j &lt; tr.childNodes.length; j++){
+        <span class="hljs-keyword">var</span> cell = tr.childNodes[j];
+        <span class="hljs-keyword">var</span> col_name = cell.getAttribute(<span class="hljs-string">'data-column'</span>);
+        <span class="hljs-keyword">if</span>(!_.isNull(col_name)){
+          fn.call(<span class="hljs-keyword">this</span>,row,col_name,cell);
+        }
+      }
+    }
+  };
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">markOverflownCell</span>(<span class="hljs-params"> row, col_name, cell</span>) </span>{
+    <span class="hljs-keyword">var</span> real_w = cell.firstChild.scrollWidth;
+    <span class="hljs-keyword">var</span> visual_w = cell.firstChild.offsetWidth;
+    <span class="hljs-keyword">if</span> (real_w &gt; visual_w) {
+      cell.classList.add(<span class="hljs-string">'wdf_over'</span>);
+    } <span class="hljs-keyword">else</span> {
+      cell.classList.remove(<span class="hljs-string">'wdf_over'</span>);
+    }
+  }
+
+
+  WdfView.prototype.setColumnWidth = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col,width</span>)</span>{
+    <span class="hljs-keyword">var</span> colName = <span class="hljs-keyword">this</span>.df.getColumnName(col);
+    <span class="hljs-keyword">this</span>.widths[colName].current = width ;
+    <span class="hljs-keyword">this</span>.applyToColumn(col,<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row,col_name,cell</span>)</span>{
+      cell.firstChild.style.width = width + <span class="hljs-string">'px'</span>;
+    });
+    <span class="hljs-keyword">this</span>.applyToColumn(col,markOverflownCell);
+  };
+
+  WdfView.prototype.setAllColumnWidths = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-keyword">this</span>.applyToAllCells(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row,col_name,cell</span>)</span>{
+      <span class="hljs-keyword">var</span> col_width = <span class="hljs-keyword">this</span>.widths[col_name];
+      <span class="hljs-keyword">if</span>( !col_width.current  ){
+        col_width.current = col_width.max &gt; <span class="hljs-keyword">this</span>.props.max_width ?
+            <span class="hljs-keyword">this</span>.props.max_width : col_width.max;
+      }
+      cell.firstChild.style.width = col_width.current + <span class="hljs-string">'px'</span>;
+    });
+  };
+
+
+  WdfView.prototype.markOverflownColumn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-keyword">this</span>.applyToAllCells(markOverflownCell);
+  };
+
+  WdfView.prototype.getColumnWidthStats = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-keyword">var</span> real_width_stats = {};
+    <span class="hljs-keyword">this</span>.applyToAllCells(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row,col_name,cell</span>)</span>{
+      <span class="hljs-keyword">var</span> real_w = cell.firstChild.scrollWidth ;
+      u$.collect_stats(col_name,real_w,real_width_stats);
+    });
+    <span class="hljs-keyword">return</span> real_width_stats;
+  };
+
+  <span class="hljs-built_in">module</span>.exports = WdfView;
+})();</pre></div></div>
+            
+        </li>
+        
+    </ul>
+    <p>
+  
+
+  </div>
+</body>
+</html>

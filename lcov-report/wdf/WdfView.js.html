@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for wdf/WdfView.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../index.html">all files</a> / <a href="index.html">wdf/</a> WdfView.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">91.28% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>136/149</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">65.22% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>30/46</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">96% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>24/25</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">91.16% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>134/147</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line high'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">340×</span>
+<span class="cline-any cline-yes">179×</span>
+<span class="cline-any cline-yes">179×</span>
+<span class="cline-any cline-yes">179×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">151×</span>
+<span class="cline-any cline-yes">145×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">5×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">28×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">19×</span>
+<span class="cline-any cline-yes">19×</span>
+<span class="cline-any cline-yes">19×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">19×</span>
+<span class="cline-any cline-yes">19×</span>
+<span class="cline-any cline-yes">19×</span>
+<span class="cline-any cline-yes">19×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">19×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">21×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">133×</span>
+<span class="cline-any cline-yes">133×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">133×</span>
+<span class="cline-any cline-yes">133×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">133×</span>
+<span class="cline-any cline-yes">132×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">132×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">133×</span>
+<span class="cline-any cline-yes">133×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">340×</span>
+<span class="cline-any cline-yes">340×</span>
+<span class="cline-any cline-yes">373×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">340×</span>
+<span class="cline-any cline-yes">340×</span>
+<span class="cline-any cline-yes">340×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">2×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-yes">16×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">9×</span>
+<span class="cline-any cline-yes">24×</span>
+<span class="cline-any cline-yes">24×</span>
+<span class="cline-any cline-yes">24×</span>
+<span class="cline-any cline-yes">144×</span>
+<span class="cline-any cline-yes">144×</span>
+<span class="cline-any cline-yes">144×</span>
+<span class="cline-any cline-yes">144×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">56×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">8×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-yes">48×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">(function() {
+  "use strict";
+&nbsp;
+  var _ = require("lodash");
+  var u$ = require("./utils");
+  var DataFrame = require("./DataFrame");
+&nbsp;
+  var defaults = {
+    format: null,
+    widths: {},
+    theme: require('./ViewTheme'),
+    max_width: 300,
+  } ;
+&nbsp;
+  var getUniqueId =
+      ( function () {
+        var incrementingId = 0;
+        return function() {
+          return incrementingId++;
+        };
+      })();
+&nbsp;
+  function setAllAttributes(elem, attrs){
+    if(attrs){
+      for(var k in attrs){
+        <span class="missing-if-branch" title="else path not taken" >E</span>if(attrs.hasOwnProperty(k)){
+          elem.setAttribute(k,attrs[k]);
+        }
+      }
+    }
+  }
+&nbsp;
+  function render_value(div,v){
+    if( u$.isPrimitive(v) ){
+      div.innerText = v ;
+    }else{
+      div.appendChild(v);
+    }
+  }
+  function WdfView(props){
+    props = _.defaults(props,defaults);
+    this.props = props;
+    if(!this.props.df){
+      throw u$.error({msg: 'df parameter has to be defined'});
+    }
+    this.df = this.props.df ;
+    if(!this.props.document){
+      throw u$.error({msg: 'document parameter has to be defined'});
+    }
+    if( this.props.container ){
+      <span class="missing-if-branch" title="else path not taken" >E</span>if( _.isString(this.props.container) ){
+        var queried = this.props.document.querySelector(this.props.container);
+        if(!queried){
+          throw u$.error({
+            msg:'container query does not match anything.',
+            query: this.props.container});
+        }
+        this.props.container = queried;
+      }
+      this.props.container.innerHTML='';
+      this.props.container.wdfView = this ;
+    }
+    this.id = 'wdf_id_' + getUniqueId();
+    this.header =  this.new_elem(this.props.container, 'table', ['wdf','wdf_header', this.id]);
+    this.data =    this.new_elem(this.props.container, 'table', ['wdf','wdf_data',this.id]);
+    var head_tr =  this.new_elem(this.header, 'tr',['wdf']);
+&nbsp;
+    function get_formatter(name,arg){
+      return props.theme[name](props.format,arg);
+    }
+&nbsp;
+    var header_cell_fn = get_formatter('header_cell_fn');
+    var columnNames = this.df.getColumnNames();
+    var cell_fns = [] ;
+    var r, tr, th, td, div, col_name;
+    for(var col_idx = 0 ; col_idx &lt; columnNames.length; col_idx++ ){
+      col_name = columnNames[col_idx];
+      cell_fns[col_idx]=get_formatter('cell_fn',this.df.columnSet.byIndex[col_idx]);
+      th = this.new_elem(head_tr,'th',['wdf'],
+          {'data-column':col_name});
+      div = this.new_elem(th,'div',['wdf_masker']);
+      r = header_cell_fn.call(th, this, col_idx, col_name);
+      <span class="missing-if-branch" title="else path not taken" >E</span>if( !_.isUndefined(r) ){
+        <span class="missing-if-branch" title="if path not taken" >I</span>if( _.isPlainObject(r) ){
+<span class="cstat-no" title="statement not covered" >          render_value(div,r.value);</span>
+<span class="cstat-no" title="statement not covered" >          setAllAttributes(div,r.div_attrs);</span>
+<span class="cstat-no" title="statement not covered" >          setAllAttributes(th,r.th_attrs);</span>
+        }else{
+          render_value(div,r);
+        }
+      }
+    }
+&nbsp;
+    r = get_formatter('header_row_fn').call(head_tr,this);
+    <span class="missing-if-branch" title="if path not taken" >I</span>if( _.isPlainObject(r) ) {
+<span class="cstat-no" title="statement not covered" >      setAllAttributes(head_tr, r);</span>
+    }
+&nbsp;
+    var row_fn = get_formatter('row_fn');
+    for(var row_idx = 0 ; row_idx &lt; this.df.getRowCount(); row_idx++ ){
+      var odd_even = 'wdf_' + (row_idx % 2 ? 'odd' : 'even');
+      tr = this.new_elem(this.data,'tr',[ 'wdf',  odd_even ],
+          {'data-row':row_idx});
+      for( col_idx = 0 ; col_idx &lt; columnNames.length; col_idx++ ){
+&nbsp;
+        col_name = columnNames[col_idx];
+        td = this.new_elem(tr,'td',['wdf'],
+            {'data-column':col_name});
+        div = this.new_elem(td,'div',['wdf_masker']);
+        r = cell_fns[col_idx].call(td, this, row_idx, col_idx, col_name);
+&nbsp;
+        if( !_.isUndefined(r) ){
+          <span class="missing-if-branch" title="if path not taken" >I</span>if( _.isPlainObject(r) ){
+<span class="cstat-no" title="statement not covered" >            render_value(div,r.value);</span>
+<span class="cstat-no" title="statement not covered" >            setAllAttributes(div,r.div_attrs);</span>
+<span class="cstat-no" title="statement not covered" >            setAllAttributes(td,r.td_attrs);</span>
+          }else{
+            render_value(div,r);
+          }
+        }
+        r = row_fn.call(tr, this, row_idx);
+        <span class="missing-if-branch" title="if path not taken" >I</span>if( _.isPlainObject(r) ) {
+<span class="cstat-no" title="statement not covered" >          setAllAttributes(tr, r);</span>
+        }
+      }
+    }
+    this.widths = this.getColumnWidthStats();
+    this.setAllColumnWidths();
+    this.markOverflownColumn();
+  }
+&nbsp;
+  WdfView.setDefault=function(key,value){
+    defaults[key]=value;
+  };
+&nbsp;
+  WdfView.getDefault=function(key){
+    return defaults[key];
+  };
+&nbsp;
+  WdfView.hasDefault=function(key){
+    return defaults.hasOwnProperty(key);
+  };
+&nbsp;
+  u$.jail(function(){
+    WdfView.setDefault('document', document);
+  });
+&nbsp;
+  u$.jail(function(){
+    WdfView.setDefault('jQuery', jQuery);
+<span class="cstat-no" title="statement not covered" >    jQuery.fn.WdfView=<span class="fstat-no" title="function not covered" >function(props){</span></span>
+<span class="cstat-no" title="statement not covered" >      if (this &amp;&amp; this[0]){</span>
+<span class="cstat-no" title="statement not covered" >        props = _.defaults(props,{container: this[0]});</span>
+<span class="cstat-no" title="statement not covered" >        new WdfView(props);</span>
+      }
+    };
+  });
+&nbsp;
+  WdfView.prototype.new_elem = function (parent, tag , classes, attrs){
+    var e = this.props.document.createElement(tag);
+    <span class="missing-if-branch" title="else path not taken" >E</span>if(classes){
+      classes.forEach(function(c){ e.classList.add(c); });
+    }
+    setAllAttributes(e,attrs);
+    if(parent) parent.appendChild(e);
+    return e;
+  };
+&nbsp;
+  WdfView.prototype.applyToColumn = function(col,fn){
+    var colName = this.df.getColumnName(col);
+    var q = '.'+this.id+' [data-column='+ colName +']' ;
+    var elems = this.props.document.querySelectorAll(q);
+    for(var i = 0 ; i &lt; elems.length; i++ ){
+      var cell = elems[i] ;
+      var row = cell.parentElement.getAttribute('wdf_row');
+      fn.call(this,row,colName,cell);
+    }
+  };
+&nbsp;
+  WdfView.prototype.applyToAllCells = function(fn){
+    var q = '.'+this.id+' tr' ;
+    var elems = this.props.document.querySelectorAll(q);
+    for(var i = 0 ; i &lt; elems.length; i++ ){
+      var tr = elems[i];
+      var row = tr.getAttribute('wdf_row');
+      for(var j = 0 ; j &lt; tr.childNodes.length; j++){
+        var cell = tr.childNodes[j];
+        var col_name = cell.getAttribute('data-column');
+        <span class="missing-if-branch" title="else path not taken" >E</span>if(!_.isNull(col_name)){
+          fn.call(this,row,col_name,cell);
+        }
+      }
+    }
+  };
+  function markOverflownCell( row, col_name, cell) {
+    var real_w = cell.firstChild.scrollWidth;
+    var visual_w = cell.firstChild.offsetWidth;
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (real_w &gt; visual_w) {
+<span class="cstat-no" title="statement not covered" >      cell.classList.add('wdf_over');</span>
+    } else {
+      cell.classList.remove('wdf_over');
+    }
+  }
+&nbsp;
+&nbsp;
+  WdfView.prototype.setColumnWidth = function(col,width){
+    var colName = this.df.getColumnName(col);
+    this.widths[colName].current = width ;
+    this.applyToColumn(col,function(row,col_name,cell){
+      cell.firstChild.style.width = width + 'px';
+    });
+    this.applyToColumn(col,markOverflownCell);
+  };
+&nbsp;
+  WdfView.prototype.setAllColumnWidths = function(){
+    this.applyToAllCells(function(row,col_name,cell){
+      var col_width = this.widths[col_name];
+      <span class="missing-if-branch" title="else path not taken" >E</span>if( !col_width.current  ){
+        col_width.current = col_width.max &gt; this.props.max_width ?
+<span class="branch-0 cbranch-no" title="branch not covered" >            this.props.max_width </span>: col_width.max;
+      }
+      cell.firstChild.style.width = col_width.current + 'px';
+    });
+  };
+&nbsp;
+&nbsp;
+  WdfView.prototype.markOverflownColumn = function(){
+    this.applyToAllCells(markOverflownCell);
+  };
+&nbsp;
+  WdfView.prototype.getColumnWidthStats = function(){
+    var real_width_stats = {};
+    this.applyToAllCells(function(row,col_name,cell){
+      var real_w = cell.firstChild.scrollWidth ;
+      u$.collect_stats(col_name,real_w,real_width_stats);
+    });
+    return real_width_stats;
+  };
+&nbsp;
+  module.exports = WdfView;
+})();</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Jan 22 2016 00:40:59 GMT-0800 (PST)
+</div>
+</div>
+<script src="../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../sorter.js"></script>
+</body>
+</html>

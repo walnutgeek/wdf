@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>WebPath.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+  
+</head>
+<head>
+</head>
+<body>
+  <div id="container">
+    
+      <div id="background"></div>
+    
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="index.html">
+                  index.md
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.md
+                </a>
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="ViewTheme.html">
+                  ViewTheme.js
+                </a>
+              
+                
+                <a class="source" href="WdfView.html">
+                  WdfView.js
+                </a>
+              
+                
+                <a class="source" href="WebPath.html">
+                  WebPath.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>WebPath.js</h1>
+              </div>
+          </li>
+        
+        
+        <li id="section-1">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+<span class="hljs-pi">    "use strict"</span>;
+    <span class="hljs-keyword">var</span> u$ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./utils"</span>);
+    <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"lodash"</span>);
+
+    <span class="hljs-keyword">var</span> SEARCH_TYPES = {
+        <span class="hljs-string">'R'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">pattern</span>)</span>{
+                <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(pattern);
+        },<span class="hljs-comment">//regex case sensitive</span>
+        <span class="hljs-string">'r'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">pattern</span>)</span>{
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">RegExp</span>(pattern,<span class="hljs-string">'i'</span>);
+        },<span class="hljs-comment">//regex case insensitive</span>
+        <span class="hljs-string">'S'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">pattern</span>)</span>{
+            <span class="hljs-keyword">return</span> {
+                test: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>)</span>{
+                    <span class="hljs-keyword">return</span> s.indexOf(pattern) &gt; -<span class="hljs-number">1</span>;
+                }};
+        },<span class="hljs-comment">//contains</span>
+        <span class="hljs-string">'s'</span>: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">pattern</span>)</span>{
+            <span class="hljs-keyword">var</span> low_pattern = pattern.toLowerCase();
+            <span class="hljs-keyword">return</span> {
+                test: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">s</span>) </span>{
+                    <span class="hljs-keyword">return</span> s.toLowerCase().indexOf(low_pattern) &gt; -<span class="hljs-number">1</span>;
+                }};
+        }};
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Search</span>(<span class="hljs-params">s</span>) </span>{
+        <span class="hljs-keyword">if</span>( ! SEARCH_TYPES.hasOwnProperty(s[<span class="hljs-number">0</span>])) {
+            <span class="hljs-keyword">throw</span> u$.error({ msg:<span class="hljs-string">'no such search type'</span>,
+                type: s[<span class="hljs-number">0</span>], allowed:<span class="hljs-built_in">Object</span>.keys(SEARCH_TYPES) } );
+        }
+        <span class="hljs-keyword">this</span>.type = s[<span class="hljs-number">0</span>];
+        <span class="hljs-keyword">this</span>.pattern = s.substring(<span class="hljs-number">1</span>);
+        <span class="hljs-keyword">this</span>.matcher = SEARCH_TYPES[<span class="hljs-keyword">this</span>.type](<span class="hljs-keyword">this</span>.pattern);
+    }
+
+    Search.prototype.toString=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.type + <span class="hljs-keyword">this</span>.pattern;
+    };
+    Search.prototype.test=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>)</span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.matcher.test(s);
+    };
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">check</span>(<span class="hljs-params">c, allowed</span>)</span>{
+        <span class="hljs-keyword">if</span>(allowed.indexOf(c) &lt; <span class="hljs-number">0</span>){
+            <span class="hljs-keyword">throw</span> u$.error({msg:<span class="hljs-string">'not allowed'</span>,
+                provided:c, allowed:allowed});
+        }
+        <span class="hljs-keyword">return</span> c;
+    }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Field</span>(<span class="hljs-params">s</span>)</span>{
+        <span class="hljs-keyword">this</span>.and_or = <span class="hljs-string">'A'</span>;
+        <span class="hljs-keyword">this</span>.show_hide = <span class="hljs-string">'S'</span>;
+        <span class="hljs-keyword">this</span>.accending_descending = <span class="hljs-literal">null</span> ;
+        <span class="hljs-keyword">this</span>.sort_index = <span class="hljs-literal">null</span> ;
+        <span class="hljs-keyword">this</span>.searches = <span class="hljs-literal">null</span>;
+        <span class="hljs-keyword">if</span>( _.isString(s) &amp;&amp; s !== <span class="hljs-string">""</span> ){
+            <span class="hljs-keyword">this</span>.and_or = check(s[<span class="hljs-number">0</span>],[<span class="hljs-string">'A'</span>,<span class="hljs-string">'O'</span>]);
+            <span class="hljs-keyword">this</span>.show_hide = check(s[<span class="hljs-number">1</span>],[<span class="hljs-string">'S'</span>,<span class="hljs-string">'H'</span>]);
+            <span class="hljs-keyword">var</span> i = <span class="hljs-number">2</span>;
+            <span class="hljs-keyword">if</span>([<span class="hljs-string">'A'</span>,<span class="hljs-string">'D'</span>].indexOf(s[i]) &gt; -<span class="hljs-number">1</span>){
+                <span class="hljs-keyword">this</span>.accending_descending = s[i];
+                <span class="hljs-keyword">while</span>( ++i &lt; s.length &amp;&amp; s[i] &gt;= <span class="hljs-string">'0'</span> &amp;&amp; s[i] &lt;= <span class="hljs-string">'9'</span>);
+                <span class="hljs-keyword">this</span>.sort_index = +s.substring(<span class="hljs-number">3</span>,i);
+            }
+            <span class="hljs-keyword">var</span> search_array = [] ;
+            <span class="hljs-keyword">var</span> next_search = <span class="hljs-string">''</span> ;
+            <span class="hljs-keyword">for</span>( ; i &lt; s.length ; i++){
+                <span class="hljs-keyword">var</span> c = s[i], nc = s[i+<span class="hljs-number">1</span>];
+                <span class="hljs-keyword">if</span>(c === <span class="hljs-string">','</span> ){
+                    <span class="hljs-keyword">if</span>( nc === <span class="hljs-string">','</span> ){
+                        i++;
+                        next_search+=c;
+                    }<span class="hljs-keyword">else</span>{
+                        search_array.push(<span class="hljs-keyword">new</span> Search(next_search));
+                        next_search = <span class="hljs-string">''</span>;
+                    }
+                }<span class="hljs-keyword">else</span>{
+                    next_search+=c;
+                }
+            }
+            <span class="hljs-keyword">if</span>(next_search.length){
+                search_array.push(<span class="hljs-keyword">new</span> Search(next_search));
+            }
+            <span class="hljs-keyword">if</span>(search_array.length){
+                <span class="hljs-keyword">this</span>.searches = search_array;
+            }
+        }
+    }
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">escape_commas</span>(<span class="hljs-params">s</span>)</span>{
+        <span class="hljs-keyword">if</span>( s.indexOf(<span class="hljs-string">','</span>) &lt; <span class="hljs-number">0</span>){
+            <span class="hljs-keyword">return</span> s;
+        }
+        <span class="hljs-keyword">var</span> copy = <span class="hljs-string">''</span>, c;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span> ; i &lt; s.length; i++){
+            c = s[i];
+            copy +=  c ;
+            <span class="hljs-keyword">if</span>( c == <span class="hljs-string">','</span> ){
+                copy += c ;
+            }
+        }
+        <span class="hljs-keyword">return</span> copy;
+    }
+
+    Field.prototype.test = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>)</span>{
+      <span class="hljs-keyword">if</span>( !<span class="hljs-keyword">this</span>.searches ){
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+      }
+      <span class="hljs-keyword">var</span> i;
+      <span class="hljs-keyword">if</span>(  <span class="hljs-keyword">this</span>.and_or === <span class="hljs-string">'A'</span> ){
+        <span class="hljs-keyword">for</span>(i = <span class="hljs-number">0</span> ; i &lt; <span class="hljs-keyword">this</span>.searches.length; i++ ){
+          <span class="hljs-keyword">if</span>( !<span class="hljs-keyword">this</span>.searches[i].test(s) ){
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+          }
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> ;
+      }<span class="hljs-keyword">else</span>{
+        <span class="hljs-keyword">for</span>(i = <span class="hljs-number">0</span> ; i &lt; <span class="hljs-keyword">this</span>.searches.length; i++ ){
+          <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.searches[i].test(s) ){
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+          }
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+      }
+    };
+
+    Field.prototype.toString = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+        <span class="hljs-keyword">var</span> s = <span class="hljs-keyword">this</span>.and_or + <span class="hljs-keyword">this</span>.show_hide;
+        <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.accending_descending &amp;&amp; _.isNumber(<span class="hljs-keyword">this</span>.sort_index) ){
+            s += <span class="hljs-keyword">this</span>.accending_descending + <span class="hljs-keyword">this</span>.sort_index;
+        }
+        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.searches &amp;&amp; <span class="hljs-keyword">this</span>.searches.length){
+            <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span> ; i &lt; <span class="hljs-keyword">this</span>.searches.length; i++){
+                <span class="hljs-keyword">if</span>(i) s += <span class="hljs-string">','</span>;
+                s += escape_commas(<span class="hljs-keyword">this</span>.searches[i].toString());
+            }
+        }
+        <span class="hljs-keyword">return</span> s === <span class="hljs-string">'AS'</span> ? <span class="hljs-literal">undefined</span> : s;
+    };
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Params</span>(<span class="hljs-params">input</span>)</span>{
+      <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span> ;
+      input = input || <span class="hljs-string">''</span>;
+      input.split(<span class="hljs-string">'&amp;'</span>).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s</span>)</span>{
+        <span class="hljs-keyword">if</span>(s){
+          <span class="hljs-keyword">var</span> key_val = s.split(<span class="hljs-string">'='</span>,<span class="hljs-number">2</span>);
+          self[key_val[<span class="hljs-number">0</span>]] = <span class="hljs-keyword">new</span> Field(<span class="hljs-built_in">decodeURIComponent</span>(key_val[<span class="hljs-number">1</span>]));
+        }
+      });
+    }
+
+    Params.prototype.toString=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+      <span class="hljs-keyword">var</span> s = <span class="hljs-string">''</span>;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> key <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>) {
+        <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.hasOwnProperty(key) ) <span class="hljs-keyword">continue</span>;
+        <span class="hljs-keyword">var</span> v = <span class="hljs-keyword">this</span>[key].toString() ;
+        <span class="hljs-keyword">if</span>( v ){
+          <span class="hljs-keyword">if</span>( s ){
+            s += <span class="hljs-string">'&amp;'</span> ;
+          }
+          s += key + <span class="hljs-string">'='</span> +  <span class="hljs-built_in">encodeURIComponent</span>(v) ;
+        }
+      }
+      <span class="hljs-keyword">return</span> s ;
+    };
+
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">WebPath</span>(<span class="hljs-params">input</span>)</span>{
+        <span class="hljs-keyword">var</span> array = input ;
+        <span class="hljs-keyword">if</span>(_.isString(input)){
+            <span class="hljs-keyword">var</span> posParams = input.indexOf(<span class="hljs-string">'?'</span>);
+            <span class="hljs-keyword">if</span>(posParams &gt;= <span class="hljs-number">0</span>){
+                <span class="hljs-keyword">this</span>.params =  <span class="hljs-keyword">new</span> Params(input.substring(posParams+<span class="hljs-number">1</span>));
+                input = input.substring(<span class="hljs-number">0</span>,posParams);
+            }
+            array = input.split(<span class="hljs-string">'/'</span>);
+            <span class="hljs-keyword">this</span>.name = array.pop();
+            <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.name === <span class="hljs-string">""</span> ){
+                <span class="hljs-keyword">this</span>.name = array.pop();
+                <span class="hljs-keyword">this</span>.dir = <span class="hljs-literal">true</span> ;
+            }
+        }<span class="hljs-keyword">else</span>{</pre></div></div>
+            
+        </li>
+        
+        <li id="section-2">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>if it is not string that it is recursive call
+to init parent chain</p>
+
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>            <span class="hljs-keyword">this</span>.name = array.pop() ;
+            <span class="hljs-keyword">this</span>.dir = <span class="hljs-literal">true</span>;
+        }
+        <span class="hljs-keyword">this</span>.parent = array.length &gt; <span class="hljs-number">0</span> ?  <span class="hljs-keyword">new</span> WebPath(array) : <span class="hljs-literal">null</span> ;
+    }
+
+    WebPath.prototype.extension=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+      <span class="hljs-keyword">if</span>( _.isUndefined(<span class="hljs-keyword">this</span>.ext) ){
+        <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> i = <span class="hljs-keyword">this</span>.name.length - <span class="hljs-number">1</span> ; i &gt; <span class="hljs-number">0</span> ; i-- ){
+          <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.name[i] === <span class="hljs-string">'.'</span> ){
+            <span class="hljs-keyword">this</span>.ext = <span class="hljs-keyword">this</span>.name.substr(i+<span class="hljs-number">1</span>).toLowerCase();
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.ext;
+          }
+        }
+        <span class="hljs-keyword">this</span>.ext = <span class="hljs-literal">null</span> ;
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.ext;
+    };
+
+
+    WebPath.prototype.isRoot=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.parent === <span class="hljs-literal">null</span>;
+    };
+
+    WebPath.prototype.path=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+        <span class="hljs-keyword">if</span>( _.isUndefined(<span class="hljs-keyword">this</span>._path) ){
+            <span class="hljs-keyword">this</span>._path = (<span class="hljs-keyword">this</span>.isRoot() ? <span class="hljs-keyword">this</span>.name  : <span class="hljs-keyword">this</span>.parent.path() +  <span class="hljs-keyword">this</span>.name) + (<span class="hljs-keyword">this</span>.dir ? <span class="hljs-string">'/'</span> : <span class="hljs-string">''</span>);
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._path;
+    };
+
+    WebPath.prototype.enumerate=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">input</span>)</span>{
+        input = input || [];
+        input.splice(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,<span class="hljs-keyword">this</span>);
+        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.parent){
+            <span class="hljs-keyword">this</span>.parent.enumerate(input);
+        }
+        <span class="hljs-keyword">return</span> input;
+    };
+    WebPath.prototype.toString=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+        <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.params){
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.path() + <span class="hljs-string">'?'</span> + <span class="hljs-keyword">this</span>.params.toString() ;
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.path() ;
+    };
+
+    WebPath.Search = Search ;
+    WebPath.Params = Params ;
+    WebPath.Field = Field ;
+
+    <span class="hljs-built_in">module</span>.exports = WebPath;
+})();</pre></div></div>
+            
+        </li>
+        
+    </ul>
+    <p>
+  
+
+  </div>
+</body>
+</html>

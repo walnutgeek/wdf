@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>ViewTheme.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+  
+</head>
+<head>
+</head>
+<body>
+  <div id="container">
+    
+      <div id="background"></div>
+    
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="index.html">
+                  index.md
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.md
+                </a>
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="ViewTheme.html">
+                  ViewTheme.js
+                </a>
+              
+                
+                <a class="source" href="WdfView.html">
+                  WdfView.js
+                </a>
+              
+                
+                <a class="source" href="WebPath.html">
+                  WebPath.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>ViewTheme.js</h1>
+              </div>
+          </li>
+        
+        
+        <li id="section-1">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h2 id="private-stuff">Private stuff</h2>
+<p>methods and classes that not supposed to be used directly</p>
+
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+<span class="hljs-pi">  "use strict"</span>;</pre></div></div>
+            
+        </li>
+        
+        <li id="section-2">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>cell_formatter:</p>
+<p>when called <code>this</code> is <code>&lt;td&gt;</code> element</p>
+<p>signature <code>function(view, row_idx, col_idx, col_name)</code>
+returns:
+<code>{ value: &lt;cell value&gt;,
+   div_attrs: { &lt;name&gt; : &lt;value&gt; ,...}
+   td_attrs: { &lt;name&gt; : &lt;value&gt; ,...}
+}</code>
+, or just <code>&lt;cell value&gt;</code> if no attributes on tags
+need to be set, or <code>undefined</code> to indicate that columns
+not need to be set.</p>
+
+            </div>
+            
+        </li>
+        
+        <li id="section-3">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>header_cell_formatter:</p>
+<p>when called <code>this</code> is <code>&lt;th&gt;</code> element</p>
+<p>signature <code>function(view, col_idx, col_name)</code>
+returns:
+<code>{ value: &lt;cell value&gt;,
+   div_attrs: { &lt;name&gt; : &lt;value&gt; ,...}
+   th_attrs: { &lt;name&gt; : &lt;value&gt; ,...}
+}</code></p>
+
+            </div>
+            
+        </li>
+        
+        <li id="section-4">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>row_formatter:</p>
+<p>when called <code>this</code> is <code>&lt;tr&gt;</code> element</p>
+<p>signature <code>function(view, row_idx)</code>
+returns tr attributes:
+<code>{ &lt;name&gt; : &lt;value&gt; ,...}</code></p>
+
+            </div>
+            
+        </li>
+        
+              <a name="get_cell_as_string" />
+        
+        <li id="section-5">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>header_row_formatter:</p>
+<p>when called <code>this</code> is <code>&lt;tr&gt;</code> element</p>
+<p>signature <code>function(view)</code>
+returns tr attributes:
+<code>{ &lt;name&gt; : &lt;value&gt; ,...}</code></p>
+
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">get_cell_as_string</span>(<span class="hljs-params">view,row_idx,col_idx,col_name</span>) </span>{
+    <span class="hljs-keyword">return</span> view.df.get(row_idx,col_idx, <span class="hljs-string">'as_string'</span>);
+  }
+  exports.get_cell_as_string = get_cell_as_string;
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">get_cell</span>(<span class="hljs-params">view,row_idx,col_idx,col_name</span>) </span>{
+    <span class="hljs-keyword">return</span> view.df.get(row_idx,col_idx);
+  }
+  exports.get_cell = get_cell;</pre></div></div>
+            
+        </li>
+        
+              <a name="anchor_elem" />
+        
+        <li id="section-6">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>formatters library</p>
+
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">anchor_elem</span>(<span class="hljs-params">view, link</span>) </span>{
+    <span class="hljs-keyword">var</span> a = view.new_elem(<span class="hljs-literal">null</span>, <span class="hljs-string">'a'</span>, [<span class="hljs-string">'wdf_link'</span>], {href: link.href});
+    a.innerText = link.text || link.href;
+    <span class="hljs-keyword">return</span> a;
+  }
+  exports.anchor_elem = anchor_elem ;
+
+  <span class="hljs-keyword">var</span> FORMAT = {
+    cell_by_type: {
+      date: get_cell_as_string,
+      datetime: get_cell_as_string,
+      timestamp: get_cell_as_string,
+      link: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view,row_idx,col_idx,col_name</span>) </span>{
+        <span class="hljs-keyword">var</span> link = view.df.get(row_idx,col_idx);
+        <span class="hljs-keyword">if</span>(link){
+          <span class="hljs-keyword">return</span> anchor_elem(view, link);
+        }
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+      }
+    },
+    other_cell: get_cell,
+    header_cell: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view,col_idx,col_name</span>)</span>{
+      <span class="hljs-keyword">return</span> col_name;
+    },
+    row: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view,row_idx</span>)</span>{},
+    header_row: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view</span>)</span>{}
+  };
+
+  exports.FORMAT =FORMAT;
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">find_format_fn</span>(<span class="hljs-params">format,col</span>)</span>{
+    <span class="hljs-keyword">var</span> fn;
+    <span class="hljs-keyword">if</span>(col &amp;&amp; format){
+      <span class="hljs-keyword">if</span>(format.cell_by_name){
+        fn =  format.cell_by_name[col.name] ;
+      }
+      <span class="hljs-keyword">if</span>(!fn &amp;&amp; format.cell_by_type &amp;&amp; col.type){
+        fn = format.cell_by_type[col.type.name];
+      }
+    }
+    <span class="hljs-keyword">if</span>( !fn &amp;&amp; format ) {
+      fn = format.other_cell;
+    }
+    <span class="hljs-keyword">return</span> fn;
+  }
+
+  exports.header_cell_fn=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">format</span>)</span>{
+    <span class="hljs-keyword">return</span> ( format ? format.header_cell : <span class="hljs-literal">null</span> ) || FORMAT.header_cell;
+  };
+
+  exports.cell_fn=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">format, col</span>)</span>{
+    <span class="hljs-keyword">return</span> find_format_fn(format,col) || find_format_fn(FORMAT,col);
+  };
+
+  exports.row_fn=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">format</span>)</span>{
+    <span class="hljs-keyword">return</span> ( format ? format.row : <span class="hljs-literal">null</span> ) || FORMAT.row;
+  };
+
+  exports.header_row_fn = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">format</span>)</span>{
+    <span class="hljs-keyword">return</span> ( format ? format.header_row : <span class="hljs-literal">null</span> ) || FORMAT.header_row;
+  };
+
+})();</pre></div></div>
+            
+        </li>
+        
+    </ul>
+    <p>
+  
+
+  </div>
+</body>
+</html>

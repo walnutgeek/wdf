@@ -40,6 +40,21 @@
                 </a>
               
                 
+                <a class="source" href="ViewTheme.html">
+                  ViewTheme.js
+                </a>
+              
+                
+                <a class="source" href="WdfView.html">
+                  WdfView.js
+                </a>
+              
+                
+                <a class="source" href="WebPath.html">
+                  WebPath.js
+                </a>
+              
+                
                 <a class="source" href="utils.html">
                   utils.js
                 </a>
@@ -415,7 +430,6 @@ TODO documentation for config</li>
     <span class="hljs-keyword">return</span> make_df_from_(parse_csv_to_array_of_rows(str), config);
   };
 
-
   DataFrame.parse_wdf=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">str</span>) </span>{
     <span class="hljs-keyword">var</span> arr = str.split(<span class="hljs-string">'\n'</span>);
     <span class="hljs-keyword">var</span> config = <span class="hljs-built_in">JSON</span>.parse(arr.shift());
@@ -475,6 +489,10 @@ considered header .</p>
 
   DataFrame.prototype.getColumnNames=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
     <span class="hljs-keyword">return</span> <span class="hljs-built_in">Object</span>.keys(<span class="hljs-keyword">this</span>.columnSet.byName);
+  };
+
+  DataFrame.prototype.getColumnCount=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.columnSet.byIndex.length;
   };</pre></div></div>
             
         </li>
@@ -578,6 +596,7 @@ for json</p>
 <ul>
 <li><code>row_num</code> - row number</li>
 <li><code>col</code> - column index or column name</li>
+<li><code>fn</code> -</li>
 </ul>
 
             </div>
@@ -705,6 +724,13 @@ for json</p>
       });
     }
     <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+  };
+
+  DataFrame.prototype.getColumnIndex = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name_or_idx</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.columnSet.getColumn(name_or_idx).col_idx;
+  };
+  DataFrame.prototype.getColumnName = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">name_or_idx</span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.columnSet.getColumn(name_or_idx).name;
   };</pre></div></div>
             
         </li>

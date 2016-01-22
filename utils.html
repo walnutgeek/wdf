@@ -40,6 +40,21 @@
                 </a>
               
                 
+                <a class="source" href="ViewTheme.html">
+                  ViewTheme.js
+                </a>
+              
+                
+                <a class="source" href="WdfView.html">
+                  WdfView.js
+                </a>
+              
+                
+                <a class="source" href="WebPath.html">
+                  WebPath.js
+                </a>
+              
+                
                 <a class="source" href="utils.html">
                   utils.js
                 </a>
@@ -863,6 +878,8 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
             
         </li>
         
+              <a name="u$.jail" />
+        
         <li id="section-32">
 
             <div class="annotation">
@@ -870,9 +887,18 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-32">&#182;</a>
               </div>
-              <h2 id="parsing-dates">Parsing dates</h2>
+              <p>jail(fn)
+exception jail</p>
 
             </div>
+            
+                 <div class="content"><div class='highlight'><pre>  u$.jail = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fn</span>)</span>{
+    <span class="hljs-keyword">try</span>{
+      <span class="hljs-keyword">return</span> fn();
+    }<span class="hljs-keyword">catch</span>(ignored){
+      <span class="hljs-keyword">return</span> ignored;
+    }
+  };</pre></div></div>
             
         </li>
         
@@ -883,7 +909,7 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-33">&#182;</a>
               </div>
-              <h3 id="some-private-date-related-stuff">some private date related stuff</h3>
+              <h2 id="parsing-dates">Parsing dates</h2>
 
             </div>
             
@@ -896,6 +922,19 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-34">&#182;</a>
               </div>
+              <h3 id="some-private-date-related-stuff">some private date related stuff</h3>
+
+            </div>
+            
+        </li>
+        
+        <li id="section-35">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
               <p>pad_with(input,template)</p>
 <p>pad <code>input</code> value according to <code>template</code></p>
 
@@ -905,12 +944,12 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
         
               <a name="pad_with" />
         
-        <li id="section-35">
+        <li id="section-36">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-35">&#182;</a>
+                <a class="pilcrow" href="#section-36">&#182;</a>
               </div>
               <pre><code> &gt; pad_with(<span class="hljs-number">5</span>,<span class="hljs-string">'00'</span>)
   <span class="hljs-string">'05'</span>
@@ -931,12 +970,12 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
         
               <a name="pad_with_zeros" />
         
-        <li id="section-36">
+        <li id="section-37">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-36">&#182;</a>
+                <a class="pilcrow" href="#section-37">&#182;</a>
               </div>
               <p>pad_with_zeros(input,n)</p>
 <p>pad <code>input</code> with zeros until it reach <code>n</code> size</p>
@@ -957,12 +996,12 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
             
         </li>
         
-        <li id="section-37">
+        <li id="section-38">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-37">&#182;</a>
+                <a class="pilcrow" href="#section-38">&#182;</a>
               </div>
               <p>define supported date patterns</p>
 
@@ -982,12 +1021,12 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
             
         </li>
         
-        <li id="section-38">
+        <li id="section-39">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-38">&#182;</a>
+                <a class="pilcrow" href="#section-39">&#182;</a>
               </div>
               <p>prepare text for regexp</p>
 
@@ -1004,12 +1043,12 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
             
         </li>
         
-        <li id="section-39">
+        <li id="section-40">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-39">&#182;</a>
+                <a class="pilcrow" href="#section-40">&#182;</a>
               </div>
               <p>generate regexps in <code>DATE_PATTERNS</code></p>
 
@@ -1035,12 +1074,12 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
         
               <a name="new_date" />
         
-        <li id="section-40">
+        <li id="section-41">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-40">&#182;</a>
+                <a class="pilcrow" href="#section-41">&#182;</a>
               </div>
               <p>build date out of components</p>
 
@@ -1058,12 +1097,12 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
         
               <a name="parse_date" />
         
-        <li id="section-41">
+        <li id="section-42">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-41">&#182;</a>
+                <a class="pilcrow" href="#section-42">&#182;</a>
               </div>
               <p>try all patters to parse string</p>
 
@@ -1086,12 +1125,12 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
             
         </li>
         
-        <li id="section-42">
+        <li id="section-43">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-42">&#182;</a>
+                <a class="pilcrow" href="#section-43">&#182;</a>
               </div>
               <h3 id="public-date-stuff">Public Date stuff</h3>
 
@@ -1101,12 +1140,12 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
         
               <a name="u$.date_from_string" />
         
-        <li id="section-43">
+        <li id="section-44">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-43">&#182;</a>
+                <a class="pilcrow" href="#section-44">&#182;</a>
               </div>
               <p><strong> date_from_string(s)</strong></p>
 <p>parse string into date assuming UTC timezone</p>
@@ -1139,12 +1178,12 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
         
               <a name="u$.date_components" />
         
-        <li id="section-44">
+        <li id="section-45">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-44">&#182;</a>
+                <a class="pilcrow" href="#section-45">&#182;</a>
               </div>
               <p><strong>date_components(d)</strong></p>
 <p>split Date object into array of components :
@@ -1162,12 +1201,12 @@ in local time</p>
         
               <a name="u$.utc_components" />
         
-        <li id="section-45">
+        <li id="section-46">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-45">&#182;</a>
+                <a class="pilcrow" href="#section-46">&#182;</a>
               </div>
               <p><strong>utc_components(d)</strong></p>
 <p>split Date object into array of components :
@@ -1183,12 +1222,12 @@ in UTC time</p>
             
         </li>
         
-        <li id="section-46">
+        <li id="section-47">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-46">&#182;</a>
+                <a class="pilcrow" href="#section-47">&#182;</a>
               </div>
               <p><strong>SUPPORTED_DATE_FORMATS</strong>
 array of supprted  date formats names</p>
@@ -1197,12 +1236,12 @@ array of supprted  date formats names</p>
             
         </li>
         
-        <li id="section-47">
+        <li id="section-48">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-47">&#182;</a>
+                <a class="pilcrow" href="#section-48">&#182;</a>
               </div>
               <pre><code>&gt; SUPPORTED_DATE_FORMATS
 [<span class="hljs-string">"YYYY_MM_DDThh_mm_ss"</span>, <span class="hljs-string">"YYYY_MM_DD_hh_mm_ss"</span>, <span class="hljs-string">"YYYYMMDD_hhmmss"</span>,
@@ -1216,12 +1255,12 @@ array of supprted  date formats names</p>
         
               <a name="u$.date_to_string_fn" />
         
-        <li id="section-48">
+        <li id="section-49">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-48">&#182;</a>
+                <a class="pilcrow" href="#section-49">&#182;</a>
               </div>
               <p><strong>date_to_string_fn(format,components_fn)</strong></p>
 <p>create function that will convert Date object into string.</p>
@@ -1257,12 +1296,12 @@ into components <code>utc_components</code> (default) and <code>date_components<
         
               <a name="u$.parseDateUTC" />
         
-        <li id="section-49">
+        <li id="section-50">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-49">&#182;</a>
+                <a class="pilcrow" href="#section-50">&#182;</a>
               </div>
               <p><strong> parseDateUTC(s) </strong></p>
 <p>parse date using on of <code>SUPPORTED_DATE_FORMATS</code>
@@ -1279,12 +1318,12 @@ assuming UTC timezone</p>
         
               <a name="u$.parseDate" />
         
-        <li id="section-50">
+        <li id="section-51">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-50">&#182;</a>
+                <a class="pilcrow" href="#section-51">&#182;</a>
               </div>
               <p><strong> parseDate(s) </strong></p>
 <p>parse date using on of <code>SUPPORTED_DATE_FORMATS</code>
@@ -1301,12 +1340,12 @@ assuming local timezone</p>
         
               <a name="u$.relativeDateString" />
         
-        <li id="section-51">
+        <li id="section-52">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-51">&#182;</a>
+                <a class="pilcrow" href="#section-52">&#182;</a>
               </div>
               <p><strong> relativeDateString(date,rel) </strong></p>
 <p>produce string representation of UTC time in format</p>
@@ -1354,12 +1393,12 @@ less then 24 hours</li>
             
         </li>
         
-        <li id="section-52">
+        <li id="section-53">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-52">&#182;</a>
+                <a class="pilcrow" href="#section-53">&#182;</a>
               </div>
               <h2 id="bi-directional-map">Bi-directional map</h2>
 
@@ -1369,12 +1408,12 @@ less then 24 hours</li>
         
               <a name="u$.BiMap" />
         
-        <li id="section-53">
+        <li id="section-54">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-53">&#182;</a>
+                <a class="pilcrow" href="#section-54">&#182;</a>
               </div>
               <p><strong> BiMap(map) </strong></p>
 <p>class that allow to maintain forward reference from key to value,
@@ -1429,12 +1468,12 @@ to strings, and we use values as keys in inverse mapping too.</p>
         
               <a name="this.get" />
         
-        <li id="section-54">
+        <li id="section-55">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-54">&#182;</a>
+                <a class="pilcrow" href="#section-55">&#182;</a>
               </div>
               <p><code>get(key)</code> - get value by key</p>
 
@@ -1446,12 +1485,12 @@ to strings, and we use values as keys in inverse mapping too.</p>
         
               <a name="this.key" />
         
-        <li id="section-55">
+        <li id="section-56">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-55">&#182;</a>
+                <a class="pilcrow" href="#section-56">&#182;</a>
               </div>
               <p><code>key(val)</code> - get key by value</p>
 
@@ -1463,12 +1502,12 @@ to strings, and we use values as keys in inverse mapping too.</p>
         
               <a name="this.put" />
         
-        <li id="section-56">
+        <li id="section-57">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-56">&#182;</a>
+                <a class="pilcrow" href="#section-57">&#182;</a>
               </div>
               <p><code>put(key,val)</code> - store key-value pair</p>
 
@@ -1480,12 +1519,12 @@ to strings, and we use values as keys in inverse mapping too.</p>
         
               <a name="this.del" />
         
-        <li id="section-57">
+        <li id="section-58">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-57">&#182;</a>
+                <a class="pilcrow" href="#section-58">&#182;</a>
               </div>
               <p><code>del(key)</code> - delete key-value pair by key</p>
 
@@ -1497,12 +1536,12 @@ to strings, and we use values as keys in inverse mapping too.</p>
         
               <a name="this.keys" />
         
-        <li id="section-58">
+        <li id="section-59">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-58">&#182;</a>
+                <a class="pilcrow" href="#section-59">&#182;</a>
               </div>
               <p><code>keys()</code> - get all keys</p>
 
@@ -1514,12 +1553,12 @@ to strings, and we use values as keys in inverse mapping too.</p>
         
               <a name="this.values" />
         
-        <li id="section-59">
+        <li id="section-60">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-59">&#182;</a>
+                <a class="pilcrow" href="#section-60">&#182;</a>
               </div>
               <p><code>values()</code> - get all distinct values</p>
 
@@ -1530,20 +1569,7 @@ to strings, and we use values as keys in inverse mapping too.</p>
             
         </li>
         
-        <li id="section-60">
-
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-60">&#182;</a>
-              </div>
-              <h2 id="stuff-should-be-thrown-away-but-i-am-reactant-for-some-reason">Stuff should be thrown away but I am reactant for  some reason</h2>
-
-            </div>
-            
-        </li>
-        
-              <a name="u$.Tokenizer" />
+              <a name="u$.collect_stats" />
         
         <li id="section-61">
 
@@ -1552,52 +1578,38 @@ to strings, and we use values as keys in inverse mapping too.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-61">&#182;</a>
               </div>
-              <p>Tokenizer</p>
-
+              <p>Collect <code>sum</code>, <code>count</code>, <code>min</code> and <code>max</code> for multiple
+sets of observations. Sets are identified  by <code>key</code> and maintainde
+in <code>store</code> object during data collection.</p>
+<pre><code>&gt; store = {}
+&gt; collect_stats(<span class="hljs-string">'a'</span>, <span class="hljs-number">1</span>, store)
+&gt; collect_stats(<span class="hljs-string">'a'</span>, <span class="hljs-number">2</span>, store)
+&gt; collect_stats(<span class="hljs-string">'b'</span>, -<span class="hljs-number">1</span>, store)
+&gt; collect_stats(<span class="hljs-string">'a'</span>, <span class="hljs-number">5</span>, store)
+&gt; collect_stats(<span class="hljs-string">'b'</span>, <span class="hljs-number">1</span>, store)
+&gt; store
+{ a: { count: <span class="hljs-number">3</span>, sum: <span class="hljs-number">8</span>, min: <span class="hljs-number">1</span>, max: <span class="hljs-number">5</span> },
+  b: { count: <span class="hljs-number">2</span>, sum: <span class="hljs-number">0</span>, min: -<span class="hljs-number">1</span>, max: <span class="hljs-number">1</span> } }
+&gt; store.a.sum/store.a.count
+<span class="hljs-number">2.6666666666666665</span>
+</code></pre>
             </div>
             
-                 <div class="content"><div class='highlight'><pre>  u$.Tokenizer=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">s, delimiters</span>) </span>{
-    <span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>;
-
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">isValueChar</span>(<span class="hljs-params"></span>) </span>{
-      <span class="hljs-keyword">return</span> delimiters.indexOf(s.charAt(i)) &lt; <span class="hljs-number">0</span>;
+                 <div class="content"><div class='highlight'><pre>  u$.collect_stats = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key, val, store</span>)</span>{
+    <span class="hljs-keyword">if</span>( store.hasOwnProperty(key) ){
+      <span class="hljs-keyword">var</span> entry = store[key];
+      entry.count ++;
+      entry.sum += val;
+      <span class="hljs-keyword">if</span>( entry.min &gt; val ) entry.min = val ;
+      <span class="hljs-keyword">if</span>( entry.max &lt; val ) entry.max = val ;
+    }<span class="hljs-keyword">else</span>{
+      store[key] = {count: <span class="hljs-number">1</span> , sum:val , min: val, max: val};
     }
-
-    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">next</span>(<span class="hljs-params">condition</span>) </span>{
-      <span class="hljs-keyword">var</span> start = i;
-      <span class="hljs-keyword">while</span> (i &lt; s.length &amp;&amp; condition()){
-        i++;
-      }
-      <span class="hljs-keyword">return</span> s.substring(start, i);
-    }
-
-    <span class="hljs-keyword">return</span> {
-      getText : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">return</span> s;
-      },
-      nextValue : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">return</span> next(isValueChar);
-      },
-      nextDelimiter : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">return</span> next(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-          <span class="hljs-keyword">return</span> !isValueChar();
-        });
-      },
-      toString : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">return</span> s.substring(<span class="hljs-number">0</span>, i) + <span class="hljs-string">" &lt;-i-&gt; "</span> + s.substring(i);
-      },
-      getPosition : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">return</span> i;
-      },
-      setPosition : <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">_i</span>) </span>{
-        i = _i;
-      }
-    };
   };</pre></div></div>
             
         </li>
         
-              <a name="u$.splitUrlPath" />
+              <a name="generic_order" />
         
         <li id="section-62">
 
@@ -1605,54 +1617,6 @@ to strings, and we use values as keys in inverse mapping too.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-62">&#182;</a>
-              </div>
-              <p><strong> splitUrlPath(urlpath) </strong></p>
-<p>spit url path on path elements, and variables.</p>
-
-            </div>
-            
-                 <div class="content"><div class='highlight'><pre>  u$.splitUrlPath=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">urlpath</span>) </span>{
-    <span class="hljs-keyword">var</span> path = urlpath.split(<span class="hljs-string">"/"</span>);
-    <span class="hljs-keyword">var</span> last = path[path.length-<span class="hljs-number">1</span>].split(<span class="hljs-string">'?'</span>);
-    <span class="hljs-keyword">var</span> result = {
-      path: path ,
-      variables: {},
-      toString: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
-        <span class="hljs-keyword">var</span> vars = <span class="hljs-string">''</span> ;
-        <span class="hljs-keyword">var</span> sep = <span class="hljs-string">'?'</span> ;
-        <span class="hljs-keyword">for</span> ( <span class="hljs-keyword">var</span> k <span class="hljs-keyword">in</span> <span class="hljs-keyword">this</span>.variables) {
-          <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.variables.hasOwnProperty(k)) {
-            vars += sep + k + <span class="hljs-string">'='</span> + <span class="hljs-built_in">encodeURI</span>(<span class="hljs-keyword">this</span>.variables[k]);
-            sep = <span class="hljs-string">'&amp;'</span>;
-          }
-        }
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.path.join(<span class="hljs-string">'/'</span>) + vars;
-      }
-    };
-    <span class="hljs-keyword">if</span>( last.length === <span class="hljs-number">2</span> ){
-      path[path.length-<span class="hljs-number">1</span>] = last[<span class="hljs-number">0</span>];
-      last[<span class="hljs-number">1</span>].split(<span class="hljs-string">"&amp;"</span>).forEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">part</span>) </span>{
-        <span class="hljs-keyword">var</span> item = part.split(<span class="hljs-string">"="</span>);
-        <span class="hljs-keyword">if</span>( item[<span class="hljs-number">0</span>].length &gt; <span class="hljs-number">0</span> ){
-          result.variables[item[<span class="hljs-number">0</span>]] = <span class="hljs-built_in">decodeURIComponent</span>(item[<span class="hljs-number">1</span>]);
-        }
-      });
-    }<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>(last.length &gt; <span class="hljs-number">2</span>){
-      <span class="hljs-keyword">throw</span> <span class="hljs-string">'Unexpected number of "?" in url :'</span> + urlpath ;
-    }
-    <span class="hljs-keyword">return</span> result;
-  };</pre></div></div>
-            
-        </li>
-        
-              <a name="generic_order" />
-        
-        <li id="section-63">
-
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <p>order functions take two arguments (let’s say <code>a</code> and <code>b</code>)
 and compare them.</p>
@@ -1676,12 +1640,12 @@ order function in chain have it’s say</li>
         
               <a name="u$.orderChain" />
         
-        <li id="section-64">
+        <li id="section-63">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
+                <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
               <p><strong> orderChain(array) </strong></p>
 <p>Create chain of order functions.</p>
@@ -1707,12 +1671,12 @@ order function in chain have it’s say</li>
         
               <a name="u$.orderPredicateFirst" />
         
-        <li id="section-65">
+        <li id="section-64">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <p><strong>orderPredicateFirst(is)</strong></p>
 <p>Turn predicate function(returning <code>true</code> or <code>false</code>) into
@@ -1728,12 +1692,12 @@ order function. Order function place <code>true</code> first.</p>
             
         </li>
         
-        <li id="section-66">
+        <li id="section-65">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>Assume we have <code>indexArray</code> and <code>valueArray</code>. We also have <code>valueOrder(a,b)</code>
 function that capable of comparing elements of <code>valueArray</code>. <code>indexArray</code>
@@ -1746,12 +1710,12 @@ order or composition of <code>indexArray</code> leave order of <code>valueArray<
         
               <a name="u$.indexOrder" />
         
-        <li id="section-67">
+        <li id="section-66">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <p><strong>indexOrder (valueOrder, valueArray)</strong></p>
 <p>creates index order function for given <code>valueOrder(a,b)</code></p>
@@ -1769,12 +1733,12 @@ order or composition of <code>indexArray</code> leave order of <code>valueArray<
         
               <a name="u$.extractValuesByIndex" />
         
-        <li id="section-68">
+        <li id="section-67">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <p><strong> extractValuesByIndex (indexArray, valueArray)</strong></p>
 <p>extract values out of <code>valueArray</code> using <code>indexArray</code></p>
@@ -1789,12 +1753,12 @@ order or composition of <code>indexArray</code> leave order of <code>valueArray<
         
               <a name="u$.createIndex" />
         
-        <li id="section-69">
+        <li id="section-68">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p><strong> createIndex(valueArray) </strong></p>
 <p>returns index array matching <code>valueArray</code></p>
@@ -1809,12 +1773,12 @@ order or composition of <code>indexArray</code> leave order of <code>valueArray<
         
               <a name="u$.orderInverse" />
         
-        <li id="section-70">
+        <li id="section-69">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <p><strong>orderInverse(f)</strong></p>
 <p>inverse order mandated by <code>f(a,b)</code></p>
@@ -1825,24 +1789,18 @@ order or composition of <code>indexArray</code> leave order of <code>valueArray<
     <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a, b</span>) </span>{
       <span class="hljs-keyword">return</span> f(b, a);
     };
-  };
-
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">build_to_string_fn</span>(<span class="hljs-params">_to_string</span>)</span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">v</span>)</span>{
-      <span class="hljs-keyword">return</span> u$.isNullish(v) ? <span class="hljs-string">""</span> : _to_string(v) ;
-    };
-  }</pre></div></div>
+  };</pre></div></div>
             
         </li>
         
               <a name="u$.orderNullsFirst" />
         
-        <li id="section-71">
+        <li id="section-70">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <p><strong> orderNullsFirst(orderFuncArray) </strong></p>
 <p>Create order function that sort <code>undefined</code> - first, <code>null</code> - second
@@ -1906,12 +1864,12 @@ and then according to order functions provided in argument.</p>
         
               <a name="Type.prototype.init" />
         
-        <li id="section-72">
+        <li id="section-71">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <p>reevaluate type conversion graph.
 called everytime when <code>addTypes()</code> called.</p>
@@ -1922,12 +1880,35 @@ called everytime when <code>addTypes()</code> called.</p>
     <span class="hljs-keyword">this</span>.to = {};
     <span class="hljs-keyword">this</span>.from = {};
 
-  };
-  u$.Type = Type;</pre></div></div>
+  };</pre></div></div>
             
         </li>
         
-              <a name="u$.addTypes" />
+              <a name="Link" />
+        
+        <li id="section-72">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-72">&#182;</a>
+              </div>
+              <p>Link object, associate name with resource location</p>
+<ul>
+<li><code>href</code> - url or path</li>
+<li><code>name</code> - name of resource</li>
+</ul>
+
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">Link</span>(<span class="hljs-params">href,text</span>)</span>{
+    <span class="hljs-keyword">this</span>.text = text || <span class="hljs-string">''</span>;
+    <span class="hljs-keyword">this</span>.href = href ;
+  }</pre></div></div>
+            
+        </li>
+        
+              <a name="Link.prototype.toString" />
         
         <li id="section-73">
 
@@ -1935,6 +1916,51 @@ called everytime when <code>addTypes()</code> called.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-73">&#182;</a>
+              </div>
+              <p>convert into string using markdown sintax
+like <code>[This link](http://example.net/)</code></p>
+
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>  Link.prototype.toString = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-string">"["</span>+<span class="hljs-keyword">this</span>.text+<span class="hljs-string">"]("</span>+<span class="hljs-keyword">this</span>.href+<span class="hljs-string">")"</span> ;
+  };
+
+  Link.parse=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">md_link</span>)</span>{
+    <span class="hljs-keyword">if</span>(md_link === <span class="hljs-literal">null</span> || md_link === <span class="hljs-string">''</span>){
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-keyword">var</span> position = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">if</span>(md_link[<span class="hljs-number">0</span>] === <span class="hljs-string">'['</span>){
+      <span class="hljs-keyword">var</span> l = md_link.length - <span class="hljs-number">1</span> ;
+      <span class="hljs-keyword">if</span>( md_link[l] === <span class="hljs-string">')'</span> ){
+        <span class="hljs-keyword">while</span>( position &lt; l ){
+          <span class="hljs-keyword">if</span>( md_link[position] === <span class="hljs-string">']'</span> &amp;&amp;
+              md_link[position+<span class="hljs-number">1</span>] === <span class="hljs-string">'('</span> ){
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Link( md_link.substring(position+<span class="hljs-number">2</span>,l),
+                md_link.substring(<span class="hljs-number">1</span>,position));
+          }
+          position++;
+        }
+      }
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
+  };
+
+  u$.Link = Link;
+
+  u$.Type = Type;</pre></div></div>
+            
+        </li>
+        
+              <a name="u$.addTypes" />
+        
+        <li id="section-74">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <p><strong> addTypes(typesMap) </strong></p>
 <p>   add types</p>
@@ -1994,12 +2020,12 @@ called everytime when <code>addTypes()</code> called.</p>
             
         </li>
         
-        <li id="section-74">
+        <li id="section-75">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
               <p><strong> number </strong> type</p>
 
@@ -2018,12 +2044,37 @@ called everytime when <code>addTypes()</code> called.</p>
             
         </li>
         
-        <li id="section-75">
+        <li id="section-76">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-76">&#182;</a>
+              </div>
+              <p><strong> link </strong> type
+<code>[This link](http://example.net/)</code></p>
+
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>    link: {
+      is: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">l</span>)</span>{ <span class="hljs-keyword">return</span> l <span class="hljs-keyword">instanceof</span> Link; },
+      missing: _.isNull,
+      from_string: Link.parse,
+      order: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a, b</span>) </span>{
+        <span class="hljs-keyword">var</span> rc = generic_order(a.href, b.href);
+        <span class="hljs-keyword">if</span>( ! rc ) rc = generic_order(a.text, b.text);
+        <span class="hljs-keyword">return</span> rc || <span class="hljs-number">0</span>;
+      }
+    },</pre></div></div>
+            
+        </li>
+        
+        <li id="section-77">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
               <p><strong> date </strong> type</p>
 
@@ -2039,12 +2090,12 @@ called everytime when <code>addTypes()</code> called.</p>
             
         </li>
         
-        <li id="section-76">
+        <li id="section-78">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-78">&#182;</a>
               </div>
               <p><strong> datetime </strong> type</p>
 
@@ -2060,12 +2111,12 @@ called everytime when <code>addTypes()</code> called.</p>
             
         </li>
         
-        <li id="section-77">
+        <li id="section-79">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-79">&#182;</a>
               </div>
               <p><strong> timestamp </strong> type</p>
 
@@ -2081,12 +2132,12 @@ called everytime when <code>addTypes()</code> called.</p>
             
         </li>
         
-        <li id="section-78">
+        <li id="section-80">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-80">&#182;</a>
               </div>
               <p><strong> boolean </strong> type</p>
 
@@ -2122,12 +2173,12 @@ called everytime when <code>addTypes()</code> called.</p>
             
         </li>
         
-        <li id="section-79">
+        <li id="section-81">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-81">&#182;</a>
               </div>
               <p><strong> string </strong> type</p>
 
@@ -2146,12 +2197,12 @@ called everytime when <code>addTypes()</code> called.</p>
         
               <a name="u$.detect_possible_array_types" />
         
-        <li id="section-80">
+        <li id="section-82">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-82">&#182;</a>
               </div>
               <p><strong> detect_possible_array_types(str_array) </strong></p>
 <p>takes <code>str_array</code> and detect other possible array
@@ -2225,12 +2276,12 @@ types from values</p>
         
               <a name="u$.ensureType" />
         
-        <li id="section-81">
+        <li id="section-83">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-83">&#182;</a>
               </div>
               <p><strong>ensureType(typeOrName)</strong></p>
 <p>returns type for name, or pass through type</p>
