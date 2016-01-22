@@ -45,26 +45,33 @@
   // returns tr attributes:
   // `{ <name> : <value> ,...}`
 
-
   function get_cell_as_string(view,row_idx,col_idx,col_name) {
     return view.df.get(row_idx,col_idx, 'as_string');
   }
+  exports.get_cell_as_string = get_cell_as_string;
 
   function get_cell(view,row_idx,col_idx,col_name) {
     return view.df.get(row_idx,col_idx);
   }
+  exports.get_cell = get_cell;
+
   // formatters library
-  var FORMATTERS = {
+  function anchor_elem(view, link) {
+    var a = view.new_elem(null, 'a', ['wdf_link'], {href: link.href});
+    a.innerText = link.text || link.href;
+    return a;
+  }
+  exports.anchor_elem = anchor_elem ;
+
+  var FORMAT = {
     cell_by_type: {
       date: get_cell_as_string,
       datetime: get_cell_as_string,
       timestamp: get_cell_as_string,
-      link: function get_cell(view,row_idx,col_idx,col_name) {
+      link: function(view,row_idx,col_idx,col_name) {
         var link = view.df.get(row_idx,col_idx);
         if(link){
-          var a = view._new_elem(null,'a',['wdf_link'],{ href: link.href });
-          a.innerText = link.text || link.href;
-          return a;
+          return anchor_elem(view, link);
         }
         return undefined;
       }
@@ -77,11 +84,7 @@
     header_row: function(view){}
   };
 
-  exports.FORMATTERS =FORMATTERS;
-
-  exports.header_cell_fn=function(format){
-    return format.header_cell || FORMATTERS.header_cell;
-  };
+  exports.FORMAT =FORMAT;
 
   function find_format_fn(format,col){
     var fn;
@@ -93,22 +96,26 @@
         fn = format.cell_by_type[col.type.name];
       }
     }
-    if( !fn && format.other_cell ) {
+    if( !fn && format ) {
       fn = format.other_cell;
     }
     return fn;
   }
+
+  exports.header_cell_fn=function(format){
+    return ( format ? format.header_cell : null ) || FORMAT.header_cell;
+  };
+
   exports.cell_fn=function(format, col){
-    return find_format_fn(format,col) || find_format_fn(FORMATTERS,col);
+    return find_format_fn(format,col) || find_format_fn(FORMAT,col);
   };
 
   exports.row_fn=function(format){
-    return format.row || FORMATTERS.row;
+    return ( format ? format.row : null ) || FORMAT.row;
   };
 
   exports.header_row_fn = function (format){
-    return format.header_row || FORMATTERS.header_row;
+    return ( format ? format.header_row : null ) || FORMAT.header_row;
   };
-
 
 })();

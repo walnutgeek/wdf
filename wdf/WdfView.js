@@ -6,9 +6,10 @@
   var DataFrame = require("./DataFrame");
 
   var defaults = {
-    format: {},
+    format: null,
     widths: {},
     theme: require('./ViewTheme'),
+    max_width: 300,
   } ;
 
   var getUniqueId =
@@ -60,9 +61,9 @@
       this.props.container.wdfView = this ;
     }
     this.id = 'wdf_id_' + getUniqueId();
-    this.header =  this._new_elem(this.props.container, 'table', ['wdf','wdf_header', this.id]);
-    this.data =    this._new_elem(this.props.container, 'table', ['wdf','wdf_data',this.id]);
-    var head_tr =  this._new_elem(this.header, 'tr',['wdf']);
+    this.header =  this.new_elem(this.props.container, 'table', ['wdf','wdf_header', this.id]);
+    this.data =    this.new_elem(this.props.container, 'table', ['wdf','wdf_data',this.id]);
+    var head_tr =  this.new_elem(this.header, 'tr',['wdf']);
 
     function get_formatter(name,arg){
       return props.theme[name](props.format,arg);
@@ -75,9 +76,9 @@
     for(var col_idx = 0 ; col_idx < columnNames.length; col_idx++ ){
       col_name = columnNames[col_idx];
       cell_fns[col_idx]=get_formatter('cell_fn',this.df.columnSet.byIndex[col_idx]);
-      th = this._new_elem(head_tr,'th',['wdf'],
+      th = this.new_elem(head_tr,'th',['wdf'],
           {'data-column':col_name});
-      div = this._new_elem(th,'div',['wdf_masker']);
+      div = this.new_elem(th,'div',['wdf_masker']);
       r = header_cell_fn.call(th, this, col_idx, col_name);
       if( !_.isUndefined(r) ){
         if( _.isPlainObject(r) ){
@@ -98,14 +99,14 @@
     var row_fn = get_formatter('row_fn');
     for(var row_idx = 0 ; row_idx < this.df.getRowCount(); row_idx++ ){
       var odd_even = 'wdf_' + (row_idx % 2 ? 'odd' : 'even');
-      tr = this._new_elem(this.data,'tr',[ 'wdf',  odd_even ],
+      tr = this.new_elem(this.data,'tr',[ 'wdf',  odd_even ],
           {'data-row':row_idx});
       for( col_idx = 0 ; col_idx < columnNames.length; col_idx++ ){
 
         col_name = columnNames[col_idx];
-        td = this._new_elem(tr,'td',['wdf'],
+        td = this.new_elem(tr,'td',['wdf'],
             {'data-column':col_name});
-        div = this._new_elem(td,'div',['wdf_masker']);
+        div = this.new_elem(td,'div',['wdf_masker']);
         r = cell_fns[col_idx].call(td, this, row_idx, col_idx, col_name);
 
         if( !_.isUndefined(r) ){
@@ -154,7 +155,7 @@
     };
   });
 
-  WdfView.prototype._new_elem = function (parent, tag , classes, attrs){
+  WdfView.prototype.new_elem = function (parent, tag , classes, attrs){
     var e = this.props.document.createElement(tag);
     if(classes){
       classes.forEach(function(c){ e.classList.add(c); });
@@ -190,6 +191,15 @@
       }
     }
   };
+  function markOverflownCell( row, col_name, cell) {
+    var real_w = cell.firstChild.scrollWidth;
+    var visual_w = cell.firstChild.offsetWidth;
+    if (real_w > visual_w) {
+      cell.classList.add('wdf_over');
+    } else {
+      cell.classList.remove('wdf_over');
+    }
+  }
 
 
   WdfView.prototype.setColumnWidth = function(col,width){
@@ -198,13 +208,15 @@
     this.applyToColumn(col,function(row,col_name,cell){
       cell.firstChild.style.width = width + 'px';
     });
+    this.applyToColumn(col,markOverflownCell);
   };
 
   WdfView.prototype.setAllColumnWidths = function(){
     this.applyToAllCells(function(row,col_name,cell){
       var col_width = this.widths[col_name];
       if( !col_width.current  ){
-        col_width.current = col_width.max > 300 ? 300 : col_width.max;
+        col_width.current = col_width.max > this.props.max_width ?
+            this.props.max_width : col_width.max;
       }
       cell.firstChild.style.width = col_width.current + 'px';
     });
@@ -212,16 +224,9 @@
 
 
   WdfView.prototype.markOverflownColumn = function(){
-    this.applyToAllCells(function(row,col_name,cell){
-      var real_w = cell.firstChild.scrollWidth ;
-      var visual_w = cell.firstChild.offsetWidth ;
-      if( real_w > visual_w ){
-        cell.classList.add('wdf_over');
-      }else{
-        cell.classList.remove('wdf_over');
-      }
-    });
+    this.applyToAllCells(markOverflownCell);
   };
+
   WdfView.prototype.getColumnWidthStats = function(){
     var real_width_stats = {};
     this.applyToAllCells(function(row,col_name,cell){
