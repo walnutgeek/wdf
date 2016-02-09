@@ -191,6 +191,7 @@
       }
     }
   };
+
   function markOverflownCell( row, col_name, cell) {
     var real_w = cell.firstChild.scrollWidth;
     var visual_w = cell.firstChild.offsetWidth;
@@ -200,7 +201,6 @@
       cell.classList.remove('wdf_over');
     }
   }
-
 
   WdfView.prototype.setColumnWidth = function(col,width){
     var colName = this.df.getColumnName(col);
@@ -221,7 +221,6 @@
       cell.firstChild.style.width = col_width.current + 'px';
     });
   };
-
 
   WdfView.prototype.markOverflownColumn = function(){
     this.applyToAllCells(markOverflownCell);
