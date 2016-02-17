@@ -8,7 +8,7 @@ function testArrays(expected, actual) {
   }
 }
 
-var u$ = require("../wdf/utils");
+var u$ = require("../utils");
 
 var smartAssert = require("./smart_assert");
 

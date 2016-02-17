@@ -1,6 +1,6 @@
 var assert = require("assert");
 var _ = require("lodash");
-var u$ = require('../wdf/utils');
+var u$ = require('../utils');
 
 module.exports = function(expected, result, msg) {
   if (expected instanceof u$.Link){

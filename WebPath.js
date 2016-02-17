@@ -1,6 +1,11 @@
 (function() {
     "use strict";
     var u$ = require("./utils");
+    var cacheit = require("./cacheit");
+
+    //subset of mime-db, 1.3k instead of 139k
+    var ext2mime = require("./ext2mime.json");
+
     var _ = require("lodash");
 
     var SEARCH_TYPES = {
@@ -22,7 +27,7 @@
                 test: function (s) {
                     return s.toLowerCase().indexOf(low_pattern) > -1;
                 }};
-        }};
+        }};//contains case insensetive
 
     function Search(s) {
         if( ! SEARCH_TYPES.hasOwnProperty(s[0])) {
@@ -187,30 +192,31 @@
         this.parent = array.length > 0 ?  new WebPath(array) : null ;
     }
 
-    WebPath.prototype.extension=function(){
-      if( _.isUndefined(this.ext) ){
-        for( var i = this.name.length - 1 ; i > 0 ; i-- ){
-          if(this.name[i] === '.' ){
-            this.ext = this.name.substr(i+1).toLowerCase();
-            return this.ext;
+    WebPath.prototype.extension=cacheit('_ext', function(){
+        if( this.dir ){
+          return '/';
+        }else{
+          for( var i = this.name.length - 1 ; i > 0 ; i-- ){
+            if(this.name[i] === '.' ){
+              return this.name.substr(i+1).toLowerCase();
+            }
           }
+          return null;
         }
-        this.ext = null ;
-      }
-      return this.ext;
-    };
+    });
 
+    WebPath.prototype.mime=cacheit('_mime', function(){
+       return ext2mime[this.extension()] || ext2mime['*'];
+    });
 
     WebPath.prototype.isRoot=function(){
         return this.parent === null;
     };
 
-    WebPath.prototype.path=function(){
-        if( _.isUndefined(this._path) ){
-            this._path = (this.isRoot() ? this.name  : this.parent.path() +  this.name) + (this.dir ? '/' : '');
-        }
-        return this._path;
-    };
+    WebPath.prototype.path=cacheit('_path', function(){
+        return  (this.isRoot() ?  this.name  :  this.parent.path() +  this.name) +
+            (this.dir ? '/' : '');
+    });
 
     WebPath.prototype.enumerate=function(input){
         input = input || [];

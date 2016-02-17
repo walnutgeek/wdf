@@ -1,6 +1,6 @@
 {
   "name": "wdf",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Web data frame",
   "main": "index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "copy_public": "docco ./docs/*md -o dist && cp ./node_modules/mocha/mocha.css dist/ ",
     "cover": "istanbul cover _mocha -- --require ignore-styles -R spec ",
     "codecov": "codecov < ./dist/coverage.json",
-    "docs": "docco ./wdf/*js ./docs/*md -t docs/docco.jst -c docs/docco.css -o dist",
+    "docs": "docco ./*js ./docs/*md -t docs/docco.jst -c docs/docco.css -o dist",
     "gh": "npm run docs && gh-pages -d dist/",
     "dev": "webpack-dev-server --config webpack.config.js",
     "debug": "node-debug -p 3333 ./node_modules/.bin/_mocha",
@@ -33,9 +33,9 @@
   ],
   "files": [
     "README.md",
-    "index.js",
-    "wdf/*.js",
-    "wdf/*.css"
+    "*.js",
+    "*.css",
+    "ext2mime.json"
   ],
   "author": "wg@walnutgeek.com",
   "license": "MIT",
@@ -53,6 +53,7 @@
     "jsdom": "^7.2.2",
     "jshint": "^2.8.0",
     "jshint-loader": "^0.8.3",
+    "json-loader": "^0.5.4",
     "markdown": "^0.5.0",
     "mocha": "^2.3.4",
     "mocha-jsdom": "^1.0.0",
@@ -62,10 +63,12 @@
     "rimraf": "^2.4.3",
     "style-loader": "^0.13.0",
     "uglify-loader": "^1.2.0",
+    "wdf-loader": "0.0.1",
     "webpack": "^1.12.6",
     "webpack-dev-server": "^1.12.1"
   },
   "dependencies": {
-    "lodash": "^4.0.0"
+    "lodash": "^4.0.0",
+    "mime-types": "^2.1.9"
   }
 }

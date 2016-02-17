@@ -1,7 +1,7 @@
 var assert = require('assert');
 var _ = require("lodash");
 
-var WebPath = require("../wdf/WebPath");
+var WebPath = require("../WebPath");
 
 var s = [ 'hello','allo hello ale','helo','heLlo'];
 var cases = [
@@ -146,8 +146,11 @@ describe( 'WebPath',function() {
   it('.extension()', function () {
     assert.equal('csv', path.extension());
     assert.equal('csv', path.extension());
-    assert.equal(null, path.parent.extension());
-    assert.equal(null, path.parent.extension());
+    assert.equal('/', path.parent.extension());
+    assert.equal('/', path.parent.extension());
+    var bashrc = new WebPath('/abc/o/.bashrc').extension();
+    assert.equal(null, bashrc );
+    assert.equal(null, bashrc );
   });
   it('.enumerate()', function () {
     var e = path.enumerate();

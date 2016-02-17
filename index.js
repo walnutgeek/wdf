@@ -1,7 +1,7 @@
 module.exports = {
-  utils:     require("./wdf/utils"),
-  DataFrame: require("./wdf/DataFrame"),
-  WdfView:   require("./wdf/WdfView"),
-  WebPath:   require("./wdf/WebPath"),
-  ViewTheme: require("./wdf/ViewTheme"),
+  utils:     require("./utils"),
+  DataFrame: require("./DataFrame"),
+  WdfView:   require("./WdfView"),
+  WebPath:   require("./WebPath"),
+  ViewTheme: require("./ViewTheme")
 };

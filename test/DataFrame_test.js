@@ -1,7 +1,7 @@
 
 describe( 'wdf/DataFrame', function(){
-  var DataFrame = require("../wdf/DataFrame");
-  var u$ = require("../wdf/utils");
+  var DataFrame = require("../DataFrame");
+  var u$ = require("../utils");
   var assert = require("assert");
   var smartAssert = require("./smart_assert");
 

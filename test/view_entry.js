@@ -1,9 +1,9 @@
-require("../wdf/wdf_view.css");
-var WdfView = require("../wdf/WdfView");
+require("../wdf_view.css");
+var WdfView = require("../WdfView");
 
 if( WdfView.hasDefault('document') ){
   document.addEventListener('DOMContentLoaded', function(){
-    var DataFrame = require("../wdf/DataFrame");
+    var DataFrame = require("../DataFrame");
     var df = DataFrame.parse_wdf( require('./all_types_including_link') );
 
     var view = new WdfView({df: df, container:'#table'});

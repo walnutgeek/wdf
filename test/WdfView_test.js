@@ -1,9 +1,9 @@
 var assert = require('assert');
 var _ = require("lodash");
-var u$ = require("../wdf/utils");
+var u$ = require("../utils");
 
-var WdfView = require("../wdf/WdfView");
-var DataFrame = require("../wdf/DataFrame");
+var WdfView = require("../WdfView");
+var DataFrame = require("../DataFrame");
 
 
 describe( 'WdfView',function() {
@@ -59,7 +59,7 @@ describe( 'WdfView',function() {
     setUpDoc();
 
     var df = DataFrame.parse_wdf( require('./all_types_wdf') );
-    var get_cell = require("../wdf/ViewTheme").get_cell;
+    var get_cell = require("../ViewTheme").get_cell;
 
     var v = new WdfView({
       df:df,

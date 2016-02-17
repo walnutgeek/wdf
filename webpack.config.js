@@ -28,6 +28,8 @@ function cfg(entry_point, out_file, customizer){
       loaders: [
         { test: /\.css$/,
           loader: 'style?minimize!css' },
+        { test: /\.json$/,
+          loader: 'json' },
       ],
     },
     plugins: [
