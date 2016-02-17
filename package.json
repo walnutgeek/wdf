@@ -63,7 +63,6 @@
     "rimraf": "^2.4.3",
     "style-loader": "^0.13.0",
     "uglify-loader": "^1.2.0",
-    "wdf-loader": "0.0.1",
     "webpack": "^1.12.6",
     "webpack-dev-server": "^1.12.1"
   },
