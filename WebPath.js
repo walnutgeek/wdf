@@ -6,7 +6,7 @@
     //subset of mime-db, 1.3k instead of 139k
     var ext2mime = require("./ext2mime.json");
 
-    var _ = require("lodash");
+    var _ = require("lodash/lang");
 
     var SEARCH_TYPES = {
         'R': function(pattern){
