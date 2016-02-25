@@ -958,6 +958,9 @@
     if(md_link === null || md_link === ''){
       return null;
     }
+    if(md_link && md_link.constructor === Link){
+      return md_link;
+    }
     var position = 1;
     if(md_link[0] === '['){
       var l = md_link.length - 1 ;

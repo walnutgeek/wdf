@@ -169,15 +169,20 @@
       return s ;
     };
 
-    function check_name(name){
-      if(name === '.' || name === '..'){
-        throw u$.error({message: "path cannot include relative directory references"})
-      }
-      return name;
-    }
     function WebPath(input){
-        var array = input ;
-        try{
+      function check_name(name){
+        if(name === '.' || name === '..' || name.indexOf('/') > -1 ){
+          throw u$.error({message: "path cannot include relative directory references"})
+        }
+        return name;
+      }
+      try{
+        if( _.isPlainObject(input) ){
+          this.name = check_name(input.name);
+          this.parent = input.parent;
+          this.dir = input.dir;
+        }else{
+          var array = input ;
           if(_.isString(input)){
               var posParams = input.indexOf('?');
               if(posParams >= 0){
@@ -198,23 +203,39 @@
               this.dir = true;
           }
           this.parent = array.length > 0 ?  new WebPath(array) : null ;
-        }catch(e){
-          throw u$.error({input:input},e);
         }
+      }catch(e){
+        throw u$.error({input:input},e);
+      }
     }
 
-    WebPath.prototype.extension=cacheit('_ext', function(){
-        if( this.dir ){
-          return '/';
-        }else{
-          for( var i = this.name.length - 1 ; i > 0 ; i-- ){
-            if(this.name[i] === '.' ){
-              return this.name.substr(i+1).toLowerCase();
-            }
-          }
-          return null;
+  WebPath.prototype.child=function(name,dir){
+    if( !this.dir ){
+      throw u$.error('only directory can have children');
+    }else{
+      return new WebPath({
+        parent: this,
+        name: name,
+        dir: dir});
+    }
+  };
+
+  WebPath.prototype.link=cacheit('_link', function(){
+    return new u$.Link(this.path(), this.name);
+  });
+
+  WebPath.prototype.extension=cacheit('_ext', function(){
+    if( this.dir ){
+      return '/';
+    }else{
+      for( var i = this.name.length - 1 ; i > 0 ; i-- ){
+        if(this.name[i] === '.' ){
+          return this.name.substr(i+1).toLowerCase();
         }
-    });
+      }
+      return null;
+    }
+  });
 
     WebPath.prototype.mime=cacheit('_mime', function(){
        return ext2mime[this.extension()] || ext2mime['*'];

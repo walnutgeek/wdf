@@ -191,5 +191,25 @@ describe( 'WebPath',function() {
     assert.equal(new WebPath('/a/').mime(),'text/wdf');
 
   });
+  it('child', function () {
+    function test_error(p,c,i,m){
+      try{
+        new WebPath(p).child(c);
+        assert.fail();
+      }catch(e){
+        if(i){
+          m = 'path cannot include relative directory ' +
+              'references {"input":' + i + '}';
+        }
+        assert.equal(e.toString(),m );
+      }
+    }
+    test_error('/b/','.','{"parent":{"name":"b","dir":true,"parent":{"name":"","dir":true,"parent":null}},"name":"."}');
+    test_error('/b/','aa/kkk','{"parent":{"name":"b","dir":true,"parent":{"name":"","dir":true,"parent":null}},"name":"aa/kkk"}');
+    test_error('/b','abc.xyz',undefined,' "only directory can have children"');
+
+    assert.equal(new WebPath('/b/').child('a.xyz').path(),'/b/a.xyz' );
+
+  });
 
 });
