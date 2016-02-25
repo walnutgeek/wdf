@@ -169,27 +169,38 @@
       return s ;
     };
 
+    function check_name(name){
+      if(name === '.' || name === '..'){
+        throw u$.error({message: "path cannot include relative directory references"})
+      }
+      return name;
+    }
     function WebPath(input){
         var array = input ;
-        if(_.isString(input)){
-            var posParams = input.indexOf('?');
-            if(posParams >= 0){
-                this.params =  new Params(input.substring(posParams+1));
-                input = input.substring(0,posParams);
-            }
-            array = input.split('/');
-            this.name = array.pop();
-            if( this.name === "" ){
-                this.name = array.pop();
-                this.dir = true ;
-            }
-        }else{
-            // if it is not string that it is recursive call
-            // to init parent chain
-            this.name = array.pop() ;
-            this.dir = true;
+        try{
+          if(_.isString(input)){
+              var posParams = input.indexOf('?');
+              if(posParams >= 0){
+                  this.params =  new Params(input.substring(posParams+1));
+                  input = input.substring(0,posParams);
+              }
+              array = input.split('/');
+              this.name = check_name(array.pop());
+
+              if( this.name === "" ){
+                  this.name = check_name(array.pop());
+                  this.dir = true ;
+              }
+          }else{
+              // if it is not string that it is recursive call
+              // to init parent chain
+              this.name = check_name(array.pop()) ;
+              this.dir = true;
+          }
+          this.parent = array.length > 0 ?  new WebPath(array) : null ;
+        }catch(e){
+          throw u$.error({input:input},e);
         }
-        this.parent = array.length > 0 ?  new WebPath(array) : null ;
     }
 
     WebPath.prototype.extension=cacheit('_ext', function(){

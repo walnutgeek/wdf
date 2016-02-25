@@ -169,4 +169,20 @@ describe( 'WebPath',function() {
     assert.equal(new WebPath('/abc/o').toString(),'/abc/o');
     assert.equal(new WebPath('/abc/o/').toString(),'/abc/o/');
   });
+  it('forbiden components', function () {
+    function test_error(p){
+      try{
+        new WebPath(p);
+        assert.fail();
+      }catch(e){
+        assert.equal(e.toString(),'path cannot include relative directory ' +
+            'references {"input":"' + p + '"}' );
+      }
+    }
+    test_error('/../');
+    test_error('/abc/../xyz/');
+    test_error('./xyz/');
+
+  });
+
 });
