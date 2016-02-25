@@ -184,5 +184,12 @@ describe( 'WebPath',function() {
     test_error('./xyz/');
 
   });
+  it('mime', function () {
+    assert.equal(new WebPath('/a.xyz').mime(),'application/octet-stream' );
+    assert.equal(new WebPath('/a.pdf').mime(),'application/pdf');
+    assert.equal(new WebPath('/a.csv').mime(),'text/csv');
+    assert.equal(new WebPath('/a/').mime(),'text/wdf');
+
+  });
 
 });
