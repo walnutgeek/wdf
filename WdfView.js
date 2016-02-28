@@ -31,7 +31,9 @@
   }
 
   function render_value(div,v){
-    if( u$.isPrimitive(v) ){
+    if( u$.isNullish(v) ) {
+      div.innerText = '' ;
+    }else if( u$.isPrimitive(v) ){
       div.innerText = v ;
     }else{
       div.appendChild(v);
