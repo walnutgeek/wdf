@@ -1052,6 +1052,9 @@
       is: function(l){ return l instanceof Link; },
       missing: _.isNull,
       from_string: Link.parse,
+      to_json: function(v){
+        return _.isNull(v) ? null : this.to_string(v);
+      },
       order: function(a, b) {
         var rc = generic_order(a.href, b.href);
         if( ! rc ) rc = generic_order(a.text, b.text);
