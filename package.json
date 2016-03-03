@@ -1,6 +1,6 @@
 {
   "name": "wdf",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Web data frame",
   "main": "index.js",
   "scripts": {
@@ -67,7 +67,6 @@
     "webpack-dev-server": "^1.12.1"
   },
   "dependencies": {
-    "lodash": "^4.5.0",
-    "mime-types": "^2.1.9"
+    "lodash": "^4.5.0"
   }
 }
