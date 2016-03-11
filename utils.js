@@ -409,25 +409,32 @@
 
 //**error(params,err)**
 //
-//creates error object or add params to it as it will fly by.
+//creates Error object if not provided and add
+// stringified params to err.stack to stack trace.
   u$.error=function(params,  err) {
-    err = err || new Error();
-    params = params || {};
-    if ( u$.isNullish(err._message) ) {
-      err._message  = err.message ? err.message :  params.message || '' ;
-      delete params.message;
-    }
-    if ( _.isPlainObject(err.params) ) {
-      _.assign(err.params, params);
+    if( _.isString(params) ){
+      params = { msg: params};
     }else{
-      err.params = params;
+      params = params || {};
     }
-    err.toString = function (){
-      var m =  err._message ;
-      return _.size(this.params)  ? m + " " + JSON.stringify(this.params) : m;
-    };
+    if(!err){
+      function mk_err(key){
+        var msg = params[key];
+        if(msg){
+          delete params[key];
+          return new Error(msg);
+        }
+      }
+      err = mk_err('msg') || mk_err('message') || new Error();
+    }
+    if( _.size(params) ){
+      var stack = err.stack.split('\n');
+      stack.splice(1,0,JSON.stringify(params));
+      err.stack = stack.join('\n') ;
+    }
     return err;
   };
+
 //** assert(provided, expected, message) **
 //
 // throws error if `provided` and `expected` are not equal.

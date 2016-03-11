@@ -5,6 +5,8 @@ var u$ = require("../utils");
 var WdfView = require("../WdfView");
 var DataFrame = require("../DataFrame");
 
+var assert_error = require('./assert_error');
+
 
 describe( 'WdfView',function() {
   it('all_types', function () {
@@ -46,14 +48,13 @@ describe( 'WdfView',function() {
     WdfView.setDefault('document', undefined);
     var df = DataFrame.parse_wdf( require('./all_types_wdf') );
 
-    assert.equal(' {"msg":"document parameter has to be defined"}',
-        u$.jail(function () {
-          new WdfView({
-            df: df,
-            container: '#x'
-          });
-        }).toString()
-    );
+    var e = u$.jail(function () {
+      new WdfView({
+        df: df,
+        container: '#x'
+      });
+    });
+    assert_error(e, 'Error: document parameter has to be defined');
   });
   it('attach to container', function () {
     setUpDoc();
@@ -69,22 +70,21 @@ describe( 'WdfView',function() {
     });
 
     v.setColumnWidth('ts',20);
-
-    assert.equal(' {"msg":"df parameter has to be defined"}',
-        u$.jail(function(){
+    var e = u$.jail(
+        function () {
           new WdfView({
-            container:'#x'
+            container: '#x'
           });
-        }).toString()
-    );
-    assert.equal(' {"msg":"container query does not match anything.","query":"#y"}',
-        u$.jail(function(){
-          new WdfView({
-            df:df,
-            container:'#y'
-          });
-        }).toString()
-    );
+        });
+    assert_error( e, 'Error: df parameter has to be defined' );
+    e = u$.jail(function(){
+      new WdfView({
+        df:df,
+        container:'#y'
+      });
+    });
+    assert_error(e, 'Error: container query does not match anything.',
+        '{"query":"#y"}');
     cleanUpDoc();
   });
 

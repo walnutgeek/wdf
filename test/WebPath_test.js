@@ -3,6 +3,8 @@ var _ = require("lodash");
 
 var WebPath = require("../WebPath");
 
+var assert_error = require('./assert_error');
+
 var s = [ 'hello','allo hello ale','helo','heLlo'];
 var cases = [
   { r: "Rhel+o",
@@ -35,7 +37,8 @@ describe( 'WebPath',function() {
       new Search('X');
       assert.fail();
     }catch(e){
-      assert.equal(e.toString()," {\"msg\":\"no such search type\",\"type\":\"X\",\"allowed\":[\"R\",\"r\",\"S\",\"s\"]}");
+      assert_error(e,"Error: no such search type",
+          "{\"type\":\"X\",\"allowed\":[\"R\",\"r\",\"S\",\"s\"]}");
     }
   });
   it('.Field', function () {
@@ -97,7 +100,8 @@ describe( 'WebPath',function() {
       new Field('X');
       assert.fail();
     }catch(e){
-      assert.equal(e.toString()," {\"msg\":\"not allowed\",\"provided\":\"X\",\"allowed\":[\"A\",\"O\"]}");
+      assert_error(e,"Error: not allowed",
+          "{\"provided\":\"X\",\"allowed\":[\"A\",\"O\"]}");
     }
   });
   it('.Params', function () {
@@ -175,8 +179,8 @@ describe( 'WebPath',function() {
         new WebPath(p);
         assert.fail();
       }catch(e){
-        assert.equal(e.toString(),'path cannot include relative directory ' +
-            'references {"input":"' + p + '"}' );
+        assert_error(e,'Error: path cannot include relative directory references',
+            '{"input":"' + p + '"}');
       }
     }
     test_error('/../');
@@ -198,15 +202,16 @@ describe( 'WebPath',function() {
         assert.fail();
       }catch(e){
         if(i){
-          m = 'path cannot include relative directory ' +
-              'references {"input":' + i + '}';
+          assert_error(e,'Error: path cannot include relative directory references',
+              '{"input":' + i + '}');
+        }else{
+          assert_error(e,m);
         }
-        assert.equal(e.toString(),m );
       }
     }
     test_error('/b/','.','{"parent":{"name":"b","dir":true,"parent":{"name":"","dir":true,"parent":null}},"name":"."}');
     test_error('/b/','aa/kkk','{"parent":{"name":"b","dir":true,"parent":{"name":"","dir":true,"parent":null}},"name":"aa/kkk"}');
-    test_error('/b','abc.xyz',undefined,' "only directory can have children"');
+    test_error('/b','abc.xyz',undefined,'Error: only directory can have children');
 
     assert.equal(new WebPath('/b/').child('a.xyz').path(),'/b/a.xyz' );
 

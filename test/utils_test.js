@@ -8,6 +8,8 @@ function testArrays(expected, actual) {
   }
 }
 
+var assert_error = require('./assert_error')
+
 var u$ = require("../utils");
 
 var smartAssert = require("./smart_assert");
@@ -19,26 +21,20 @@ describe( 'wdf/utils',function(){
     try {
       u$.assert("aa", "bb");
     } catch (x) {
-      assert.equal(x.toString(),
-          "Unexpected value {\"expected\":\"bb\",\"provided\":\"aa\"}");
-      assert.equal(x.params.expected, "bb");
-      assert.equal(x.params.provided, "aa");
+      assert_error(x, "Error: Unexpected value");
     }
     var arr = [ "cc", "bb" ];
     try {
       u$.assert("aa", arr);
     } catch (x) {
-      assert.equal(x.toString(),
-          "Unexpected value {\"expected\":[\"cc\",\"bb\"],\"provided\":\"aa\"}");
-      assert.equal(x.params.expected, arr);
-      assert.equal(x.params.provided, "aa");
+      assert_error(x,"Error: Unexpected value",
+          "{\"expected\":[\"cc\",\"bb\"],\"provided\":\"aa\"}");
     }
     try {
       u$.assert("aa", "bb", "haha");
     } catch (x) {
-      assert.equal(x.toString(), "haha {\"expected\":\"bb\",\"provided\":\"aa\"}");
-      assert.equal(x.params.expected, "bb");
-      assert.equal(x.params.provided, "aa");
+      assert_error(x, "Error: haha",
+          "{\"expected\":\"bb\",\"provided\":\"aa\"}");
     }
   });
   it( '#applyOnAll', function() {
@@ -131,19 +127,18 @@ describe( 'wdf/utils',function(){
     }), "[1,2,3]");
   });
   it( '#error', function() {
+
     var e = u$.error({
       message : "msg",
       a : "a",
       b : "not b"
     });
-    assert.ok(e instanceof Error);
-    assert.equal(e.toString(), 'msg {"a":"a","b":"not b"}');
+    assert_error(e, 'Error: msg', '{"a":"a","b":"not b"}');
     u$.error({
       b : "b",
       c : "c"
     }, e);
-    assert.ok(e instanceof Error);
-    assert.equal(e.toString(), 'msg {"a":"a","b":"b","c":"c"}');
+    assert_error(e, 'Error: msg', '{"b":"b","c":"c"}','{"a":"a","b":"not b"}');
     //
     //assert.equal(e.stack.split(/\n/)[0],
     //   "Error: msg  a:'a', b:'b', c:'c'");
@@ -268,8 +263,7 @@ describe( 'wdf/utils',function(){
       u$.testFor('','any',[]);
       assert.fail('not supposed to get here');
     }catch(e){
-      assert.equal("Unexpected value {\"expected\":[\"some\",\"every\"],\"provided\":\"any\"}",
-          e.toString());
+      assert_error(e,"Error: Unexpected value");
     }
     var values = [
       undefined, null, 0, 1, 1.5, " ", "", "a",
