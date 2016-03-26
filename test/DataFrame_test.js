@@ -111,6 +111,9 @@ describe( 'wdf/DataFrame', function(){
     assert.deepEqual( df.getColumn("d") , ['20150716','20130710'] );
     df.deleteRow(0);
     assert.deepEqual( df.getColumn("a") , [3]  );
+    var i3 = df.newRow();
+    assert.equal(df.get(i3,'a'),undefined);
+
   });
   it( 'apply', function() {
     var df = DataFrame.parse_csv("abc,cdx\n1,2\n2,3\n");

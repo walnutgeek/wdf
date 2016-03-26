@@ -417,6 +417,7 @@
     this.index.splice(position,0,new_storage_row);
     return position;
   };
+
 //**deleteRow(row_num)**
 //
 //delete row by `row_num`.
