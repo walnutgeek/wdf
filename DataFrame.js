@@ -116,6 +116,21 @@
     return this;
   };
 
+  ColumnSet.prototype.getStorageSize=function(){
+    function max_data_length(prev, col) {
+      return prev > col.data.length ? prev : col.data.length;
+    }
+    return this.byIndex.reduce(max_data_length, 0);
+  };
+
+  ColumnSet.prototype.setStorageSize=function(size){
+    var storageSize = this.getStorageSize();
+    if( size < storageSize ){
+      throw u$.error({ msg:'cannot reduce column storage size',
+        current: storageSize, requested: size} );
+    }
+    return this.byIndex.forEach(function(col){col.data.length = size;});
+  };
 
 // ## <section id='DataFrame'>Dataframe</section>
 //
@@ -156,12 +171,13 @@
     config = config || {columns: array_of_rows.shift()};
     return new DataFrame(array_of_rows, config);
   }
-  function parse_csv_to_array_of_rows(str) {
+
+  function parse_csv_to_array_of_rows(str,offset) {
     var arr = [];
     var quote = false;  // true means we're inside a quoted field
 
     var row, col, c;
-    for (row = col = c = 0; c < str.length; c++) {
+    for (row = col = 0 , c = offset; c < str.length; c++) {
       var cc = str[c], nc = str[c + 1];        // current character, next character
       arr[row] = arr[row] || [];             // create a new row if necessary
       arr[row][col] = arr[row][col] || '';   // create a new column (start with empty string) if necessary
@@ -231,13 +247,49 @@
 // `header` is array with column names, if omitted first line of  CSV  in `str` considered header .
 
   DataFrame.parse_csv = function (str, config) {
-    return make_df_from_(parse_csv_to_array_of_rows(str), config);
+    return make_df_from_(parse_csv_to_array_of_rows(str,0), config);
   };
 
+  function parse_lf_separated(str,offset){
+    var arr = [], row = '', c;
+    function append_row(){
+        arr.push([row]);
+    }
+    for (c = offset; c < str.length; c++) {
+      var cc = str[c];
+      if (cc === '\n') {
+        append_row();
+        row = '';
+      } else {
+        row += cc;
+      }
+    }
+    append_row();
+    return arr;
+  }
+
+  function parse_lf_separated_json(str,offset){
+    var arr = [], row = '', c;
+    function append_row(){
+      if(row.length > 0){
+        arr.push(JSON.parse(row));
+      }
+    }
+    for (c = offset; c < str.length; c++) {
+      var cc = str[c];
+      if (cc === '\n') {
+        append_row();
+        row = '';
+      } else {
+        row += cc;
+      }
+    }
+    append_row();
+    return arr;
+  }
   DataFrame.parse_wdf=function(str) {
-    var arr = str.split('\n');
-    var config = JSON.parse(arr.shift());
-    var rows = arr.filter(u$.isStringNotEmpty).map(JSON.parse);
+    var rows = parse_lf_separated_json(str,0);
+    var config = rows.shift();
     return new DataFrame(rows,config);
   };
 
@@ -358,10 +410,12 @@
 //**newRow()**
 //
 //add new row. Returns new row number.
-  DataFrame.prototype.newRow = function () {
-    var new_row_num = this.index.length;
-    this.index[new_row_num] = new_row_num;
-    return new_row_num;
+  DataFrame.prototype.newRow = function (position) {
+    position = position || this.index.length;
+    var new_storage_row = this.columnSet.getStorageSize();
+    this.columnSet.setStorageSize(new_storage_row+1);
+    this.index.splice(position,0,new_storage_row);
+    return position;
   };
 //**deleteRow(row_num)**
 //
@@ -461,6 +515,75 @@
     return this.map( this.getObjectRow );
   };
 
+  DataFrame.MultiPart = function (fragment_factory,  config ){
+    /*
+    @param parser {}
+      @param header function(buffer,offset) returns newoffset
+      @param line function(buffer,offset) return newoffset
+    @param fragment_factory function(direction, offset)
+    @param columns [] or undefined
+     provided if first fragment does not contain header.
+     */
+    this.file_type = file_type ;
+    this.fragment_factory = fragment_factory;
+    this.config = config ;
+    this.hasHeader = ! u$.isNullish(config);
+    this.fragment_store = [];
+    this.fragment_factory('F',0).then( this.parse_fragment.bind(this) ) ;
+  };
+
+  var mime2parser = {
+    'text/plain' : {
+      parse: parse_lf_separated,
+      static_header: { columns: [ 'line' ] } },
+    'text/wdf' : {
+      parse: parse_lf_separated_json,
+      adjust_header: function(header){return header;} },
+    'text/csv' : {
+      parse: parse_csv_to_array_of_rows,
+      adjust_header: function(header){return {columns: header};} },
+  };
+
+  DataFrame.MultiPart.prototype.parse_fragment=function(fragment){
+    var meta_data_idx = fragment.indexOf('\n');
+    var meta_data = JSON.parse(fragment.substr(0,meta_data_idx));
+    /*
+     @param filesize
+        size of file
+     @param mtime
+        modification time of file
+     @param start_position @param end_position
+        fragment boundaries in file. `end_positon` can be smaller
+        then `start position` if direction is backward `'B'`
+     @param num_of_records
+     @param content_type
+        mime type of original file
+     @param direction 'F' or 'B'
+     */
+    var parser = mime2parser[meta_data.content_type];
+
+    if( !this.hasHeader && parser.static_header ){
+      this.config = parser.static_header;
+    }
+
+    if( meta_data.start_position !== 0 && ! this.hasHeader && ! this.config ) {
+      this.deferred_fragments = this.deferred_fragments || [];
+      this.deferred_fragments.push(fragment);
+      return;
+    }
+    var rows = parser.parse(fragment,meta_data_idx+1);
+    if( meta_data.start_position === 0 && meta_data.end_position > 0 ){
+      if( ! this.hasHeader ){
+        this.config = parser.adjust_header(rows.shift());
+      }
+    }
+    this.fragment_store.push([meta_data, new DataFrame(rows,this.config)]);
+    if( this.deferred_fragments ){
+      var deferred = this.deferred_fragments;
+      this.deferred_fragments = undefined;
+      deferred.forEach(this.parse_fragment.bind(this));
+    }
+  };
   module.exports = DataFrame;
 
 
