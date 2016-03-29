@@ -244,15 +244,15 @@ describe( 'wdf/DataFrame', function(){
       assert.equal(5,array.length);
       assert.deepEqual({col1:"0 text 1",col2:"text 2",col3:"0"}, array[0] );
       dom = dom_fragment("<table>" +
-        "<thead><tr><th>col name 1</th><th>col name 2</th><th>col name 3</th></tr></thead>" +
-        "<tbody>"+
-        "<tr><td></td><td></td><td></td></tr>"+
-        "<tr><td></td><td></td><td></td></tr>"+
-        "<tr><td></td><td></td><td></td></tr>"+
-        "<tr><td>ABC</td><td></td><td>52</td></tr>"+
-        "<tr><td></td><td></td><td></td></tr>" +
-        "</tbody>" +
-        "</table>").element;
+          "<thead><tr><th>col name 1</th><th>col name 2</th><th>col name 3</th></tr></thead>" +
+          "<tbody>"+
+          "<tr><td></td><td></td><td></td></tr>"+
+          "<tr><td></td><td></td><td></td></tr>"+
+          "<tr><td></td><td></td><td></td></tr>"+
+          "<tr><td>ABC</td><td></td><td>52</td></tr>"+
+          "<tr><td></td><td></td><td></td></tr>" +
+          "</tbody>" +
+          "</table>").element;
       df = DataFrame.parse_dom_table(dom);
       array = df.getObjects();
       assert.equal(5,array.length);
@@ -260,6 +260,43 @@ describe( 'wdf/DataFrame', function(){
         "col name 1":"ABC",
         "col name 2": "",
         "col name 3":"52"}, array[3] );
+    });
+    it('parse_json', function () {
+      var e = u$.jail(
+          function(){ DataFrame.parse_json('{}');}) ;
+      assert.ok(e instanceof Error);
+      e = u$.jail(
+          function(){ DataFrame.parse_json('{');}) ;
+      assert.equal(e,undefined);
+
+      var df = new DataFrame();
+      df.columnSet.enforceColumn("a");
+      df.columnSet.enforceColumn("b");
+      df.columnSet.enforceColumn("d");
+      var i1 = df.newRow();
+      var i2 = df.newRow();
+      df.set(i1,"a",2);
+      df.set(i2,"a",3);
+      df.set(i2,"b",'x');
+      df.set(i1,"d",'20150716');
+      df.set(i2,"d",'20130710');
+      var json = {"type":"DataFrame","config":{"columns":[{"name":"a"},{"name":"b"},{"name":"d"}]},"rows":[[2,null,"20150716"],[3,"x","20130710"]]};
+      assert.deepEqual(df.to_json(), json) ;
+      assert.equal(2,DataFrame.parse_json(json).getRowCount());
+    });
+    it('unknownTypesHandling_issue_10', function () {
+      var df = DataFrame.parse_json(
+          { type:"DataFrame",
+            config:{ columns:[
+              {name:"a",type: "unknown"},
+              {name:"b"},
+              {name:"d"}]},
+            rows:[
+              [2,null,"20150716"],
+              [3,"x","20130710"]
+            ]
+          });
+      assert.equal(df.columnSet.byName.a.type,undefined);
     });
   });
 
