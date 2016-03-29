@@ -137,8 +137,8 @@
 // **new Dataframe(rows,columns)**:
 //    - `rows` - array of rows. row could be array or object.
 //    - `config` :
-//      - `columns` - array that contains column names or objects with `{name: "colname",type: "number"}`.
-// TODO documentation for config
+//      - `columns` - array that contains column names or objects with
+//        `{name: "colname",type: "number"}`.
 
   var DataFrame = function (rows, config) {
     var obj = this;
@@ -161,7 +161,7 @@
           this.columnSet.enforceColumnAt(col_idx).set(row, row_data[col_idx]);
         }
       } else {
-        throw {msg: "row should be object or array and not:" + row_data};
+        throw u$.error("row should be object or array and not:" + row_data);
       }
     }
     return obj;
@@ -293,6 +293,20 @@
     return new DataFrame(rows,config);
   };
 
+  DataFrame.parse_json=function(json) {
+    json = u$.ensurePlainObject(json);
+    if( u$.isNullish(json) || json instanceof DataFrame){
+      return json;
+    }
+    if(json.type==='DataFrame'){
+      return new DataFrame(json.rows,json.config);
+    }
+    throw u$.error({
+      msg: 'not valid DataFrame json',
+      json: json
+    });
+  };
+
   DataFrame.prototype.to_wdf=function(){
     var s = '';
     s+=JSON.stringify(this.getConfig());
@@ -302,6 +316,15 @@
       s+='\n';
     });
     return s;
+  };
+  DataFrame.prototype.to_json = function () {
+    return {
+      type: 'DataFrame',
+      config: this.getConfig(),
+      rows: this.map(function(row){
+        return this.getJsonRow(row);
+      })
+    };
   };
 
   function parse_dom_table_to_array_of_rows(dom_table) {
@@ -407,15 +430,51 @@
   DataFrame.prototype.getRowCount = function () {
     return this.index.length;
   };
-//**newRow()**
-//
-//add new row. Returns new row number.
-  DataFrame.prototype.newRow = function (position) {
-    position = position || this.index.length;
+
+  DataFrame.prototype.newRow = function (row_num) {
+    /*
+    adds new row. Returns new row number.
+
+    @param row_num integer
+       row where to insert new row. if omitted new row is appended.
+     */
+    row_num = row_num || this.index.length;
     var new_storage_row = this.columnSet.getStorageSize();
     this.columnSet.setStorageSize(new_storage_row+1);
-    this.index.splice(position,0,new_storage_row);
-    return position;
+    this.index.splice(row_num,0,new_storage_row);
+    return row_num;
+  };
+
+  DataFrame.prototype.setRow = function (row_num,row_data) {
+    /*
+    @param row_num
+      row to set
+    @param row_data array or object
+      data to set in row
+     */
+    var ph_row = this.index[row_num];
+    if (_.isPlainObject(row_data)) {
+      var keys = Object.keys(row_data);
+      for (var k = 0; k < keys.length; k++) {
+        this.columnSet.getColumn(keys[k]).set(ph_row, row_data[keys[k]]);
+      }
+    } else if (_.isArray(row_data)) {
+      for (var col_idx = 0; col_idx < row_data.length; col_idx++) {
+        this.columnSet.getColumn(col_idx).set(ph_row, row_data[col_idx]);
+      }
+    } else {
+      throw u$.error("row should be object or array and not:" + row_data);
+    }
+  };
+
+  DataFrame.prototype.addRow = function (row_data,row_num) {
+    /*
+     @param row_data array or object
+       row data to add
+     @param row_num integer @optional
+       where to insert row, if omitted row is appended
+     */
+    this.setRow(this.newRow(row_num),row_data);
   };
 
 //**deleteRow(row_num)**
@@ -515,6 +574,21 @@
   DataFrame.prototype.getObjects = function () {
     return this.map( this.getObjectRow );
   };
+
+  u$.addTypes({
+    dataframe: {
+      is: function(o){
+        return (o &&  o.type === 'DataFrame')
+            || o instanceof DataFrame ;
+      },
+      missing: _.isNull,
+      from_string: DataFrame.parse_json,
+      to_json: function (v) {
+        return _.isNull(v) ? null : v.to_json();
+      },
+      order: u$.no_order
+    }
+  });
 
   DataFrame.MultiPart = function (fragment_factory,  config ){
     /*

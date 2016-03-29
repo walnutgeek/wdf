@@ -8,7 +8,7 @@ function testArrays(expected, actual) {
   }
 }
 
-var assert_error = require('./assert_error')
+var assert_error = require('./assert_error');
 
 var u$ = require("../utils");
 

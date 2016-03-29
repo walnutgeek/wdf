@@ -460,6 +460,17 @@
       return ignored;
     }
   };
+  u$.ensurePlainObject = function(o){
+    try{
+      if(_.isString(o)){
+        o = JSON.parse(o);
+      }
+      if(_.isPlainObject(o) || u$.isNullish(o)) {
+        return o;
+      }
+    }catch(ignored){}
+    return undefined;
+  };
 
 //## Parsing dates
 
@@ -817,6 +828,9 @@
     return a === b ? null : a < b ? -1 : 1 ;
   }
 
+  function no_order(a,b){
+    return 0 ;
+  }
 
 // ** orderChain(array) **
 //
@@ -989,6 +1003,8 @@
 
   u$.Type = Type;
 
+  u$.no_order = no_order ;
+
 // ** addTypes(typesMap) **
 //
 //    add types
@@ -1067,6 +1083,13 @@
         if( ! rc ) rc = generic_order(a.text, b.text);
         return rc || 0;
       }
+    },
+    json: {
+      is: _.isPlainObject,
+      missing: _.isNull,
+      from_string: u$.ensurePlainObject,
+      to_json: _.identity ,
+      order: no_order,
     },
 // ** date ** type
     date: {
