@@ -217,6 +217,23 @@
     return Array.prototype.slice.call(args);
   };
 
+  var SORTING = [ 'ASCENDING', 'DESCENDING' , 'ASC', 'DESC', 'A', 'D' ];
+  
+  u$.sorting = function(sort_var){
+    /*
+    @param sort_var string or number
+    @return number
+      sort index: 0 - for ascending, 1 - for descending, if
+     */
+    if( +sort_var === 0 || +sort_var === 1)
+      return sort_var;
+    if( _.isBoolean(sort_var) )
+      return sort_var ? 1 : 0 ;
+    var idx = SORTING.indexOf(sort_var);
+    if(idx > -1)
+      return idx % 2;
+    return 0 ;
+  }
 
 // **binarySearch(searchFor, array, comparator, mapper)  **
 //
@@ -237,15 +254,13 @@
 //   -5
 // ```
   u$.binarySearch=function(searchFor, array, comparator, mapper) {
-    var mapToValue = mapper || function(x) {
-          return x;
-        };
+    mapper = mapper || _.identity;
     var min = 0;
     var max = array.length - 1;
     var mid, r;
     while (min <= max) {
       mid = ((min + max) / 2) | 0;
-      r = comparator(searchFor, mapToValue(array[mid]));
+      r = comparator(searchFor, mapper(array[mid]));
       if (r > 0) {
         min = mid + 1;
       } else if (r < 0) {
@@ -331,11 +346,7 @@
   u$.join=function(collection, delimiter, toValue) {
     var keys = _.isArray(collection)  || _.isTypedArray(collection)  ?
         collection : Object.keys(collection) ;
-    if (!toValue) {
-      toValue = function (s) {
-        return s;
-      };
-    }
+    toValue = toValue || _.identity ;
     if (u$.isNullish(delimiter) ) {
       delimiter = ',';
     }
@@ -824,24 +835,26 @@
 //   * `0` if `a` equals `b` period.
 //
 // here is generic order function
-  function generic_order(a,b){
+  u$.generic_order = function (a,b){
     return a === b ? null : a < b ? -1 : 1 ;
-  }
+  };
 
-  function no_order(a,b){
+  u$.no_order = function (a,b){
     return 0 ;
-  }
+  };
 
-// ** orderChain(array) **
-//
-// Create chain of order functions.
   u$.orderChain = function(){
+    /*
+    @param funcs array of functions
+      order functions that need to be chained
+    @return cumulative order function
+     */
     var funcs = u$.extractArray(arguments);
     return function(a,b){
       var rc = 0;
       for (var i = 0; i < funcs.length; i++) {
         var res = funcs[i](a,b);
-        if( res !== null ){
+        if( res ){
           rc = res;
           break;
         }
@@ -850,50 +863,30 @@
     };
   };
 
-// **orderPredicateFirst(is)**
-//
-// Turn predicate function(returning `true` or `false`) into
-// order function. Order function place `true` first.
+  u$.orderWithResolver = function(order,valueMapper){
+    /*
+     @param order function(v1,v2):cmp
+       function that operate on values
+       that not directly available for
+       comparison
+     @param valueMapper function(x):v
+       function that map values available
+       for comparison to what `order` function
+       can accept.
+     @return cumulative order function
+     */
+    return function(a,b){
+      return order(valueMapper(a),valueMapper(b));
+    };
+  };
+
   u$.orderPredicateFirst = function (is) {
+    /*
+     Turn predicate function(returning `true` or `false`) into
+     order function. Order function place `true` first.
+     */
     return function(a, b) {
       return is(a) ? (is(b) ? 0 : -1) : (is(b) ? 1 : null);
-    };
-  };
-
-// Assume we have `indexArray` and `valueArray`. We also have `valueOrder(a,b)`
-// function that capable of comparing elements of `valueArray`. `indexArray`
-// contains integers pointing to `valueArray`. That set up allow messing with
-// order or composition of `indexArray` leave order of `valueArray` unchanged.
-
-// **indexOrder (valueOrder, valueArray)**
-//
-// creates index order function for given `valueOrder(a,b)`
-
-  u$.indexOrder = function (valueOrder, valueArray) {
-    return function(a, b) {
-      return valueOrder(valueArray[a],valueArray[b]);
-    };
-  };
-
-// ** extractValuesByIndex (indexArray, valueArray)**
-//
-// extract values out of `valueArray` using `indexArray`
-  u$.extractValuesByIndex = function (indexArray, valueArray) {
-    return indexArray.map(function(idx){return valueArray[idx];});
-  };
-
-// ** createIndex(valueArray) **
-//
-// returns index array matching `valueArray`
-  u$.createIndex = function (valueArray) {
-    return _.range(valueArray.length);
-  };
-// **orderInverse(f)**
-//
-// inverse order mandated by `f(a,b)`
-  u$.orderInverse = function(f) {
-    return function(a, b) {
-      return f(b, a);
     };
   };
 
@@ -921,7 +914,7 @@
     }
     this.name = name ;
     _.defaults(this, {
-        order:      generic_order,
+        order:      u$.generic_order,
         missing:    _.isNull,
         to_json:    _.identity,
         coerce:     function(value,from_type){
@@ -1003,8 +996,6 @@
 
   u$.Type = Type;
 
-  u$.no_order = no_order ;
-
 // ** addTypes(typesMap) **
 //
 //    add types
@@ -1047,7 +1038,7 @@
       return u$.isNullish(dt) ? NaN : dt.getTime();
     },
     order: function (a, b) {
-      return generic_order( a.getTime(), b.getTime());
+      return u$.generic_order( a.getTime(), b.getTime());
     },
     mixin_coerce: function(value,from_type){
       return this.from_number(from_type.to_number(value));
@@ -1079,8 +1070,8 @@
         return _.isNull(v) ? null : this.to_string(v);
       },
       order: function(a, b) {
-        var rc = generic_order(a.href, b.href);
-        if( ! rc ) rc = generic_order(a.text, b.text);
+        var rc = u$.generic_order(a.href, b.href);
+        if( ! rc ) rc = u$.generic_order(a.text, b.text);
         return rc || 0;
       }
     },
@@ -1089,7 +1080,7 @@
       missing: _.isNull,
       from_string: u$.ensurePlainObject,
       to_json: _.identity ,
-      order: no_order,
+      order: u$.no_order,
     },
 // ** date ** type
     date: {

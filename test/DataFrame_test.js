@@ -143,7 +143,15 @@ describe( 'wdf/DataFrame', function(){
     assert.deepEqual(df.getData(),  { "config":{ "columns": columns}, "rows": [ [ "2", "3" ]]}, 'getData after delete' );
   });
 
-
+  describe('SortCriteria', function () {
+    it('constructor', function () {
+      var sc = new DataFrame.SortCriteria([['a','A'],{name:'b',order:'D'}]);
+      assert.equal(sc.parts[0].name,'a');
+      assert.equal(sc.parts[1].name,'b');
+      assert.equal(sc.parts[0].order,0);
+      assert.equal(sc.parts[1].order,1);
+    });
+  });
 
   describe('parse', function () {
 

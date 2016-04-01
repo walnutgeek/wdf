@@ -565,6 +565,70 @@
     this.columnSet.getColumn(col).setType(new_type);
   };
 
+  DataFrame.SortCriteria = function(criteria){
+    this.parts = [];
+    for( var i  = 0 ; i <  criteria.length ; i++){
+      var p  = this.parts[i] = {} ;
+      var c  = criteria[i];
+      if(_.isPlainObject(c)) {
+        p.name = c.name;
+        p.order = u$.sorting(c.order);
+      }else{
+        p.name = c[0];
+        p.order = u$.sorting(c[1]);
+      }
+      p.decorate_order_fn = function(asc_order_fn){
+        return this.order ? u$.orderInverse(asc_order_fn) : asc_order_fn ;
+      }
+    }
+  };
+
+  DataFrame.SortCriteria.prototype._phrow_order_fn = function(df,row_data){
+    var orders = [] ;
+    function create_ph_order(column,order){
+      function _get_data(phrow){
+        if(phrow===-1){
+          if(_.isArray(row_data) ){
+            return row_data[column.col_idx];
+          }else{
+            return row_data[column.name];
+          }
+        }else{
+          return column.get(phrow);
+        }
+      }
+      return function(ph1,ph2){
+        return order(_get_data(ph1),_get_data(ph2));
+      }
+    }
+    for( var i  = 0 ; i <  this.parts.length ; i++) {
+      var column = df.columnSet.getColumn(this.parts[i].name);
+      var order = column.type ? column.type.order : u$.generic_order ;
+      if( this.parts[i].order ) order = u$.orderInverse(order);
+      orders.push(create_ph_order(column, u$.orderNullsFirst( order )));
+    }
+    return u$.orderChain(orders);
+  };
+
+  DataFrame.prototype.sort=function(criteria){
+    this.index.sort(criteria._phrow_order_fn(this));
+  };
+
+  DataFrame.prototype.find=function(criteria,row_data){
+    return u$.binarySearch(-1, this.index, criteria._phrow_order_fn(this,row_data));
+  };
+
+  /*
+   find
+   method assumne that dataframe is sorted by column `col`
+   @param col
+   col_name or col_idx
+   @param value
+   to search for in column
+   @returns number
+   positive number indicates were matcheing record was found or negative  number
+   */
+
 // **getObjects()**
 //
 // returns all rows in  array , each row is object
@@ -590,6 +654,8 @@
     }
   });
 
+  var FILE_INFO_COLUMNS = [ 'content_type', 'filesize', 'mtime' ];
+
   DataFrame.MultiPart = function (fragment_factory,  config ){
     /*
     @param parser {}
@@ -603,7 +669,16 @@
     this.fragment_factory = fragment_factory;
     this.config = config ;
     this.hasHeader = ! u$.isNullish(config);
-    this.fragment_store = [];
+    this.fileInfo = {};
+    this.fragment_store = new DataFrame([], {columns:[
+      {name: 'content_type',type: 'string'},
+      {name: 'filesize',type: 'number'},
+      {name: 'mtime',type: 'timestamp'},
+      {name: 'start_position',type: 'number'},
+      {name: 'end_position',type: 'number'},
+      {name: 'num_of_records',type: 'number'},
+      {name: 'fragment',type: 'dataframe'},
+    ]});
     this.fragment_factory('F',0).then( this.parse_fragment.bind(this) ) ;
   };
 
@@ -646,13 +721,17 @@
       this.deferred_fragments.push(fragment);
       return;
     }
+
     var rows = parser.parse(fragment,meta_data_idx+1);
     if( meta_data.start_position === 0 && meta_data.end_position > 0 ){
       if( ! this.hasHeader ){
         this.config = parser.adjust_header(rows.shift());
       }
     }
+
+    this.fragment_store.binarySearch()
     this.fragment_store.push([meta_data, new DataFrame(rows,this.config)]);
+
     if( this.deferred_fragments ){
       var deferred = this.deferred_fragments;
       this.deferred_fragments = undefined;

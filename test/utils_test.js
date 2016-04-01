@@ -174,6 +174,20 @@ describe( 'wdf/utils',function(){
     assert.equal(new Date(isoDate).toISOString(),
         '1980-01-01T00:00:00.000Z');
   });
+  it( '#sorting', function() {
+    assert.equal(0, u$.sorting(0));
+    assert.equal(0, u$.sorting('0'));
+    assert.equal(0, u$.sorting(''));
+    assert.equal(0, u$.sorting('A'));
+    assert.equal(0, u$.sorting('ASC'));
+    assert.equal(0, u$.sorting('ASCENDING'));
+    assert.equal(0, u$.sorting('xxx'));
+    assert.equal(1, u$.sorting('D'));
+    assert.equal(1, u$.sorting('DESC'));
+    assert.equal(1, u$.sorting('DESCENDING'));
+    assert.equal(1, u$.sorting(1));
+    assert.equal(1, u$.sorting('1'));
+  });
   it( '#binarySearch', function() {
     var array = [ 1, 2, 4, 6, 8, 10, 25 ];
     function test(value, position) {
@@ -308,14 +322,15 @@ describe( 'wdf/utils',function(){
       assert.equal(cmp('z','a'),1);
       assert.equal(cmp('a','z'),-1);
       var array = ['a','A',null,'z','r',undefined ] ;
-      var index = u$.createIndex(array);
+      var index = _.range(array.length);
+      var mapper = function(idx){return array[idx];};
       assert.deepEqual(array,['a','A',null,'z','r',undefined ],'sanity');
       assert.deepEqual(index,[0,1,2,3,4,5 ] , 'index');
-      index.sort(u$.indexOrder(cmp,array));
-      assert.deepEqual(u$.extractValuesByIndex(index,array),[ undefined, null, "A", "a", "r", "z" ],'check order');
+      index.sort(u$.orderWithResolver(cmp,mapper));
+      assert.deepEqual(index.map(mapper),[ undefined, null, "A", "a", "r", "z" ],'check order');
       assert.deepEqual(index,[ 5, 2, 1, 0, 4, 3 ],'check index');
       assert.deepEqual(array,['a','A',null,'z','r',undefined ],'original array unchanged');
-      index.sort(u$.orderInverse(u$.indexOrder(cmp,array)));
+      index.sort(u$.orderInverse(u$.orderWithResolver(cmp,mapper)));
       assert.deepEqual(index,[ 3, 4, 0, 1, 2, 5 ]);
     });
 
