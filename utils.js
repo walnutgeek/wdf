@@ -836,7 +836,7 @@
 //
 // here is generic order function
   u$.generic_order = function (a,b){
-    return a === b ? null : a < b ? -1 : 1 ;
+    return a === b ? 0 : a < b ? -1 : 1 ;
   };
 
   u$.no_order = function (a,b){
@@ -862,7 +862,6 @@
       return rc;
     };
   };
-
   u$.orderWithResolver = function(order,valueMapper){
     /*
      @param order function(v1,v2):cmp
@@ -887,6 +886,14 @@
      */
     return function(a, b) {
       return is(a) ? (is(b) ? 0 : -1) : (is(b) ? 1 : null);
+    };
+  };
+
+
+  u$.orderInverse = function(f) {
+// inverse order mandated by `f(a,b)`
+    return function(a, b) {
+      return f(b, a);
     };
   };
 
