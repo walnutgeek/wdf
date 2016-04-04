@@ -885,7 +885,7 @@
      order function. Order function place `true` first.
      */
     return function(a, b) {
-      return is(a) ? (is(b) ? 0 : -1) : (is(b) ? 1 : null);
+      return is(a) ? (is(b) ? 0 : -1) : (is(b) ? 1 : 0);
     };
   };
 
@@ -903,8 +903,10 @@
 // and then according to order functions provided in argument.
   u$.orderNullsFirst = function(){
     var funcs = u$.extractArray(arguments);
-    funcs.splice(0,0,u$.orderPredicateFirst(_.isUndefined));
-    funcs.splice(1,0,u$.orderPredicateFirst(_.isNull));
+    funcs.splice(0,0,
+        u$.orderPredicateFirst(_.isUndefined),
+        u$.orderPredicateFirst(_.isNull),
+        u$.orderPredicateFirst(isNaN));
     return u$.orderChain(funcs);
   };
 

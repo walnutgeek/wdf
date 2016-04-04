@@ -151,6 +151,33 @@ describe( 'wdf/DataFrame', function(){
       assert.equal(sc.parts[0].order,0);
       assert.equal(sc.parts[1].order,1);
     });
+    it('sort', function () {
+      var df = DataFrame.parse_wdf(require('./all_types_wdf'));
+      var sc = new DataFrame.SortCriteria([['n','D'],['s']]);
+      assert.equal(-1,df.columnSet.byName.n.type.compare(null,2));
+      assert.equal(1,df.columnSet.byName.n.type.compare(2,undefined));
+      assert.equal(-1,df.columnSet.byName.n.type.compare(1,25));
+      assert.equal(1,df.columnSet.byName.n.type.compare(25,1));
+
+      df.sort(sc);
+      assert.equal(df.to_wdf(),
+          '{"columns":[{"name":"s","type":"string"},{"name":"n","type":"number"},{"name":"b","type":"boolean"},{"name":"d","type":"date"},{"name":"dt","type":"datetime"},{"name":"ts","type":"timestamp"}]}\n'+
+          '["hello",25,false,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n'+
+          '["hello",5,false,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n'+
+          '["hello",4,true,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n'+
+          '["hello",3,true,"2015-09-18","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n'+
+          '["ello",2,true,"2015-09-13",null,"2015-09-17 17:18:19.345"]\n'+
+          '["hello",2,true,"2015-09-17","2015-09-17 17:18:19","2015-09-17 17:18:19.345"]\n'+
+          '["",null,true,"2015-09-11","2015-09-17 17:18:19",null]\n');
+    });
+
+    it('find', function () {
+      var df = DataFrame.parse_wdf(require('./all_types_wdf'));
+      var sc = new DataFrame.SortCriteria([['d']]);
+      df.sort(sc);
+      assert.equal(1,df.find(sc,{d: new Date(Date.UTC(2015,8,13))}));
+
+    });
   });
 
   describe('parse', function () {

@@ -598,14 +598,25 @@
         }
       }
       return function(ph1,ph2){
-        return order(_get_data(ph1),_get_data(ph2));
+        var v1 = _get_data(ph1);
+        var v2 = _get_data(ph2);
+        try{
+          //console.log(column.name,ph1,ph2,v1,v2,o);
+          return order(v1, v2);
+        }catch(e){
+          throw u$.error({
+            col: column.name,
+            ph1:ph1,ph2:ph2,
+            v1:v1,v2:v2
+          },e);
+        }
       }
     }
     for( var i  = 0 ; i <  this.parts.length ; i++) {
       var column = df.columnSet.getColumn(this.parts[i].name);
-      var order = column.type ? column.type.order : u$.generic_order ;
+      var order = column.type ? column.type.compare : u$.orderNullsFirst(u$.generic_order) ;
       if( this.parts[i].order ) order = u$.orderInverse(order);
-      orders.push(create_ph_order(column, u$.orderNullsFirst( order )));
+      orders.push(create_ph_order(column,  order ));
     }
     return u$.orderChain(orders);
   };
