@@ -217,6 +217,16 @@
     return Array.prototype.slice.call(args);
   };
 
+  u$.assignByKeys=function(dest, src, keys) {
+    keys = keys || _.keys(src);
+    for(var i = 0 ; i < keys.length ; i++){
+      var key = keys[i];
+      dest[key] = src[key];
+    }
+    return dest;
+  };
+
+
   var SORTING = [ 'ASCENDING', 'DESCENDING' , 'ASC', 'DESC', 'A', 'D' ];
   
   u$.sorting = function(sort_var){
@@ -423,19 +433,19 @@
 //creates Error object if not provided and add
 // stringified params to err.stack to stack trace.
   u$.error=function(params,  err) {
+    function mk_err(key){
+      var msg = params[key];
+      if(msg){
+        delete params[key];
+        return new Error(msg);
+      }
+    }
     if( _.isString(params) ){
       params = { msg: params};
     }else{
       params = params || {};
     }
     if(!err){
-      function mk_err(key){
-        var msg = params[key];
-        if(msg){
-          delete params[key];
-          return new Error(msg);
-        }
-      }
       err = mk_err('msg') || mk_err('message') || new Error();
     }
     if( _.size(params) ){

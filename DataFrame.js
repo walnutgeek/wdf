@@ -680,7 +680,7 @@
     this.fragment_factory = fragment_factory;
     this.config = config ;
     this.hasHeader = ! u$.isNullish(config);
-    this.fileInfo = {};
+    this.fileInfo = null;
     this.fragment_store = new DataFrame([], {columns:[
       {name: 'content_type',type: 'string'},
       {name: 'filesize',type: 'number'},
@@ -739,9 +739,11 @@
         this.config = parser.adjust_header(rows.shift());
       }
     }
-
-    this.fragment_store.binarySearch()
-    this.fragment_store.push([meta_data, new DataFrame(rows,this.config)]);
+    if(this.fileInfo == null){
+      this.fileInfo = u$.assignByKeys({},meta_data,FILE_INFO_COLUMNS);
+    }
+    //this.fragment_store.find()
+    //this.fragment_store.push([meta_data, new DataFrame(rows,this.config)]);
 
     if( this.deferred_fragments ){
       var deferred = this.deferred_fragments;

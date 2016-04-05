@@ -83,6 +83,14 @@ describe( 'wdf/utils',function(){
   });
   it( '#extractArray', function() {
     assert.deepEqual([], u$.extractArray());
+    assert.deepEqual([3,5], u$.extractArray([3,5]));
+    assert.deepEqual([3,5], u$.extractArray([[3,5]]));
+  });
+  it( '#assignByKeys', function() {
+    assert.deepEqual({a:5,b:3}, u$.assignByKeys({},{a:5,b:3}));
+    assert.deepEqual({a:5,b:3}, u$.assignByKeys({},{a:5,b:3,x:22},['a','b']));
+    assert.deepEqual({a:5,b:3,z:undefined},
+        u$.assignByKeys({},{a:5,b:3,x:22},['a','b','z']));
   });
   it( '#combineKeyExtractors', function() {
     function a(){return 5;}
