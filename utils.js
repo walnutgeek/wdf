@@ -243,7 +243,7 @@
     if(idx > -1)
       return idx % 2;
     return 0 ;
-  }
+  };
 
 // **binarySearch(searchFor, array, comparator, mapper)  **
 //
@@ -1229,10 +1229,8 @@
     }
   };
 
-// **ensureType(typeOrName)**
-//
-// returns type for name, or pass through type
   u$.ensureType=function(typeOrName){
+    // @return type for name, or pass through type
     return typeOrName instanceof Type ? typeOrName : u$.types[typeOrName];
   };
 

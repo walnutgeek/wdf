@@ -667,6 +667,56 @@
 
   var FILE_INFO_COLUMNS = [ 'content_type', 'filesize', 'mtime' ];
 
+
+  function emptyFragmentsStore() {
+    return new DataFrame([], {
+      columns: [
+        {name: 'content_type', type: 'string'},
+        {name: 'filesize', type: 'number'},
+        {name: 'mtime', type: 'timestamp'},
+        {name: 'start_position', type: 'number'},
+        {name: 'end_position', type: 'number'},
+        {name: 'num_of_records', type: 'number'},
+        {name: 'direction', type: 'string'},
+        {name: 'fragment', type: 'dataframe'},
+      ]
+    });
+  }
+
+  function directional_storage (direction){
+    return {
+      df: emptyFragmentsStore() ,
+      add: direction == 'F' ?
+          function(meta){
+            var rowCount = this.df.getRowCount();
+            var append =
+                ( rowCount == 0 && meta.start_position === 0 ) ||
+                ( rowCount > 0 && this.df.get(rowCount-1,'end_position') === meta.start_position) ;
+            if( append ){
+              this.df.addRow(meta);
+            }
+            return append;
+          }:
+          function(meta){
+            var rowCount = this.df.getRowCount();
+            var prepend =
+                ( rowCount == 0 && meta.end_position === meta.filesize ) ||
+                ( rowCount > 0 && this.df.get(0,'start_position') === meta.end_position) ;
+            if( prepend ){
+              this.df.addRow(meta,0);
+            }
+            return prepend;
+          }
+     };
+  }
+
+  function newFragmentStorage() {
+    return {
+      F: directional_storage('F'),
+      B: directional_storage('B')
+    };
+  }
+
   DataFrame.MultiPart = function (fragment_factory,  config ){
     /*
     @param parser {}
@@ -681,15 +731,7 @@
     this.config = config ;
     this.hasHeader = ! u$.isNullish(config);
     this.fileInfo = null;
-    this.fragment_store = new DataFrame([], {columns:[
-      {name: 'content_type',type: 'string'},
-      {name: 'filesize',type: 'number'},
-      {name: 'mtime',type: 'timestamp'},
-      {name: 'start_position',type: 'number'},
-      {name: 'end_position',type: 'number'},
-      {name: 'num_of_records',type: 'number'},
-      {name: 'fragment',type: 'dataframe'},
-    ]});
+    this.fragments = newFragmentStorage();
     this.fragment_factory('F',0).then( this.parse_fragment.bind(this) ) ;
   };
 
@@ -705,9 +747,25 @@
       adjust_header: function(header){return {columns: header};} },
   };
 
+  DataFrame.MultiPart.prototype.difer=function(fragment,fragment_data){
+    if( this.fileInfo && !_.isEqual(this.fileInfo, fragment_data.file_info) ){
+      return;
+    }
+    if( !this.deferred_fragments ){
+      this.deferred_fragments = [];
+    }
+    var pos = fragment_data.direction == 'F' ?
+          fragment_data.start_position :
+          fragment_data.filesize - fragment_data.end_position ;
+    for(var i = 0 ; i < this.deferred_fragments.length ; i++){
+      if( this.deferred_fragments[i].pos > pos ) break ;
+    }
+    this.deferred_fragments.splice(i, 0, {pos: pos, fragment: fragment} );
+  };
+
   DataFrame.MultiPart.prototype.parse_fragment=function(fragment){
     var meta_data_idx = fragment.indexOf('\n');
-    var meta_data = JSON.parse(fragment.substr(0,meta_data_idx));
+    var fragment_data = JSON.parse(fragment.substr(0,meta_data_idx));
     /*
      @param filesize
         size of file
@@ -721,35 +779,45 @@
         mime type of original file
      @param direction 'F' or 'B'
      */
-    var parser = mime2parser[meta_data.content_type];
+    var parser = mime2parser[fragment_data.content_type];
 
     if( !this.hasHeader && parser.static_header ){
       this.config = parser.static_header;
     }
 
-    if( meta_data.start_position !== 0 && ! this.hasHeader && ! this.config ) {
-      this.deferred_fragments = this.deferred_fragments || [];
-      this.deferred_fragments.push(fragment);
-      return;
-    }
-
-    var rows = parser.parse(fragment,meta_data_idx+1);
-    if( meta_data.start_position === 0 && meta_data.end_position > 0 ){
-      if( ! this.hasHeader ){
-        this.config = parser.adjust_header(rows.shift());
+    fragment_data.file_info = u$.assignByKeys({}, fragment_data, FILE_INFO_COLUMNS);
+    if(this.fileInfo === null){
+      this.fileInfo = fragment_data.file_info;
+    }else{
+      if( !_.isEqual(this.fileInfo, fragment_data.file_info) ){
+        this.fileInfo = fragment_data.file_info;
+        this.fragments = newFragmentStorage() ;
       }
     }
-    if(this.fileInfo == null){
-      this.fileInfo = u$.assignByKeys({},meta_data,FILE_INFO_COLUMNS);
+    if( fragment_data.start_position !== 0 && ! this.hasHeader && ! this.config ) {
+      this.difer(fragment, fragment_data )
+    }else{
+      var rows = parser.parse(fragment,meta_data_idx+1);
+      if( fragment_data.start_position === 0 && fragment_data.end_position > 0 ){
+        if( ! this.hasHeader ){
+          this.config = parser.adjust_header(rows.shift());
+        }
+      }
+      fragment_data.fragment = new DataFrame(rows,this.config);
+      var processed = this.fragments[fragment_data.direction].add(fragment_data);
+      if(!processed){
+        this.difer(fragment,fragment_data);
+      }
+      if( this.deferred_fragments ){
+        var deferred = this.deferred_fragments;
+        this.deferred_fragments = undefined;
+        var self = this ;
+        deferred.forEach(function(f){
+          self.parse_fragment(f.fragment);
+        });
+      }
     }
-    //this.fragment_store.find()
-    //this.fragment_store.push([meta_data, new DataFrame(rows,this.config)]);
 
-    if( this.deferred_fragments ){
-      var deferred = this.deferred_fragments;
-      this.deferred_fragments = undefined;
-      deferred.forEach(this.parse_fragment.bind(this));
-    }
   };
   module.exports = DataFrame;
 
