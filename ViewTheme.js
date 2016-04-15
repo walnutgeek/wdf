@@ -55,13 +55,6 @@
   }
   exports.get_cell = get_cell;
 
-  // formatters library
-  function anchor_elem(view, link) {
-    var a = view.new_elem(null, 'a', ['wdf_link'], {href: link.href});
-    a.innerText = link.text || link.href;
-    return a;
-  }
-  exports.anchor_elem = anchor_elem ;
 
   var FORMAT = {
     cell_by_type: {
@@ -71,7 +64,7 @@
       link: function(view,row_idx,col_idx,col_name) {
         var link = view.df.get(row_idx,col_idx);
         if(link){
-          return anchor_elem(view, link);
+          return view.link_elem(link);
         }
         return undefined;
       }

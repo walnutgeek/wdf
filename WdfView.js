@@ -39,6 +39,7 @@
       div.appendChild(v);
     }
   }
+
   function WdfView(props){
     props = _.defaults(props,defaults);
     this.props = props;
@@ -130,7 +131,6 @@
     this.setAllColumnWidths();
     this.markOverflownColumn();
   }
-
   WdfView.setDefault=function(key,value){
     defaults[key]=value;
   };
@@ -176,6 +176,11 @@
       var row = cell.parentElement.getAttribute('wdf_row');
       fn.call(this,row,colName,cell);
     }
+  };
+  WdfView.prototype.link_elem=function(link) {
+    var a = this.new_elem(null, 'a', ['wdf_link'], {href: link.href});
+    a.innerText = link.text || link.href;
+    return a;
   };
 
   WdfView.prototype.applyToAllCells = function(fn){
