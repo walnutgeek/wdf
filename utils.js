@@ -1234,6 +1234,11 @@
     return typeOrName instanceof Type ? typeOrName : u$.types[typeOrName];
   };
 
+  u$.get_to_string = function(typeOrName){
+    var t = u$.ensureType(typeOrName);
+    return t ? t.to_string.bind(t) : u$.ensureString ;
+  };
+
 })();
 
 

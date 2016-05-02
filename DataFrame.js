@@ -43,12 +43,14 @@
     this.get = function (row) {
       return this.data[row];
     };
+    var to_string = u$.get_to_string(this.type);
+    this.to_string = to_string ;
+    this.as_string = function(row) {
+      return to_string(this.data[row]);
+    };
     if( this.type ){
       this.as_json = function(row){
         return this.type.to_json(this.data[row]);
-      };
-      this.as_string = function(row) {
-        return this.type.to_string(this.data[row]);
       };
       this.set = function(row,v){
         this.data[row] = this.type.coerce(v);
@@ -58,9 +60,6 @@
       }
     }else{
       this.as_json = this.get ;
-      this.as_string = function(row) {
-        return u$.ensureString(this.data[row]) ;
-      };
       this.set = function(row,v){
         this.data[row] = v;
       };
@@ -114,6 +113,17 @@
       this.enforceColumn(name, n_rows, type);
     }
     return this;
+  };
+
+  ColumnSet.prototype.getFormats=function(){
+    var formats = {} ;
+    _.forOwn(this.byName,function(col,col_name){
+        formats[col_name] = {
+          type: col.type && col.type.name,
+          format: col.to_string
+      };
+    });
+    return formats;
   };
 
   ColumnSet.prototype.getStorageSize=function(){

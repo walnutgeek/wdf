@@ -4,6 +4,7 @@ describe( 'wdf/DataFrame', function(){
   var u$ = require("../utils");
   var assert = require("assert");
   var smartAssert = require("./smart_assert");
+  var _ = require("lodash");
 
 
   var rows = [{ abc: 1, cdx: 2},{ abc: 2, cdx: 3}];
@@ -332,6 +333,23 @@ describe( 'wdf/DataFrame', function(){
             ]
           });
       assert.equal(df.columnSet.byName.a.type,undefined);
+    });
+    it('columnSet.getFormats', function () {
+      var df = DataFrame.parse_wdf( require('./all_types_including_link'));
+      var formats = df.columnSet.getFormats();
+      assert.equal(7,_.size(formats));
+      function testFormat(rowNum,col,actual) {
+        var v = df.get(rowNum, col);
+        assert.equal(actual, formats[col].format(v));
+      }
+      testFormat(0,"s","asr");
+      testFormat(2,"s","");
+      testFormat(2,"l",'[hello z](/abc/z)');
+      testFormat(4,"l",'');
+      testFormat(4,"n",'');
+      testFormat(3,"n",'5');
+      testFormat(3,"d","2015-09-17");
+      testFormat(4,"ts","");
     });
   });
 
