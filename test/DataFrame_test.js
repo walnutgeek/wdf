@@ -335,21 +335,68 @@ describe( 'wdf/DataFrame', function(){
       assert.equal(df.columnSet.byName.a.type,undefined);
     });
     it('columnSet.getFormats', function () {
-      var df = DataFrame.parse_wdf( require('./all_types_including_link'));
+      var df = DataFrame.parse_wdf(require('./all_types_including_link'));
       var formats = df.columnSet.getFormats();
-      assert.equal(7,_.size(formats));
-      function testFormat(rowNum,col,actual) {
+      assert.equal(7, _.size(formats));
+      function testFormat(rowNum, col, actual) {
         var v = df.get(rowNum, col);
         assert.equal(actual, formats[col].format(v));
       }
-      testFormat(0,"s","asr");
-      testFormat(2,"s","");
-      testFormat(2,"l",'[hello z](/abc/z)');
-      testFormat(4,"l",'');
-      testFormat(4,"n",'');
-      testFormat(3,"n",'5');
-      testFormat(3,"d","2015-09-17");
-      testFormat(4,"ts","");
+      testFormat(0, "s", "asr");
+      testFormat(2, "s", "");
+      testFormat(2, "l", '[hello z](/abc/z)');
+      testFormat(4, "l", '');
+      testFormat(4, "n", '');
+      testFormat(3, "n", '5');
+      testFormat(3, "d", "2015-09-17");
+      testFormat(4, "ts", "");
+      var reverse = function (s) {
+        return s && s.split("").reverse().join("");
+      };
+      var just_text = function (l) {
+        return l && l.text;
+      };
+      var just_href = function (l) {
+        return l && l.href;
+      };
+      formats = df.columnSet.getFormats({
+        fn: function (col_name, type_name, col) {
+          if ('s' === col_name) {
+            return reverse;
+          }
+        }
+      });
+      testFormat(0, "s", "rsa");
+      testFormat(2, "s", "");
+      testFormat(2, "l", '[hello z](/abc/z)');
+      formats = df.columnSet.getFormats({
+        fn: function (col_name, type_name, col) {
+          if ('link' === type_name) {
+            return just_text;
+          }
+        }
+      });
+      testFormat(0, "s", "asr");
+      testFormat(2, "s", "");
+      testFormat(2, "l", 'hello z');
+      formats = df.columnSet.getFormats({by_names: {s: reverse}});
+      testFormat(0, "s", "rsa");
+      testFormat(2, "s", "");
+      testFormat(2, "l", '[hello z](/abc/z)');
+      formats = df.columnSet.getFormats({by_types: {link: just_text}});
+      testFormat(0, "s", "asr");
+      testFormat(2, "s", "");
+      testFormat(2, "l", 'hello z');
+      formats = df.columnSet.getFormats({by_names: {s: reverse},by_types: {link: just_text}});
+      testFormat(0, "s", "rsa");
+      testFormat(2, "s", "");
+      testFormat(2, "l", 'hello z');
+      testFormat(3, "d", "2015-09-17");
+      formats = df.columnSet.getFormats({by_names: {s: reverse,l:just_href},by_types: {link: just_text}});
+      testFormat(0, "s", "rsa");
+      testFormat(2, "s", "");
+      testFormat(2, "l", '/abc/z');
+      testFormat(3, "d", "2015-09-17");
     });
   });
 
