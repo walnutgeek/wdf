@@ -120,22 +120,28 @@
     if(!config.fn){
       if(config.by_names || config.by_types){
         if( !config.by_names ) {
-          config.fn = function (_,type_name){ return this.by_types[type_name]; };
+          config.format_fn = function (_,type_name){ return this.by_types[type_name]; };
         }else if( !config.by_types ) {
-          config.fn = function (col_name,_){ return this.by_names[col_name]; } ;
+          config.format_fn = function (col_name,_){ return this.by_names[col_name]; } ;
         }else{
-          config.fn = function (col_name,type_name){ return this.by_names[col_name] || this.by_types[type_name]; };
+          config.format_fn = function (col_name,type_name){ return this.by_names[col_name] || this.by_types[type_name]; };
         }
       }
     }
-    var formats = {} ;
-    _.forOwn(this.byName,function(col,col_name){
+    var formats = [] ;
+    var col_names = config.columns || Object.keys(this.byName);
+    for(var i = 0 ; i < col_names.length ; i++){
+      var col_name = col_names[i];
+      var col = this.byName[col_name];
       var type_name = col.type && col.type.name;
-      formats[col_name] = {
+      formats[i] = {
+          name: col_name,
+          col_idx: col.col_idx,
+          title: (config.title_fn && config.title_fn(col_name,type_name,col)) || col_name,
           type: type_name,
-          format: (config.fn && config.fn(col_name,type_name,col)) || col.to_string
+          format: (config.format_fn && config.format_fn(col_name,type_name,col)) || col.to_string
       };
-    });
+    }
     return formats;
   };
 

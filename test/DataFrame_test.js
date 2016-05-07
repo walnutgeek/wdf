@@ -338,9 +338,12 @@ describe( 'wdf/DataFrame', function(){
       var df = DataFrame.parse_wdf(require('./all_types_including_link'));
       var formats = df.columnSet.getFormats();
       assert.equal(7, _.size(formats));
-      function testFormat(rowNum, col, actual) {
-        var v = df.get(rowNum, col);
-        assert.equal(actual, formats[col].format(v));
+      function testFormat(rowNum, col, actual, col_title) {
+        col_title = col_title || col ;
+        var col_idx = df.getColumnIndex(col);
+        var v = df.get(rowNum, col_idx);
+        assert.equal(actual, formats[col_idx].format(v));
+        assert.equal(col_title, formats[col_idx].title);
       }
       testFormat(0, "s", "asr");
       testFormat(2, "s", "");
@@ -360,7 +363,7 @@ describe( 'wdf/DataFrame', function(){
         return l && l.href;
       };
       formats = df.columnSet.getFormats({
-        fn: function (col_name, type_name, col) {
+        format_fn: function (col_name, type_name, col) {
           if ('s' === col_name) {
             return reverse;
           }
@@ -370,14 +373,19 @@ describe( 'wdf/DataFrame', function(){
       testFormat(2, "s", "");
       testFormat(2, "l", '[hello z](/abc/z)');
       formats = df.columnSet.getFormats({
-        fn: function (col_name, type_name, col) {
+        format_fn: function (col_name, type_name, col) {
           if ('link' === type_name) {
             return just_text;
           }
+        },
+        title_fn: function(col_name){
+          if(col_name=='s'){
+            return "Column S";
+          }
         }
       });
-      testFormat(0, "s", "asr");
-      testFormat(2, "s", "");
+      testFormat(0, "s", "asr", "Column S");
+      testFormat(2, "s", "",    "Column S");
       testFormat(2, "l", 'hello z');
       formats = df.columnSet.getFormats({by_names: {s: reverse}});
       testFormat(0, "s", "rsa");
