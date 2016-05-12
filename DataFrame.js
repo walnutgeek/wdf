@@ -136,7 +136,7 @@
       var type_name = col.type && col.type.name;
       formats[i] = {
           name: col_name,
-          col_idx: col.col_idx,
+          index: col.col_idx,
           title: (config.title_fn && config.title_fn(col_name,type_name,col)) || col_name,
           type: type_name,
           format: (config.format_fn && config.format_fn(col_name,type_name,col)) || col.to_string
