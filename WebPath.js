@@ -264,11 +264,18 @@
         }
         return this.path() ;
     };
+    WebPath.ensurePath = function(path_or_str){
+      return ( path_or_str instanceof WebPath
+          ? path_or_str
+          : (u$.isNullish(path_or_str)
+              ? null
+              : new WebPath(path_or_str))
+      );
+    };
 
     WebPath.Search = Search ;
     WebPath.Params = Params ;
     WebPath.Field = Field ;
-
     module.exports = WebPath;
 })();
 

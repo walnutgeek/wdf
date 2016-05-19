@@ -173,6 +173,11 @@ describe( 'WebPath',function() {
     assert.equal(new WebPath('/abc/o').toString(),'/abc/o');
     assert.equal(new WebPath('/abc/o/').toString(),'/abc/o/');
   });
+  it('ensurePath', function () {
+    assert.ok(WebPath.ensurePath('/abc/o/x.csv') instanceof WebPath );
+    assert.ok(WebPath.ensurePath(new WebPath('/abc/o/x.csv')) instanceof WebPath );
+    assert.ok(WebPath.ensurePath(null) === null );
+  });
   it('forbiden components', function () {
     function test_error(p){
       try{
