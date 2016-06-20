@@ -34,6 +34,7 @@
   "java": "text/x-java-source",
   "json": "application/json",
   "csv": "text/csv",
+  "css": "text/css",
   "wdf": "text/wdf",
   "/": "text/wdf",
   "xml": "application/xml",
