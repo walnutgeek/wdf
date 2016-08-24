@@ -20,24 +20,24 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">91.28% </span>
+        <span class="strong">90.97% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>136/149</span>
+        <span class='fraction'>141/155</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">65.22% </span>
+        <span class="strong">66% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>30/46</span>
+        <span class='fraction'>33/50</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">96% </span>
+        <span class="strong">96.15% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>24/25</span>
+        <span class='fraction'>25/26</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">91.16% </span>
+        <span class="strong">90.85% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>134/147</span>
+        <span class='fraction'>139/153</span>
       </div>
     </div>
   </div>
@@ -282,7 +282,13 @@
 237
 238
 239
-240</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
+240
+241
+242
+243
+244
+245
+246</td><td class="line-coverage quiet"><span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
@@ -316,9 +322,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">151×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">151×</span>
 <span class="cline-any cline-yes">145×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
@@ -412,7 +421,6 @@
 <span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -459,6 +467,11 @@
 <span class="cline-any cline-yes">16×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-yes">6×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-yes">9×</span>
@@ -471,6 +484,7 @@
 <span class="cline-any cline-yes">144×</span>
 <span class="cline-any cline-yes">144×</span>
 <span class="cline-any cline-yes">144×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -482,7 +496,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">56×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -503,7 +516,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">48×</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -554,12 +566,15 @@
   }
 &nbsp;
   function render_value(div,v){
-    if( u$.isPrimitive(v) ){
+    <span class="missing-if-branch" title="if path not taken" >I</span>if( u$.isNullish(v) ) {
+<span class="cstat-no" title="statement not covered" >      div.innerText = '' ;</span>
+    }else if( u$.isPrimitive(v) ){
       div.innerText = v ;
     }else{
       div.appendChild(v);
     }
   }
+&nbsp;
   function WdfView(props){
     props = _.defaults(props,defaults);
     this.props = props;
@@ -651,7 +666,6 @@
     this.setAllColumnWidths();
     this.markOverflownColumn();
   }
-&nbsp;
   WdfView.setDefault=function(key,value){
     defaults[key]=value;
   };
@@ -698,6 +712,11 @@
       fn.call(this,row,colName,cell);
     }
   };
+  WdfView.prototype.link_elem=function(link) {
+    var a = this.new_elem(null, 'a', ['wdf_link'], {href: link.href});
+    a.innerText = link.text || link.href;
+    return a;
+  };
 &nbsp;
   WdfView.prototype.applyToAllCells = function(fn){
     var q = '.'+this.id+' tr' ;
@@ -714,6 +733,7 @@
       }
     }
   };
+&nbsp;
   function markOverflownCell( row, col_name, cell) {
     var real_w = cell.firstChild.scrollWidth;
     var visual_w = cell.firstChild.offsetWidth;
@@ -723,7 +743,6 @@
       cell.classList.remove('wdf_over');
     }
   }
-&nbsp;
 &nbsp;
   WdfView.prototype.setColumnWidth = function(col,width){
     var colName = this.df.getColumnName(col);
@@ -745,7 +764,6 @@
     });
   };
 &nbsp;
-&nbsp;
   WdfView.prototype.markOverflownColumn = function(){
     this.applyToAllCells(markOverflownCell);
   };
@@ -766,7 +784,7 @@
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Jan 22 2016 07:30:48 GMT-0800 (PST)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Aug 24 2016 00:10:23 GMT-0700 (PDT)
 </div>
 </div>
 <script src="../prettify.js"></script>

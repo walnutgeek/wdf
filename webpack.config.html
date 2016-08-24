@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>webpack.config.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+  
+</head>
+<head>
+</head>
+<body>
+  <div id="container">
+    
+      <div id="background"></div>
+    
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="DataFrame.html">
+                  DataFrame.js
+                </a>
+              
+                
+                <a class="source" href="ViewTheme.html">
+                  ViewTheme.js
+                </a>
+              
+                
+                <a class="source" href="WdfView.html">
+                  WdfView.js
+                </a>
+              
+                
+                <a class="source" href="WebPath.html">
+                  WebPath.js
+                </a>
+              
+                
+                <a class="source" href="cacheit.html">
+                  cacheit.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.md
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.md
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
+                <a class="source" href="utils.html">
+                  utils.js
+                </a>
+              
+                
+                <a class="source" href="webpack.config.html">
+                  webpack.config.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>webpack.config.js</h1>
+              </div>
+          </li>
+        
+        
+        <li id="section-1">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre><span class="hljs-keyword">var</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">"path"</span>);
+<span class="hljs-keyword">var</span> webpack = <span class="hljs-built_in">require</span>(<span class="hljs-string">"webpack"</span>);
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">absdir</span>(<span class="hljs-params">r</span>)</span>{
+  <span class="hljs-keyword">return</span> path.resolve(__dirname, r) ;
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">output_fn</span>(<span class="hljs-params">name, dirname</span>)</span>{
+  dirname = dirname || <span class="hljs-string">'dist'</span>;
+  <span class="hljs-keyword">var</span> dir = absdir( dirname) ;
+  <span class="hljs-keyword">return</span> { path: dir, filename: name, publicPath: <span class="hljs-string">"/"</span> + dirname, library: <span class="hljs-string">'wdf'</span> };
+}
+
+<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">cfg</span>(<span class="hljs-params">entry_point, out_file, customizer</span>)</span>{
+  <span class="hljs-keyword">var</span> c = {
+    entry: entry_point,
+    output: output_fn(out_file),
+    devtool: <span class="hljs-string">"source-map"</span>,
+    <span class="hljs-built_in">module</span>: {
+      preLoaders: [
+        {
+          test: <span class="hljs-regexp">/\.js$/</span>,
+          loaders: [<span class="hljs-string">'jshint'</span>],</pre></div></div>
+            
+        </li>
+        
+        <li id="section-2">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>define an include so we check just the files we need</p>
+
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>          include: [<span class="hljs-string">"wdf"</span>, <span class="hljs-string">"test"</span>].map(absdir)
+        }
+      ],
+      loaders: [
+        { test: <span class="hljs-regexp">/\.css$/</span>,
+          loader: <span class="hljs-string">'style?minimize!css'</span> },
+        { test: <span class="hljs-regexp">/\.json$/</span>,
+          loader: <span class="hljs-string">'json'</span> },
+      ],
+    },
+    plugins: [
+      <span class="hljs-keyword">new</span> webpack.IgnorePlugin(<span class="hljs-regexp">/jsdom/</span>)
+    ]
+  };
+  <span class="hljs-keyword">if</span>(customizer)customizer(c);
+  <span class="hljs-keyword">return</span> c;
+}
+
+<span class="hljs-built_in">module</span>.exports = [
+  cfg(<span class="hljs-string">"./index.js"</span>,<span class="hljs-string">"wdf.js"</span>),
+  cfg(<span class="hljs-string">"./index.js"</span>,<span class="hljs-string">"wdf.min.js"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">c</span>)</span>{
+    c.module.loaders.push({
+      test: <span class="hljs-regexp">/\.js$/</span>,
+      loader: <span class="hljs-string">"uglify"</span>
+    });
+  }),
+  cfg(<span class="hljs-string">"./test/view_entry.js"</span>,<span class="hljs-string">"view.js"</span>),
+  cfg(<span class="hljs-string">"mocha!./test/index.js"</span>,<span class="hljs-string">"testBundle.js"</span>)
+];</pre></div></div>
+            
+        </li>
+        
+    </ul>
+    <p>
+  
+
+  </div>
+</body>
+</html>

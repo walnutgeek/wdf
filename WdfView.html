@@ -25,16 +25,6 @@
             <div id="jump_page">
               
                 
-                <a class="source" href="index.html">
-                  index.md
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.md
-                </a>
-              
-                
                 <a class="source" href="DataFrame.html">
                   DataFrame.js
                 </a>
@@ -55,8 +45,33 @@
                 </a>
               
                 
+                <a class="source" href="cacheit.html">
+                  cacheit.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.md
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.md
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
                 <a class="source" href="utils.html">
                   utils.js
+                </a>
+              
+                
+                <a class="source" href="webpack.config.html">
+                  webpack.config.js
                 </a>
               
             </div>
@@ -84,7 +99,7 @@
             </div>
             
                  <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-<span class="hljs-pi">  "use strict"</span>;
+<span class="hljs-meta">  "use strict"</span>;
 
   <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"lodash"</span>);
   <span class="hljs-keyword">var</span> u$ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./utils"</span>);
@@ -116,12 +131,15 @@
   }
 
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">render_value</span>(<span class="hljs-params">div,v</span>)</span>{
-    <span class="hljs-keyword">if</span>( u$.isPrimitive(v) ){
+    <span class="hljs-keyword">if</span>( u$.isNullish(v) ) {
+      div.innerText = <span class="hljs-string">''</span> ;
+    }<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( u$.isPrimitive(v) ){
       div.innerText = v ;
     }<span class="hljs-keyword">else</span>{
       div.appendChild(v);
     }
   }
+
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">WdfView</span>(<span class="hljs-params">props</span>)</span>{
     props = _.defaults(props,defaults);
     <span class="hljs-keyword">this</span>.props = props;
@@ -213,7 +231,6 @@
     <span class="hljs-keyword">this</span>.setAllColumnWidths();
     <span class="hljs-keyword">this</span>.markOverflownColumn();
   }
-
   WdfView.setDefault=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">key,value</span>)</span>{
     defaults[key]=value;
   };
@@ -260,6 +277,11 @@
       fn.call(<span class="hljs-keyword">this</span>,row,colName,cell);
     }
   };
+  WdfView.prototype.link_elem=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">link</span>) </span>{
+    <span class="hljs-keyword">var</span> a = <span class="hljs-keyword">this</span>.new_elem(<span class="hljs-literal">null</span>, <span class="hljs-string">'a'</span>, [<span class="hljs-string">'wdf_link'</span>], {href: link.href});
+    a.innerText = link.text || link.href;
+    <span class="hljs-keyword">return</span> a;
+  };
 
   WdfView.prototype.applyToAllCells = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fn</span>)</span>{
     <span class="hljs-keyword">var</span> q = <span class="hljs-string">'.'</span>+<span class="hljs-keyword">this</span>.id+<span class="hljs-string">' tr'</span> ;
@@ -276,6 +298,7 @@
       }
     }
   };
+
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">markOverflownCell</span>(<span class="hljs-params"> row, col_name, cell</span>) </span>{
     <span class="hljs-keyword">var</span> real_w = cell.firstChild.scrollWidth;
     <span class="hljs-keyword">var</span> visual_w = cell.firstChild.offsetWidth;
@@ -285,7 +308,6 @@
       cell.classList.remove(<span class="hljs-string">'wdf_over'</span>);
     }
   }
-
 
   WdfView.prototype.setColumnWidth = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col,width</span>)</span>{
     <span class="hljs-keyword">var</span> colName = <span class="hljs-keyword">this</span>.df.getColumnName(col);
@@ -306,7 +328,6 @@
       cell.firstChild.style.width = col_width.current + <span class="hljs-string">'px'</span>;
     });
   };
-
 
   WdfView.prototype.markOverflownColumn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
     <span class="hljs-keyword">this</span>.applyToAllCells(markOverflownCell);

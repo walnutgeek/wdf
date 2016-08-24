@@ -25,16 +25,6 @@
             <div id="jump_page">
               
                 
-                <a class="source" href="index.html">
-                  index.md
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.md
-                </a>
-              
-                
                 <a class="source" href="DataFrame.html">
                   DataFrame.js
                 </a>
@@ -55,8 +45,33 @@
                 </a>
               
                 
+                <a class="source" href="cacheit.html">
+                  cacheit.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.md
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.md
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
                 <a class="source" href="utils.html">
                   utils.js
+                </a>
+              
+                
+                <a class="source" href="webpack.config.html">
+                  webpack.config.js
                 </a>
               
             </div>
@@ -87,7 +102,7 @@
             
                  <div class="content"><div class='highlight'><pre>
 (<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-<span class="hljs-pi">  "use strict"</span>;
+<span class="hljs-meta">  "use strict"</span>;
   <span class="hljs-keyword">var</span> u$ = <span class="hljs-built_in">module</span>.exports = {} ;
   <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"lodash"</span>);</pre></div></div>
             
@@ -342,7 +357,7 @@ do not throw exceptions.</p>
   u$.new_Object = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">constructor, args</span>) </span>{
     <span class="hljs-keyword">var</span> a = [<span class="hljs-literal">null</span>];
     <span class="hljs-built_in">Array</span>.prototype.push.apply(a,args);
-    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> (<span class="hljs-built_in">Function</span>.prototype.bind.apply(constructor, a))();
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> (<span class="hljs-built_in">Function</span>.prototype.bind.apply(<span class="hljs-keyword">constructor</span>, a))();
   };</pre></div></div>
             
         </li>
@@ -490,6 +505,34 @@ array as well.</p>
       }
     }
     <span class="hljs-keyword">return</span> <span class="hljs-built_in">Array</span>.prototype.slice.call(args);
+  };
+
+  u$.assignByKeys=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">dest, src, keys</span>) </span>{
+    keys = keys || _.keys(src);
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span> ; i &lt; keys.length ; i++){
+      <span class="hljs-keyword">var</span> key = keys[i];
+      dest[key] = src[key];
+    }
+    <span class="hljs-keyword">return</span> dest;
+  };
+
+
+  <span class="hljs-keyword">var</span> SORTING = [ <span class="hljs-string">'ASCENDING'</span>, <span class="hljs-string">'DESCENDING'</span> , <span class="hljs-string">'ASC'</span>, <span class="hljs-string">'DESC'</span>, <span class="hljs-string">'A'</span>, <span class="hljs-string">'D'</span> ];
+  
+  u$.sorting = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">sort_var</span>)</span>{
+    <span class="hljs-comment">/*
+    @param sort_var string or number
+    @return number
+      sort index: 0 - for ascending, 1 - for descending, if
+     */</span>
+    <span class="hljs-keyword">if</span>( +sort_var === <span class="hljs-number">0</span> || +sort_var === <span class="hljs-number">1</span>)
+      <span class="hljs-keyword">return</span> sort_var;
+    <span class="hljs-keyword">if</span>( _.isBoolean(sort_var) )
+      <span class="hljs-keyword">return</span> sort_var ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span> ;
+    <span class="hljs-keyword">var</span> idx = SORTING.indexOf(sort_var);
+    <span class="hljs-keyword">if</span>(idx &gt; <span class="hljs-number">-1</span>)
+      <span class="hljs-keyword">return</span> idx % <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span> ;
   };</pre></div></div>
             
         </li>
@@ -516,20 +559,18 @@ something like: <code>a &lt; b ? -1 : a &gt; b ? 1 : 0</code></p>
  &gt; u$.binarySearch(<span class="hljs-number">4</span>, array, t$.number.compare);
   <span class="hljs-number">2</span>
  &gt; u$.binarySearch(<span class="hljs-number">7</span>, array, t$.number.compare);
-  -<span class="hljs-number">5</span>
+  <span class="hljs-number">-5</span>
 </code></pre>
             </div>
             
                  <div class="content"><div class='highlight'><pre>  u$.binarySearch=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">searchFor, array, comparator, mapper</span>) </span>{
-    <span class="hljs-keyword">var</span> mapToValue = mapper || <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">x</span>) </span>{
-          <span class="hljs-keyword">return</span> x;
-        };
+    mapper = mapper || _.identity;
     <span class="hljs-keyword">var</span> min = <span class="hljs-number">0</span>;
     <span class="hljs-keyword">var</span> max = array.length - <span class="hljs-number">1</span>;
     <span class="hljs-keyword">var</span> mid, r;
     <span class="hljs-keyword">while</span> (min &lt;= max) {
       mid = ((min + max) / <span class="hljs-number">2</span>) | <span class="hljs-number">0</span>;
-      r = comparator(searchFor, mapToValue(array[mid]));
+      r = comparator(searchFor, mapper(array[mid]));
       <span class="hljs-keyword">if</span> (r &gt; <span class="hljs-number">0</span>) {
         min = mid + <span class="hljs-number">1</span>;
       } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (r &lt; <span class="hljs-number">0</span>) {
@@ -538,7 +579,7 @@ something like: <code>a &lt; b ? -1 : a &gt; b ? 1 : 0</code></p>
         <span class="hljs-keyword">return</span> mid;
       }
     }
-    <span class="hljs-keyword">return</span> -<span class="hljs-number">1</span> - min;
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span> - min;
   };</pre></div></div>
             
         </li>
@@ -677,11 +718,7 @@ elements before join.</li>
                  <div class="content"><div class='highlight'><pre>  u$.join=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">collection, delimiter, toValue</span>) </span>{
     <span class="hljs-keyword">var</span> keys = _.isArray(collection)  || _.isTypedArray(collection)  ?
         collection : <span class="hljs-built_in">Object</span>.keys(collection) ;
-    <span class="hljs-keyword">if</span> (!toValue) {
-      toValue = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">s</span>) </span>{
-        <span class="hljs-keyword">return</span> s;
-      };
-    }
+    toValue = toValue || _.identity ;
     <span class="hljs-keyword">if</span> (u$.isNullish(delimiter) ) {
       delimiter = <span class="hljs-string">','</span>;
     }
@@ -691,8 +728,8 @@ elements before join.</li>
         <span class="hljs-keyword">return</span> (fromBegining &lt; <span class="hljs-number">0</span> || fromEnd &lt; <span class="hljs-number">0</span>) ? <span class="hljs-string">''</span> : delimiter;
       };
     }
-    <span class="hljs-keyword">var</span> indexFromBegining = -<span class="hljs-number">1</span>; <span class="hljs-comment">// -1 means delimiter before of first element</span>
-    <span class="hljs-keyword">var</span> indexFromEnd = keys.length-<span class="hljs-number">1</span>; <span class="hljs-comment">//it become -1 for delimiter after of last element</span>
+    <span class="hljs-keyword">var</span> indexFromBegining = <span class="hljs-number">-1</span>; <span class="hljs-comment">// -1 means delimiter before of first element</span>
+    <span class="hljs-keyword">var</span> indexFromEnd = keys.length<span class="hljs-number">-1</span>; <span class="hljs-comment">//it become -1 for delimiter after of last element</span>
     <span class="hljs-keyword">var</span> result = <span class="hljs-string">''</span>;
     <span class="hljs-keyword">while</span> (indexFromBegining &lt; keys.length) {
       <span class="hljs-keyword">if</span> (indexFromBegining &gt;= <span class="hljs-number">0</span>) {
@@ -823,26 +860,32 @@ same as <code>String.prototype.startWith(prefix)</code> but ES6 not quite here y
                 <a class="pilcrow" href="#section-30">&#182;</a>
               </div>
               <p><strong>error(params,err)</strong></p>
-<p>creates error object or add params to it as it will fly by.</p>
+<p>creates Error object if not provided and add
+stringified params to err.stack to stack trace.</p>
 
             </div>
             
                  <div class="content"><div class='highlight'><pre>  u$.error=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">params,  err</span>) </span>{
-    err = err || <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>();
-    params = params || {};
-    <span class="hljs-keyword">if</span> ( u$.isNullish(err._message) ) {
-      err._message  = err.message ? err.message :  params.message || <span class="hljs-string">''</span> ;
-      <span class="hljs-keyword">delete</span> params.message;
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">mk_err</span>(<span class="hljs-params">key</span>)</span>{
+      <span class="hljs-keyword">var</span> msg = params[key];
+      <span class="hljs-keyword">if</span>(msg){
+        <span class="hljs-keyword">delete</span> params[key];
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(msg);
+      }
     }
-    <span class="hljs-keyword">if</span> ( _.isPlainObject(err.params) ) {
-      _.assign(err.params, params);
+    <span class="hljs-keyword">if</span>( _.isString(params) ){
+      params = { msg: params};
     }<span class="hljs-keyword">else</span>{
-      err.params = params;
+      params = params || {};
     }
-    err.toString = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>)</span>{
-      <span class="hljs-keyword">var</span> m =  err._message ;
-      <span class="hljs-keyword">return</span> _.size(<span class="hljs-keyword">this</span>.params)  ? m + <span class="hljs-string">" "</span> + <span class="hljs-built_in">JSON</span>.stringify(<span class="hljs-keyword">this</span>.params) : m;
-    };
+    <span class="hljs-keyword">if</span>(!err){
+      err = mk_err(<span class="hljs-string">'msg'</span>) || mk_err(<span class="hljs-string">'message'</span>) || <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>();
+    }
+    <span class="hljs-keyword">if</span>( _.size(params) ){
+      <span class="hljs-keyword">var</span> stack = err.stack.split(<span class="hljs-string">'\n'</span>);
+      stack.splice(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,<span class="hljs-built_in">JSON</span>.stringify(params));
+      err.stack = stack.join(<span class="hljs-string">'\n'</span>) ;
+    }
     <span class="hljs-keyword">return</span> err;
   };</pre></div></div>
             
@@ -898,6 +941,17 @@ exception jail</p>
     }<span class="hljs-keyword">catch</span>(ignored){
       <span class="hljs-keyword">return</span> ignored;
     }
+  };
+  u$.ensurePlainObject = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">o</span>)</span>{
+    <span class="hljs-keyword">try</span>{
+      <span class="hljs-keyword">if</span>(_.isString(o)){
+        o = <span class="hljs-built_in">JSON</span>.parse(o);
+      }
+      <span class="hljs-keyword">if</span>(_.isPlainObject(o) || u$.isNullish(o)) {
+        <span class="hljs-keyword">return</span> o;
+      }
+    }<span class="hljs-keyword">catch</span>(ignored){}
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
   };</pre></div></div>
             
         </li>
@@ -1060,7 +1114,7 @@ exception jail</p>
     <span class="hljs-keyword">var</span> s = <span class="hljs-string">'^'</span>;
     <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; n; i++) {
       <span class="hljs-keyword">if</span>(i&gt;<span class="hljs-number">0</span>){
-        s += o.delims[i-<span class="hljs-number">1</span>];
+        s += o.delims[i<span class="hljs-number">-1</span>];
       }
       <span class="hljs-keyword">var</span> p = pattern_texts[i];
       <span class="hljs-keyword">if</span>( p )
@@ -1114,7 +1168,7 @@ exception jail</p>
       <span class="hljs-keyword">if</span>(m){
         <span class="hljs-keyword">var</span> args = [];
         <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">1</span> ; i &lt; m.length ;i++){
-          args[i-<span class="hljs-number">1</span>] = +m[i] ;
+          args[i<span class="hljs-number">-1</span>] = +m[i] ;
         }
         args[<span class="hljs-number">1</span>]--;
         <span class="hljs-keyword">return</span> new_date(in_utc, args);
@@ -1282,7 +1336,7 @@ into components <code>utc_components</code> (default) and <code>date_components<
       <span class="hljs-keyword">var</span> s = <span class="hljs-string">''</span>;
       <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; n; i++) {
         <span class="hljs-keyword">if</span>(i &gt; <span class="hljs-number">0</span>){
-          s += delims[i-<span class="hljs-number">1</span>];
+          s += delims[i<span class="hljs-number">-1</span>];
         }
         <span class="hljs-keyword">if</span>( i &lt; d_values.length ){
           s += pad_with_zeros(d_values[i],DATE_FIELD_SIZES[i]);
@@ -1354,9 +1408,9 @@ assuming local timezone</p>
 less then 24 hours</li>
 <li><code>YYYY-MM-DD hh:mm</code> otherwise<pre><code>&gt; relativeDateString(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(d.getTime()+<span class="hljs-number">120000</span>),d)
 <span class="hljs-string">"+00:02"</span>
-&gt; relativeDateString(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(d.getTime()-<span class="hljs-number">120000</span>),d)
+&gt; relativeDateString(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(d.getTime()<span class="hljs-number">-120000</span>),d)
 <span class="hljs-string">"-00:02"</span>
-&gt; relativeDateString(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(d.getTime()-<span class="hljs-number">1200000000</span>),d)
+&gt; relativeDateString(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>(d.getTime()<span class="hljs-number">-1200000000</span>),d)
 <span class="hljs-string">"2015-10-22 08:34"</span>
 </code></pre></li>
 </ul>
@@ -1584,12 +1638,12 @@ in <code>store</code> object during data collection.</p>
 <pre><code>&gt; store = {}
 &gt; collect_stats(<span class="hljs-string">'a'</span>, <span class="hljs-number">1</span>, store)
 &gt; collect_stats(<span class="hljs-string">'a'</span>, <span class="hljs-number">2</span>, store)
-&gt; collect_stats(<span class="hljs-string">'b'</span>, -<span class="hljs-number">1</span>, store)
+&gt; collect_stats(<span class="hljs-string">'b'</span>, <span class="hljs-number">-1</span>, store)
 &gt; collect_stats(<span class="hljs-string">'a'</span>, <span class="hljs-number">5</span>, store)
 &gt; collect_stats(<span class="hljs-string">'b'</span>, <span class="hljs-number">1</span>, store)
 &gt; store
 { a: { count: <span class="hljs-number">3</span>, sum: <span class="hljs-number">8</span>, min: <span class="hljs-number">1</span>, max: <span class="hljs-number">5</span> },
-  b: { count: <span class="hljs-number">2</span>, sum: <span class="hljs-number">0</span>, min: -<span class="hljs-number">1</span>, max: <span class="hljs-number">1</span> } }
+  b: { count: <span class="hljs-number">2</span>, sum: <span class="hljs-number">0</span>, min: <span class="hljs-number">-1</span>, max: <span class="hljs-number">1</span> } }
 &gt; store.a.sum/store.a.count
 <span class="hljs-number">2.6666666666666665</span>
 </code></pre>
@@ -1609,7 +1663,7 @@ in <code>store</code> object during data collection.</p>
             
         </li>
         
-              <a name="generic_order" />
+              <a name="u$.generic_order" />
         
         <li id="section-62">
 
@@ -1632,13 +1686,64 @@ order function in chain have it’s say</li>
 
             </div>
             
-                 <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">generic_order</span>(<span class="hljs-params">a,b</span>)</span>{
-    <span class="hljs-keyword">return</span> a === b ? <span class="hljs-literal">null</span> : a &lt; b ? -<span class="hljs-number">1</span> : <span class="hljs-number">1</span> ;
-  }</pre></div></div>
+                 <div class="content"><div class='highlight'><pre>  u$.generic_order = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">a,b</span>)</span>{
+    <span class="hljs-keyword">return</span> a === b ? <span class="hljs-number">0</span> : a &lt; b ? <span class="hljs-number">-1</span> : <span class="hljs-number">1</span> ;
+  };
+
+  u$.no_order = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">a,b</span>)</span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span> ;
+  };
+
+  u$.orderChain = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-comment">/*
+    @param funcs array of functions
+      order functions that need to be chained
+    @return cumulative order function
+     */</span>
+    <span class="hljs-keyword">var</span> funcs = u$.extractArray(<span class="hljs-built_in">arguments</span>);
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a,b</span>)</span>{
+      <span class="hljs-keyword">var</span> rc = <span class="hljs-number">0</span>;
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; funcs.length; i++) {
+        <span class="hljs-keyword">var</span> res = funcs[i](a,b);
+        <span class="hljs-keyword">if</span>( res ){
+          rc = res;
+          <span class="hljs-keyword">break</span>;
+        }
+      }
+      <span class="hljs-keyword">return</span> rc;
+    };
+  };
+  u$.orderWithResolver = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">order,valueMapper</span>)</span>{
+    <span class="hljs-comment">/*
+     @param order function(v1,v2):cmp
+       function that operate on values
+       that not directly available for
+       comparison
+     @param valueMapper function(x):v
+       function that map values available
+       for comparison to what `order` function
+       can accept.
+     @return cumulative order function
+     */</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a,b</span>)</span>{
+      <span class="hljs-keyword">return</span> order(valueMapper(a),valueMapper(b));
+    };
+  };
+
+  u$.orderPredicateFirst = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">is</span>) </span>{
+    <span class="hljs-comment">/*
+     Turn predicate function(returning `true` or `false`) into
+     order function. Order function place `true` first.
+     */</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a, b</span>) </span>{
+      <span class="hljs-keyword">return</span> is(a) ? (is(b) ? <span class="hljs-number">0</span> : <span class="hljs-number">-1</span>) : (is(b) ? <span class="hljs-number">1</span> : <span class="hljs-number">0</span>);
+    };
+  };
+
+
+  u$.orderInverse = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">f</span>) </span>{</pre></div></div>
             
         </li>
-        
-              <a name="u$.orderChain" />
         
         <li id="section-63">
 
@@ -1647,146 +1752,11 @@ order function in chain have it’s say</li>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
-              <p><strong> orderChain(array) </strong></p>
-<p>Create chain of order functions.</p>
+              <p>inverse order mandated by <code>f(a,b)</code></p>
 
             </div>
             
-                 <div class="content"><div class='highlight'><pre>  u$.orderChain = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
-    <span class="hljs-keyword">var</span> funcs = u$.extractArray(<span class="hljs-built_in">arguments</span>);
-    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a,b</span>)</span>{
-      <span class="hljs-keyword">var</span> rc = <span class="hljs-number">0</span>;
-      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; funcs.length; i++) {
-        <span class="hljs-keyword">var</span> res = funcs[i](a,b);
-        <span class="hljs-keyword">if</span>( res !== <span class="hljs-literal">null</span> ){
-          rc = res;
-          <span class="hljs-keyword">break</span>;
-        }
-      }
-      <span class="hljs-keyword">return</span> rc;
-    };
-  };</pre></div></div>
-            
-        </li>
-        
-              <a name="u$.orderPredicateFirst" />
-        
-        <li id="section-64">
-
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-64">&#182;</a>
-              </div>
-              <p><strong>orderPredicateFirst(is)</strong></p>
-<p>Turn predicate function(returning <code>true</code> or <code>false</code>) into
-order function. Order function place <code>true</code> first.</p>
-
-            </div>
-            
-                 <div class="content"><div class='highlight'><pre>  u$.orderPredicateFirst = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">is</span>) </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a, b</span>) </span>{
-      <span class="hljs-keyword">return</span> is(a) ? (is(b) ? <span class="hljs-number">0</span> : -<span class="hljs-number">1</span>) : (is(b) ? <span class="hljs-number">1</span> : <span class="hljs-literal">null</span>);
-    };
-  };</pre></div></div>
-            
-        </li>
-        
-        <li id="section-65">
-
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-65">&#182;</a>
-              </div>
-              <p>Assume we have <code>indexArray</code> and <code>valueArray</code>. We also have <code>valueOrder(a,b)</code>
-function that capable of comparing elements of <code>valueArray</code>. <code>indexArray</code>
-contains integers pointing to <code>valueArray</code>. That set up allow messing with
-order or composition of <code>indexArray</code> leave order of <code>valueArray</code> unchanged.</p>
-
-            </div>
-            
-        </li>
-        
-              <a name="u$.indexOrder" />
-        
-        <li id="section-66">
-
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-66">&#182;</a>
-              </div>
-              <p><strong>indexOrder (valueOrder, valueArray)</strong></p>
-<p>creates index order function for given <code>valueOrder(a,b)</code></p>
-
-            </div>
-            
-                 <div class="content"><div class='highlight'><pre>
-  u$.indexOrder = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">valueOrder, valueArray</span>) </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a, b</span>) </span>{
-      <span class="hljs-keyword">return</span> valueOrder(valueArray[a],valueArray[b]);
-    };
-  };</pre></div></div>
-            
-        </li>
-        
-              <a name="u$.extractValuesByIndex" />
-        
-        <li id="section-67">
-
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-67">&#182;</a>
-              </div>
-              <p><strong> extractValuesByIndex (indexArray, valueArray)</strong></p>
-<p>extract values out of <code>valueArray</code> using <code>indexArray</code></p>
-
-            </div>
-            
-                 <div class="content"><div class='highlight'><pre>  u$.extractValuesByIndex = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">indexArray, valueArray</span>) </span>{
-    <span class="hljs-keyword">return</span> indexArray.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">idx</span>)</span>{<span class="hljs-keyword">return</span> valueArray[idx];});
-  };</pre></div></div>
-            
-        </li>
-        
-              <a name="u$.createIndex" />
-        
-        <li id="section-68">
-
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-68">&#182;</a>
-              </div>
-              <p><strong> createIndex(valueArray) </strong></p>
-<p>returns index array matching <code>valueArray</code></p>
-
-            </div>
-            
-                 <div class="content"><div class='highlight'><pre>  u$.createIndex = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">valueArray</span>) </span>{
-    <span class="hljs-keyword">return</span> _.range(valueArray.length);
-  };</pre></div></div>
-            
-        </li>
-        
-              <a name="u$.orderInverse" />
-        
-        <li id="section-69">
-
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-69">&#182;</a>
-              </div>
-              <p><strong>orderInverse(f)</strong></p>
-<p>inverse order mandated by <code>f(a,b)</code></p>
-
-            </div>
-            
-                 <div class="content"><div class='highlight'><pre>  u$.orderInverse = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">f</span>) </span>{
-    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a, b</span>) </span>{
+                 <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a, b</span>) </span>{
       <span class="hljs-keyword">return</span> f(b, a);
     };
   };</pre></div></div>
@@ -1795,12 +1765,12 @@ order or composition of <code>indexArray</code> leave order of <code>valueArray<
         
               <a name="u$.orderNullsFirst" />
         
-        <li id="section-70">
+        <li id="section-64">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-70">&#182;</a>
+                <a class="pilcrow" href="#section-64">&#182;</a>
               </div>
               <p><strong> orderNullsFirst(orderFuncArray) </strong></p>
 <p>Create order function that sort <code>undefined</code> - first, <code>null</code> - second
@@ -1810,8 +1780,10 @@ and then according to order functions provided in argument.</p>
             
                  <div class="content"><div class='highlight'><pre>  u$.orderNullsFirst = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
     <span class="hljs-keyword">var</span> funcs = u$.extractArray(<span class="hljs-built_in">arguments</span>);
-    funcs.splice(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,u$.orderPredicateFirst(_.isUndefined));
-    funcs.splice(<span class="hljs-number">1</span>,<span class="hljs-number">0</span>,u$.orderPredicateFirst(_.isNull));
+    funcs.splice(<span class="hljs-number">0</span>,<span class="hljs-number">0</span>,
+        u$.orderPredicateFirst(_.isUndefined),
+        u$.orderPredicateFirst(_.isNull),
+        u$.orderPredicateFirst(<span class="hljs-built_in">isNaN</span>));
     <span class="hljs-keyword">return</span> u$.orderChain(funcs);
   };
 
@@ -1828,7 +1800,7 @@ and then according to order functions provided in argument.</p>
     }
     <span class="hljs-keyword">this</span>.name = name ;
     _.defaults(<span class="hljs-keyword">this</span>, {
-        order:      generic_order,
+        order:      u$.generic_order,
         missing:    _.isNull,
         to_json:    _.identity,
         coerce:     <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value,from_type</span>)</span>{
@@ -1864,12 +1836,12 @@ and then according to order functions provided in argument.</p>
         
               <a name="Type.prototype.init" />
         
-        <li id="section-71">
+        <li id="section-65">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-71">&#182;</a>
+                <a class="pilcrow" href="#section-65">&#182;</a>
               </div>
               <p>reevaluate type conversion graph.
 called everytime when <code>addTypes()</code> called.</p>
@@ -1886,12 +1858,12 @@ called everytime when <code>addTypes()</code> called.</p>
         
               <a name="Link" />
         
-        <li id="section-72">
+        <li id="section-66">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-72">&#182;</a>
+                <a class="pilcrow" href="#section-66">&#182;</a>
               </div>
               <p>Link object, associate name with resource location</p>
 <ul>
@@ -1910,12 +1882,12 @@ called everytime when <code>addTypes()</code> called.</p>
         
               <a name="Link.prototype.toString" />
         
-        <li id="section-73">
+        <li id="section-67">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-73">&#182;</a>
+                <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
               <p>convert into string using markdown sintax
 like <code>[This link](http://example.net/)</code></p>
@@ -1929,6 +1901,9 @@ like <code>[This link](http://example.net/)</code></p>
   Link.parse=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">md_link</span>)</span>{
     <span class="hljs-keyword">if</span>(md_link === <span class="hljs-literal">null</span> || md_link === <span class="hljs-string">''</span>){
       <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+    <span class="hljs-keyword">if</span>(md_link &amp;&amp; md_link.constructor === Link){
+      <span class="hljs-keyword">return</span> md_link;
     }
     <span class="hljs-keyword">var</span> position = <span class="hljs-number">1</span>;
     <span class="hljs-keyword">if</span>(md_link[<span class="hljs-number">0</span>] === <span class="hljs-string">'['</span>){
@@ -1955,12 +1930,12 @@ like <code>[This link](http://example.net/)</code></p>
         
               <a name="u$.addTypes" />
         
-        <li id="section-74">
+        <li id="section-68">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-74">&#182;</a>
+                <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
               <p><strong> addTypes(typesMap) </strong></p>
 <p>   add types</p>
@@ -2006,7 +1981,7 @@ like <code>[This link](http://example.net/)</code></p>
       <span class="hljs-keyword">return</span> u$.isNullish(dt) ? <span class="hljs-literal">NaN</span> : dt.getTime();
     },
     order: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">a, b</span>) </span>{
-      <span class="hljs-keyword">return</span> generic_order( a.getTime(), b.getTime());
+      <span class="hljs-keyword">return</span> u$.generic_order( a.getTime(), b.getTime());
     },
     mixin_coerce: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value,from_type</span>)</span>{
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.from_number(from_type.to_number(value));
@@ -2020,12 +1995,12 @@ like <code>[This link](http://example.net/)</code></p>
             
         </li>
         
-        <li id="section-75">
+        <li id="section-69">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-75">&#182;</a>
+                <a class="pilcrow" href="#section-69">&#182;</a>
               </div>
               <p><strong> number </strong> type</p>
 
@@ -2035,7 +2010,7 @@ like <code>[This link](http://example.net/)</code></p>
       is: _.isNumber,
       missing: <span class="hljs-built_in">isNaN</span>,
       from_string: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v</span>)</span>{
-        <span class="hljs-keyword">return</span> NANs.indexOf(v) &gt; -<span class="hljs-number">1</span> ? <span class="hljs-literal">NaN</span> :  u$.numDefault(+v,<span class="hljs-literal">undefined</span>);
+        <span class="hljs-keyword">return</span> NANs.indexOf(v) &gt; <span class="hljs-number">-1</span> ? <span class="hljs-literal">NaN</span> :  u$.numDefault(+v,<span class="hljs-literal">undefined</span>);
       },
       _to_string: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v</span>)</span>{
         <span class="hljs-keyword">return</span> <span class="hljs-built_in">isNaN</span>(v)? <span class="hljs-string">''</span> : <span class="hljs-built_in">String</span>(v);
@@ -2044,12 +2019,12 @@ like <code>[This link](http://example.net/)</code></p>
             
         </li>
         
-        <li id="section-76">
+        <li id="section-70">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-76">&#182;</a>
+                <a class="pilcrow" href="#section-70">&#182;</a>
               </div>
               <p><strong> link </strong> type
 <code>[This link](http://example.net/)</code></p>
@@ -2060,21 +2035,31 @@ like <code>[This link](http://example.net/)</code></p>
       is: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">l</span>)</span>{ <span class="hljs-keyword">return</span> l <span class="hljs-keyword">instanceof</span> Link; },
       missing: _.isNull,
       from_string: Link.parse,
+      to_json: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">v</span>)</span>{
+        <span class="hljs-keyword">return</span> _.isNull(v) ? <span class="hljs-literal">null</span> : <span class="hljs-keyword">this</span>.to_string(v);
+      },
       order: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a, b</span>) </span>{
-        <span class="hljs-keyword">var</span> rc = generic_order(a.href, b.href);
-        <span class="hljs-keyword">if</span>( ! rc ) rc = generic_order(a.text, b.text);
+        <span class="hljs-keyword">var</span> rc = u$.generic_order(a.href, b.href);
+        <span class="hljs-keyword">if</span>( ! rc ) rc = u$.generic_order(a.text, b.text);
         <span class="hljs-keyword">return</span> rc || <span class="hljs-number">0</span>;
       }
+    },
+    json: {
+      is: _.isPlainObject,
+      missing: _.isNull,
+      from_string: u$.ensurePlainObject,
+      to_json: _.identity ,
+      order: u$.no_order,
     },</pre></div></div>
             
         </li>
         
-        <li id="section-77">
+        <li id="section-71">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-77">&#182;</a>
+                <a class="pilcrow" href="#section-71">&#182;</a>
               </div>
               <p><strong> date </strong> type</p>
 
@@ -2090,12 +2075,12 @@ like <code>[This link](http://example.net/)</code></p>
             
         </li>
         
-        <li id="section-78">
+        <li id="section-72">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-78">&#182;</a>
+                <a class="pilcrow" href="#section-72">&#182;</a>
               </div>
               <p><strong> datetime </strong> type</p>
 
@@ -2111,12 +2096,12 @@ like <code>[This link](http://example.net/)</code></p>
             
         </li>
         
-        <li id="section-79">
+        <li id="section-73">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-79">&#182;</a>
+                <a class="pilcrow" href="#section-73">&#182;</a>
               </div>
               <p><strong> timestamp </strong> type</p>
 
@@ -2132,12 +2117,12 @@ like <code>[This link](http://example.net/)</code></p>
             
         </li>
         
-        <li id="section-80">
+        <li id="section-74">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-80">&#182;</a>
+                <a class="pilcrow" href="#section-74">&#182;</a>
               </div>
               <p><strong> boolean </strong> type</p>
 
@@ -2167,18 +2152,18 @@ like <code>[This link](http://example.net/)</code></p>
         <span class="hljs-keyword">return</span> u$.isNullish(b) ? <span class="hljs-literal">NaN</span> : +b;
       },
       order: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">a, b</span>) </span>{
-        <span class="hljs-keyword">return</span> a ? (b ? <span class="hljs-literal">null</span> : <span class="hljs-number">1</span>) : (b ? -<span class="hljs-number">1</span> : <span class="hljs-literal">null</span>);
+        <span class="hljs-keyword">return</span> a ? (b ? <span class="hljs-literal">null</span> : <span class="hljs-number">1</span>) : (b ? <span class="hljs-number">-1</span> : <span class="hljs-literal">null</span>);
       }
     },</pre></div></div>
             
         </li>
         
-        <li id="section-81">
+        <li id="section-75">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-81">&#182;</a>
+                <a class="pilcrow" href="#section-75">&#182;</a>
               </div>
               <p><strong> string </strong> type</p>
 
@@ -2197,12 +2182,12 @@ like <code>[This link](http://example.net/)</code></p>
         
               <a name="u$.detect_possible_array_types" />
         
-        <li id="section-82">
+        <li id="section-76">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-82">&#182;</a>
+                <a class="pilcrow" href="#section-76">&#182;</a>
               </div>
               <p><strong> detect_possible_array_types(str_array) </strong></p>
 <p>takes <code>str_array</code> and detect other possible array
@@ -2270,26 +2255,29 @@ types from values</p>
         }
       }
     }
-  };</pre></div></div>
+  };
+
+  u$.ensureType=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">typeOrName</span>)</span>{</pre></div></div>
             
         </li>
         
-              <a name="u$.ensureType" />
-        
-        <li id="section-83">
+        <li id="section-77">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-83">&#182;</a>
+                <a class="pilcrow" href="#section-77">&#182;</a>
               </div>
-              <p><strong>ensureType(typeOrName)</strong></p>
-<p>returns type for name, or pass through type</p>
+              <p>@return type for name, or pass through type</p>
 
             </div>
             
-                 <div class="content"><div class='highlight'><pre>  u$.ensureType=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">typeOrName</span>)</span>{
-    <span class="hljs-keyword">return</span> typeOrName <span class="hljs-keyword">instanceof</span> Type ? typeOrName : u$.types[typeOrName];
+                 <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> typeOrName <span class="hljs-keyword">instanceof</span> Type ? typeOrName : u$.types[typeOrName];
+  };
+
+  u$.get_to_string = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">typeOrName</span>)</span>{
+    <span class="hljs-keyword">var</span> t = u$.ensureType(typeOrName);
+    <span class="hljs-keyword">return</span> t ? t.to_string.bind(t) : u$.ensureString ;
   };
 
 })();</pre></div></div>

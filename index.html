@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>Web Data Frame or WDF [<img alt="github" src="https://cdn4.iconfinder.com/data/icons/miu-square-shadow-social/60/github-square-shadow-social-media-128.png" width="32" />](https://github.com/walnutgeek/wdf)</title>
+  <title>index.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -13,6 +13,8 @@
 <body>
   <div id="container">
     
+      <div id="background"></div>
+    
     
       <ul id="jump_to">
         <li>
@@ -21,16 +23,6 @@
           <div id="jump_wrapper">
           <div id="jump_page_wrapper">
             <div id="jump_page">
-              
-                
-                <a class="source" href="index.html">
-                  index.md
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.md
-                </a>
               
                 
                 <a class="source" href="DataFrame.html">
@@ -53,8 +45,33 @@
                 </a>
               
                 
+                <a class="source" href="cacheit.html">
+                  cacheit.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.md
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.md
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
                 <a class="source" href="utils.html">
                   utils.js
+                </a>
+              
+                
+                <a class="source" href="webpack.config.html">
+                  webpack.config.js
                 </a>
               
             </div>
@@ -62,7 +79,13 @@
         </li>
       </ul>
     
-    <ul class="">
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>index.js</h1>
+              </div>
+          </li>
         
         
         <li id="section-1">
@@ -72,16 +95,16 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <h1 id="web-data-frame-or-wdf-img-alt-github-src-https-cdn4-iconfinder-com-data-icons-miu-square-shadow-social-60-github-square-shadow-social-media-128-png-width-32-https-github-com-walnutgeek-wdf-">Web Data Frame or WDF <a href="https://github.com/walnutgeek/wdf"><img alt="github" src="https://cdn4.iconfinder.com/data/icons/miu-square-shadow-social/60/github-square-shadow-social-media-128.png" width="32" /></a></h1>
-<p>dataframe for web:</p>
-<p><a href="https://travis-ci.org/walnutgeek/wdf"><img src="https://travis-ci.org/walnutgeek/wdf.svg?branch=master" alt="travis-ci.org"></a>
-<a href="https://codecov.io/github/walnutgeek/wdf?branch=master"><img src="https://codecov.io/github/walnutgeek/wdf/coverage.svg?branch=master" alt="codecov.io"></a>
-<a href="https://www.npmjs.com/package/wdf"><img src="https://badge.fury.io/js/wdf.svg" alt="npm version"></a>
-<a href="https://gemnasium.com/walnutgeek/wdf"><img src="https://gemnasium.com/walnutgeek/wdf.svg" alt="Dependency Status"></a></p>
-<p>Insipred by Pandas dataframe or R-like dataframe or SAS-like dataset.</p>
-<p><a href="lcov-report/index.html">Coverage</a></p>
-
+              
             </div>
+            
+                 <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = {
+  utils:     <span class="hljs-built_in">require</span>(<span class="hljs-string">"./utils"</span>),
+  DataFrame: <span class="hljs-built_in">require</span>(<span class="hljs-string">"./DataFrame"</span>),
+  WdfView:   <span class="hljs-built_in">require</span>(<span class="hljs-string">"./WdfView"</span>),
+  WebPath:   <span class="hljs-built_in">require</span>(<span class="hljs-string">"./WebPath"</span>),
+  ViewTheme: <span class="hljs-built_in">require</span>(<span class="hljs-string">"./ViewTheme"</span>)
+};</pre></div></div>
             
         </li>
         

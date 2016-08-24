@@ -25,16 +25,6 @@
             <div id="jump_page">
               
                 
-                <a class="source" href="index.html">
-                  index.md
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.md
-                </a>
-              
-                
                 <a class="source" href="DataFrame.html">
                   DataFrame.js
                 </a>
@@ -55,8 +45,33 @@
                 </a>
               
                 
+                <a class="source" href="cacheit.html">
+                  cacheit.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.md
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.md
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
                 <a class="source" href="utils.html">
                   utils.js
+                </a>
+              
+                
+                <a class="source" href="webpack.config.html">
+                  webpack.config.js
                 </a>
               
             </div>
@@ -86,7 +101,7 @@
             </div>
             
                  <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-<span class="hljs-pi">  "use strict"</span>;</pre></div></div>
+<span class="hljs-meta">  "use strict"</span>;</pre></div></div>
             
         </li>
         
@@ -176,29 +191,8 @@ returns tr attributes:
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">get_cell</span>(<span class="hljs-params">view,row_idx,col_idx,col_name</span>) </span>{
     <span class="hljs-keyword">return</span> view.df.get(row_idx,col_idx);
   }
-  exports.get_cell = get_cell;</pre></div></div>
-            
-        </li>
-        
-              <a name="anchor_elem" />
-        
-        <li id="section-6">
+  exports.get_cell = get_cell;
 
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-6">&#182;</a>
-              </div>
-              <p>formatters library</p>
-
-            </div>
-            
-                 <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">anchor_elem</span>(<span class="hljs-params">view, link</span>) </span>{
-    <span class="hljs-keyword">var</span> a = view.new_elem(<span class="hljs-literal">null</span>, <span class="hljs-string">'a'</span>, [<span class="hljs-string">'wdf_link'</span>], {href: link.href});
-    a.innerText = link.text || link.href;
-    <span class="hljs-keyword">return</span> a;
-  }
-  exports.anchor_elem = anchor_elem ;
 
   <span class="hljs-keyword">var</span> FORMAT = {
     cell_by_type: {
@@ -208,7 +202,7 @@ returns tr attributes:
       link: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">view,row_idx,col_idx,col_name</span>) </span>{
         <span class="hljs-keyword">var</span> link = view.df.get(row_idx,col_idx);
         <span class="hljs-keyword">if</span>(link){
-          <span class="hljs-keyword">return</span> anchor_elem(view, link);
+          <span class="hljs-keyword">return</span> view.link_elem(link);
         }
         <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>;
       }

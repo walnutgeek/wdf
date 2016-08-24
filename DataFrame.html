@@ -25,16 +25,6 @@
             <div id="jump_page">
               
                 
-                <a class="source" href="index.html">
-                  index.md
-                </a>
-              
-                
-                <a class="source" href="test.html">
-                  test.md
-                </a>
-              
-                
                 <a class="source" href="DataFrame.html">
                   DataFrame.js
                 </a>
@@ -55,8 +45,33 @@
                 </a>
               
                 
+                <a class="source" href="cacheit.html">
+                  cacheit.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.md
+                </a>
+              
+                
+                <a class="source" href="test.html">
+                  test.md
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
                 <a class="source" href="utils.html">
                   utils.js
+                </a>
+              
+                
+                <a class="source" href="webpack.config.html">
+                  webpack.config.js
                 </a>
               
             </div>
@@ -86,7 +101,7 @@
             </div>
             
                  <div class="content"><div class='highlight'><pre>(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-<span class="hljs-pi">  "use strict"</span>;
+<span class="hljs-meta">  "use strict"</span>;
 
   <span class="hljs-keyword">var</span> u$ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./utils"</span>);
   <span class="hljs-keyword">var</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">"lodash"</span>);</pre></div></div>
@@ -141,12 +156,14 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
     <span class="hljs-keyword">this</span>.get = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">row</span>) </span>{
       <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.data[row];
     };
+    <span class="hljs-keyword">var</span> to_string = u$.get_to_string(<span class="hljs-keyword">this</span>.type);
+    <span class="hljs-keyword">this</span>.to_string = to_string ;
+    <span class="hljs-keyword">this</span>.as_string = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row</span>) </span>{
+      <span class="hljs-keyword">return</span> to_string(<span class="hljs-keyword">this</span>.data[row]);
+    };
     <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.type ){
       <span class="hljs-keyword">this</span>.as_json = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row</span>)</span>{
         <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.type.to_json(<span class="hljs-keyword">this</span>.data[row]);
-      };
-      <span class="hljs-keyword">this</span>.as_string = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row</span>) </span>{
-        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.type.to_string(<span class="hljs-keyword">this</span>.data[row]);
       };
       <span class="hljs-keyword">this</span>.set = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row,v</span>)</span>{
         <span class="hljs-keyword">this</span>.data[row] = <span class="hljs-keyword">this</span>.type.coerce(v);
@@ -156,9 +173,6 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
       }
     }<span class="hljs-keyword">else</span>{
       <span class="hljs-keyword">this</span>.as_json = <span class="hljs-keyword">this</span>.get ;
-      <span class="hljs-keyword">this</span>.as_string = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row</span>) </span>{
-        <span class="hljs-keyword">return</span> u$.ensureString(<span class="hljs-keyword">this</span>.data[row]) ;
-      };
       <span class="hljs-keyword">this</span>.set = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row,v</span>)</span>{
         <span class="hljs-keyword">this</span>.data[row] = v;
       };
@@ -282,6 +296,52 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
       <span class="hljs-keyword">this</span>.enforceColumn(name, n_rows, type);
     }
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>;
+  };
+
+  ColumnSet.prototype.getFormats=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">config</span>)</span>{
+    config = config || {};
+    <span class="hljs-keyword">if</span>(!config.fn){
+      <span class="hljs-keyword">if</span>(config.by_names || config.by_types){
+        <span class="hljs-keyword">if</span>( !config.by_names ) {
+          config.format_fn = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">_,type_name</span>)</span>{ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.by_types[type_name]; };
+        }<span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( !config.by_types ) {
+          config.format_fn = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">col_name,_</span>)</span>{ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.by_names[col_name]; } ;
+        }<span class="hljs-keyword">else</span>{
+          config.format_fn = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">col_name,type_name</span>)</span>{ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.by_names[col_name] || <span class="hljs-keyword">this</span>.by_types[type_name]; };
+        }
+      }
+    }
+    <span class="hljs-keyword">var</span> formats = [] ;
+    <span class="hljs-keyword">var</span> col_names = config.columns || <span class="hljs-built_in">Object</span>.keys(<span class="hljs-keyword">this</span>.byName);
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span> ; i &lt; col_names.length ; i++){
+      <span class="hljs-keyword">var</span> col_name = col_names[i];
+      <span class="hljs-keyword">var</span> col = <span class="hljs-keyword">this</span>.byName[col_name];
+      <span class="hljs-keyword">var</span> type_name = col.type &amp;&amp; col.type.name;
+      formats[i] = {
+          name: col_name,
+          index: col.col_idx,
+          title: (config.title_fn &amp;&amp; config.title_fn(col_name,type_name,col)) || col_name,
+          type: type_name,
+          format: (config.format_fn &amp;&amp; config.format_fn(col_name,type_name,col)) || col.to_string
+      };
+    }
+    <span class="hljs-keyword">return</span> formats;
+  };
+
+  ColumnSet.prototype.getStorageSize=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">max_data_length</span>(<span class="hljs-params">prev, col</span>) </span>{
+      <span class="hljs-keyword">return</span> prev &gt; col.data.length ? prev : col.data.length;
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.byIndex.reduce(max_data_length, <span class="hljs-number">0</span>);
+  };
+
+  ColumnSet.prototype.setStorageSize=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">size</span>)</span>{
+    <span class="hljs-keyword">var</span> storageSize = <span class="hljs-keyword">this</span>.getStorageSize();
+    <span class="hljs-keyword">if</span>( size &lt; storageSize ){
+      <span class="hljs-keyword">throw</span> u$.error({ msg:<span class="hljs-string">'cannot reduce column storage size'</span>,
+        current: storageSize, requested: size} );
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.byIndex.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">col</span>)</span>{col.data.length = size;});
   };</pre></div></div>
             
         </li>
@@ -300,8 +360,8 @@ See <a href="types.html">type</a> ). Also <code>col_idx</code> point on this col
 <ul>
 <li><code>rows</code> - array of rows. row could be array or object.</li>
 <li><code>config</code> :<ul>
-<li><code>columns</code> - array that contains column names or objects with <code>{name: &quot;colname&quot;,type: &quot;number&quot;}</code>.
-TODO documentation for config</li>
+<li><code>columns</code> - array that contains column names or objects with
+<code>{name: &quot;colname&quot;,type: &quot;number&quot;}</code>.</li>
 </ul>
 </li>
 </ul>
@@ -330,7 +390,7 @@ TODO documentation for config</li>
           <span class="hljs-keyword">this</span>.columnSet.enforceColumnAt(col_idx).set(row, row_data[col_idx]);
         }
       } <span class="hljs-keyword">else</span> {
-        <span class="hljs-keyword">throw</span> {msg: <span class="hljs-string">"row should be object or array and not:"</span> + row_data};
+        <span class="hljs-keyword">throw</span> u$.error(<span class="hljs-string">"row should be object or array and not:"</span> + row_data);
       }
     }
     <span class="hljs-keyword">return</span> obj;
@@ -340,12 +400,13 @@ TODO documentation for config</li>
     config = config || {columns: array_of_rows.shift()};
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> DataFrame(array_of_rows, config);
   }
-  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parse_csv_to_array_of_rows</span>(<span class="hljs-params">str</span>) </span>{
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parse_csv_to_array_of_rows</span>(<span class="hljs-params">str,offset</span>) </span>{
     <span class="hljs-keyword">var</span> arr = [];
     <span class="hljs-keyword">var</span> quote = <span class="hljs-literal">false</span>;  <span class="hljs-comment">// true means we're inside a quoted field</span>
 
     <span class="hljs-keyword">var</span> row, col, c;
-    <span class="hljs-keyword">for</span> (row = col = c = <span class="hljs-number">0</span>; c &lt; str.length; c++) {
+    <span class="hljs-keyword">for</span> (row = col = <span class="hljs-number">0</span> , c = offset; c &lt; str.length; c++) {
       <span class="hljs-keyword">var</span> cc = str[c], nc = str[c + <span class="hljs-number">1</span>];        <span class="hljs-comment">// current character, next character</span>
       arr[row] = arr[row] || [];             <span class="hljs-comment">// create a new row if necessary</span>
       arr[row][col] = arr[row][col] || <span class="hljs-string">''</span>;   <span class="hljs-comment">// create a new column (start with empty string) if necessary</span>
@@ -427,14 +488,64 @@ TODO documentation for config</li>
             
                  <div class="content"><div class='highlight'><pre>
   DataFrame.parse_csv = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">str, config</span>) </span>{
-    <span class="hljs-keyword">return</span> make_df_from_(parse_csv_to_array_of_rows(str), config);
+    <span class="hljs-keyword">return</span> make_df_from_(parse_csv_to_array_of_rows(str,<span class="hljs-number">0</span>), config);
   };
 
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parse_lf_separated</span>(<span class="hljs-params">str,offset</span>)</span>{
+    <span class="hljs-keyword">var</span> arr = [], row = <span class="hljs-string">''</span>, c;
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">append_row</span>(<span class="hljs-params"></span>)</span>{
+        arr.push([row]);
+    }
+    <span class="hljs-keyword">for</span> (c = offset; c &lt; str.length; c++) {
+      <span class="hljs-keyword">var</span> cc = str[c];
+      <span class="hljs-keyword">if</span> (cc === <span class="hljs-string">'\n'</span>) {
+        append_row();
+        row = <span class="hljs-string">''</span>;
+      } <span class="hljs-keyword">else</span> {
+        row += cc;
+      }
+    }
+    append_row();
+    <span class="hljs-keyword">return</span> arr;
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parse_lf_separated_json</span>(<span class="hljs-params">str,offset</span>)</span>{
+    <span class="hljs-keyword">var</span> arr = [], row = <span class="hljs-string">''</span>, c;
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">append_row</span>(<span class="hljs-params"></span>)</span>{
+      <span class="hljs-keyword">if</span>(row.length &gt; <span class="hljs-number">0</span>){
+        arr.push(<span class="hljs-built_in">JSON</span>.parse(row));
+      }
+    }
+    <span class="hljs-keyword">for</span> (c = offset; c &lt; str.length; c++) {
+      <span class="hljs-keyword">var</span> cc = str[c];
+      <span class="hljs-keyword">if</span> (cc === <span class="hljs-string">'\n'</span>) {
+        append_row();
+        row = <span class="hljs-string">''</span>;
+      } <span class="hljs-keyword">else</span> {
+        row += cc;
+      }
+    }
+    append_row();
+    <span class="hljs-keyword">return</span> arr;
+  }
   DataFrame.parse_wdf=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">str</span>) </span>{
-    <span class="hljs-keyword">var</span> arr = str.split(<span class="hljs-string">'\n'</span>);
-    <span class="hljs-keyword">var</span> config = <span class="hljs-built_in">JSON</span>.parse(arr.shift());
-    <span class="hljs-keyword">var</span> rows = arr.filter(u$.isStringNotEmpty).map(<span class="hljs-built_in">JSON</span>.parse);
+    <span class="hljs-keyword">var</span> rows = parse_lf_separated_json(str,<span class="hljs-number">0</span>);
+    <span class="hljs-keyword">var</span> config = rows.shift();
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> DataFrame(rows,config);
+  };
+
+  DataFrame.parse_json=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">json</span>) </span>{
+    json = u$.ensurePlainObject(json);
+    <span class="hljs-keyword">if</span>( u$.isNullish(json) || json <span class="hljs-keyword">instanceof</span> DataFrame){
+      <span class="hljs-keyword">return</span> json;
+    }
+    <span class="hljs-keyword">if</span>(json.type===<span class="hljs-string">'DataFrame'</span>){
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> DataFrame(json.rows,json.config);
+    }
+    <span class="hljs-keyword">throw</span> u$.error({
+      msg: <span class="hljs-string">'not valid DataFrame json'</span>,
+      json: json
+    });
   };
 
   DataFrame.prototype.to_wdf=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
@@ -446,6 +557,15 @@ TODO documentation for config</li>
       s+=<span class="hljs-string">'\n'</span>;
     });
     <span class="hljs-keyword">return</span> s;
+  };
+  DataFrame.prototype.to_json = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> {
+      type: <span class="hljs-string">'DataFrame'</span>,
+      config: <span class="hljs-keyword">this</span>.getConfig(),
+      rows: <span class="hljs-keyword">this</span>.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">row</span>)</span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getJsonRow(row);
+      })
+    };
   };
 
   <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">parse_dom_table_to_array_of_rows</span>(<span class="hljs-params">dom_table</span>) </span>{
@@ -653,11 +773,57 @@ for json</p>
             
                  <div class="content"><div class='highlight'><pre>  DataFrame.prototype.getRowCount = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.index.length;
+  };
+
+  DataFrame.prototype.newRow = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">row_num</span>) </span>{
+    <span class="hljs-comment">/*
+    adds new row. Returns new row number.
+
+    @param row_num integer
+       row where to insert new row. if omitted new row is appended.
+     */</span>
+    row_num = row_num || <span class="hljs-keyword">this</span>.index.length;
+    <span class="hljs-keyword">var</span> new_storage_row = <span class="hljs-keyword">this</span>.columnSet.getStorageSize();
+    <span class="hljs-keyword">this</span>.columnSet.setStorageSize(new_storage_row+<span class="hljs-number">1</span>);
+    <span class="hljs-keyword">this</span>.index.splice(row_num,<span class="hljs-number">0</span>,new_storage_row);
+    <span class="hljs-keyword">return</span> row_num;
+  };
+
+  DataFrame.prototype.setRow = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">row_num,row_data</span>) </span>{
+    <span class="hljs-comment">/*
+    @param row_num
+      row to set
+    @param row_data array or object
+      data to set in row
+     */</span>
+    <span class="hljs-keyword">var</span> ph_row = <span class="hljs-keyword">this</span>.index[row_num];
+    <span class="hljs-keyword">if</span> (_.isPlainObject(row_data)) {
+      <span class="hljs-keyword">var</span> keys = <span class="hljs-built_in">Object</span>.keys(row_data);
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> k = <span class="hljs-number">0</span>; k &lt; keys.length; k++) {
+        <span class="hljs-keyword">this</span>.columnSet.getColumn(keys[k]).set(ph_row, row_data[keys[k]]);
+      }
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (_.isArray(row_data)) {
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> col_idx = <span class="hljs-number">0</span>; col_idx &lt; row_data.length; col_idx++) {
+        <span class="hljs-keyword">this</span>.columnSet.getColumn(col_idx).set(ph_row, row_data[col_idx]);
+      }
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-keyword">throw</span> u$.error(<span class="hljs-string">"row should be object or array and not:"</span> + row_data);
+    }
+  };
+
+  DataFrame.prototype.addRow = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">row_data,row_num</span>) </span>{
+    <span class="hljs-comment">/*
+     @param row_data array or object
+       row data to add
+     @param row_num integer @optional
+       where to insert row, if omitted row is appended
+     */</span>
+    <span class="hljs-keyword">this</span>.setRow(<span class="hljs-keyword">this</span>.newRow(row_num),row_data);
   };</pre></div></div>
             
         </li>
         
-              <a name="DataFrame.prototype.newRow" />
+              <a name="DataFrame.prototype.deleteRow" />
         
         <li id="section-17">
 
@@ -665,28 +831,6 @@ for json</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-17">&#182;</a>
-              </div>
-              <p><strong>newRow()</strong></p>
-<p>add new row. Returns new row number.</p>
-
-            </div>
-            
-                 <div class="content"><div class='highlight'><pre>  DataFrame.prototype.newRow = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>{
-    <span class="hljs-keyword">var</span> new_row_num = <span class="hljs-keyword">this</span>.index.length;
-    <span class="hljs-keyword">this</span>.index[new_row_num] = new_row_num;
-    <span class="hljs-keyword">return</span> new_row_num;
-  };</pre></div></div>
-            
-        </li>
-        
-              <a name="DataFrame.prototype.deleteRow" />
-        
-        <li id="section-18">
-
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p><strong>deleteRow(row_num)</strong></p>
 <p>delete row by <code>row_num</code>.</p>
@@ -701,12 +845,12 @@ for json</p>
         
               <a name="DataFrame.prototype.getColumn" />
         
-        <li id="section-19">
+        <li id="section-18">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-19">&#182;</a>
+                <a class="pilcrow" href="#section-18">&#182;</a>
               </div>
               <p>getColumn(col)</p>
 <p>get all data out column. returns array of values</p>
@@ -737,12 +881,12 @@ for json</p>
         
               <a name="DataFrame.prototype.apply" />
         
-        <li id="section-20">
+        <li id="section-19">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-20">&#182;</a>
+                <a class="pilcrow" href="#section-19">&#182;</a>
               </div>
               <p><strong> apply(logic) </strong></p>
 <p>run <code>logic(df,row_num)</code> function on all rows of DataFrame</p>
@@ -759,12 +903,12 @@ for json</p>
         
               <a name="DataFrame.prototype.map" />
         
-        <li id="section-21">
+        <li id="section-20">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-21">&#182;</a>
+                <a class="pilcrow" href="#section-20">&#182;</a>
               </div>
               <p><strong> map(logic) </strong></p>
 <p>run <code>logic(df,row_num)</code> function on all rows of DataFrame.
@@ -788,12 +932,12 @@ will not be included in array.</p>
         
               <a name="DataFrame.prototype.getConfig" />
         
-        <li id="section-22">
+        <li id="section-21">
 
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-22">&#182;</a>
+                <a class="pilcrow" href="#section-21">&#182;</a>
               </div>
               <p><strong>getData()</strong></p>
 <p>Get all data in structure:
@@ -834,7 +978,95 @@ returns {Object}</p>
 
   DataFrame.prototype.setColumnType = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">col,new_type</span>) </span>{
     <span class="hljs-keyword">this</span>.columnSet.getColumn(col).setType(new_type);
-  };</pre></div></div>
+  };
+
+  DataFrame.SortCriteria = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">criteria</span>)</span>{
+    <span class="hljs-keyword">this</span>.parts = [];
+    <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> i  = <span class="hljs-number">0</span> ; i &lt;  criteria.length ; i++){
+      <span class="hljs-keyword">var</span> p  = <span class="hljs-keyword">this</span>.parts[i] = {} ;
+      <span class="hljs-keyword">var</span> c  = criteria[i];
+      <span class="hljs-keyword">if</span>(_.isPlainObject(c)) {
+        p.name = c.name;
+        p.order = u$.sorting(c.order);
+      }<span class="hljs-keyword">else</span>{
+        p.name = c[<span class="hljs-number">0</span>];
+        p.order = u$.sorting(c[<span class="hljs-number">1</span>]);
+      }
+      p.decorate_order_fn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">asc_order_fn</span>)</span>{
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.order ? u$.orderInverse(asc_order_fn) : asc_order_fn ;
+      }
+    }
+  };
+
+  DataFrame.SortCriteria.prototype._phrow_order_fn = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">df,row_data</span>)</span>{
+    <span class="hljs-keyword">var</span> orders = [] ;
+    <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">create_ph_order</span>(<span class="hljs-params">column,order</span>)</span>{
+      <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">_get_data</span>(<span class="hljs-params">phrow</span>)</span>{
+        <span class="hljs-keyword">if</span>(phrow===<span class="hljs-number">-1</span>){
+          <span class="hljs-keyword">if</span>(_.isArray(row_data) ){
+            <span class="hljs-keyword">return</span> row_data[column.col_idx];
+          }<span class="hljs-keyword">else</span>{
+            <span class="hljs-keyword">return</span> row_data[column.name];
+          }
+        }<span class="hljs-keyword">else</span>{
+          <span class="hljs-keyword">return</span> column.get(phrow);
+        }
+      }
+      <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">ph1,ph2</span>)</span>{
+        <span class="hljs-keyword">var</span> v1 = _get_data(ph1);
+        <span class="hljs-keyword">var</span> v2 = _get_data(ph2);
+        <span class="hljs-keyword">try</span>{</pre></div></div>
+            
+        </li>
+        
+        <li id="section-22">
+
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>console.log(column.name,ph1,ph2,v1,v2,o);</p>
+
+            </div>
+            
+                 <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">return</span> order(v1, v2);
+        }<span class="hljs-keyword">catch</span>(e){
+          <span class="hljs-keyword">throw</span> u$.error({
+            col: column.name,
+            ph1:ph1,ph2:ph2,
+            v1:v1,v2:v2
+          },e);
+        }
+      }
+    }
+    <span class="hljs-keyword">for</span>( <span class="hljs-keyword">var</span> i  = <span class="hljs-number">0</span> ; i &lt;  <span class="hljs-keyword">this</span>.parts.length ; i++) {
+      <span class="hljs-keyword">var</span> column = df.columnSet.getColumn(<span class="hljs-keyword">this</span>.parts[i].name);
+      <span class="hljs-keyword">var</span> order = column.type ? column.type.compare : u$.orderNullsFirst(u$.generic_order) ;
+      <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.parts[i].order ) order = u$.orderInverse(order);
+      orders.push(create_ph_order(column,  order ));
+    }
+    <span class="hljs-keyword">return</span> u$.orderChain(orders);
+  };
+
+  DataFrame.prototype.sort=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">criteria</span>)</span>{
+    <span class="hljs-keyword">this</span>.index.sort(criteria._phrow_order_fn(<span class="hljs-keyword">this</span>));
+  };
+
+  DataFrame.prototype.find=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">criteria,row_data</span>)</span>{
+    <span class="hljs-keyword">return</span> u$.binarySearch(<span class="hljs-number">-1</span>, <span class="hljs-keyword">this</span>.index, criteria._phrow_order_fn(<span class="hljs-keyword">this</span>,row_data));
+  };
+
+  <span class="hljs-comment">/*
+   find
+   method assumne that dataframe is sorted by column `col`
+   @param col
+   col_name or col_idx
+   @param value
+   to search for in column
+   @returns number
+   positive number indicates were matcheing record was found or negative  number
+   */</span></pre></div></div>
             
         </li>
         
@@ -858,6 +1090,175 @@ with column names pointing to values</p>
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.map( <span class="hljs-keyword">this</span>.getObjectRow );
   };
 
+  u$.addTypes({
+    dataframe: {
+      is: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">o</span>)</span>{
+        <span class="hljs-keyword">return</span> (o &amp;&amp;  o.type === <span class="hljs-string">'DataFrame'</span>)
+            || o <span class="hljs-keyword">instanceof</span> DataFrame ;
+      },
+      missing: _.isNull,
+      from_string: DataFrame.parse_json,
+      to_json: <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">v</span>) </span>{
+        <span class="hljs-keyword">return</span> _.isNull(v) ? <span class="hljs-literal">null</span> : v.to_json();
+      },
+      order: u$.no_order
+    }
+  });
+
+  <span class="hljs-keyword">var</span> FILE_INFO_COLUMNS = [ <span class="hljs-string">'content_type'</span>, <span class="hljs-string">'filesize'</span>, <span class="hljs-string">'mtime'</span> ];
+
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">emptyFragmentsStore</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> DataFrame([], {
+      columns: [
+        {name: <span class="hljs-string">'content_type'</span>, type: <span class="hljs-string">'string'</span>},
+        {name: <span class="hljs-string">'filesize'</span>, type: <span class="hljs-string">'number'</span>},
+        {name: <span class="hljs-string">'mtime'</span>, type: <span class="hljs-string">'timestamp'</span>},
+        {name: <span class="hljs-string">'start_position'</span>, type: <span class="hljs-string">'number'</span>},
+        {name: <span class="hljs-string">'end_position'</span>, type: <span class="hljs-string">'number'</span>},
+        {name: <span class="hljs-string">'num_of_records'</span>, type: <span class="hljs-string">'number'</span>},
+        {name: <span class="hljs-string">'direction'</span>, type: <span class="hljs-string">'string'</span>},
+        {name: <span class="hljs-string">'fragment'</span>, type: <span class="hljs-string">'dataframe'</span>},
+      ]
+    });
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">directional_storage</span> (<span class="hljs-params">direction</span>)</span>{
+    <span class="hljs-keyword">return</span> {
+      df: emptyFragmentsStore() ,
+      add: direction == <span class="hljs-string">'F'</span> ?
+          <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">meta</span>)</span>{
+            <span class="hljs-keyword">var</span> rowCount = <span class="hljs-keyword">this</span>.df.getRowCount();
+            <span class="hljs-keyword">var</span> append =
+                ( rowCount == <span class="hljs-number">0</span> &amp;&amp; meta.start_position === <span class="hljs-number">0</span> ) ||
+                ( rowCount &gt; <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>.df.get(rowCount<span class="hljs-number">-1</span>,<span class="hljs-string">'end_position'</span>) === meta.start_position) ;
+            <span class="hljs-keyword">if</span>( append ){
+              <span class="hljs-keyword">this</span>.df.addRow(meta);
+            }
+            <span class="hljs-keyword">return</span> append;
+          }:
+          <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">meta</span>)</span>{
+            <span class="hljs-keyword">var</span> rowCount = <span class="hljs-keyword">this</span>.df.getRowCount();
+            <span class="hljs-keyword">var</span> prepend =
+                ( rowCount == <span class="hljs-number">0</span> &amp;&amp; meta.end_position === meta.filesize ) ||
+                ( rowCount &gt; <span class="hljs-number">0</span> &amp;&amp; <span class="hljs-keyword">this</span>.df.get(<span class="hljs-number">0</span>,<span class="hljs-string">'start_position'</span>) === meta.end_position) ;
+            <span class="hljs-keyword">if</span>( prepend ){
+              <span class="hljs-keyword">this</span>.df.addRow(meta,<span class="hljs-number">0</span>);
+            }
+            <span class="hljs-keyword">return</span> prepend;
+          }
+     };
+  }
+
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">newFragmentStorage</span>(<span class="hljs-params"></span>) </span>{
+    <span class="hljs-keyword">return</span> {
+      F: directional_storage(<span class="hljs-string">'F'</span>),
+      B: directional_storage(<span class="hljs-string">'B'</span>)
+    };
+  }
+
+  DataFrame.MultiPart = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">fragment_factory,  config </span>)</span>{
+    <span class="hljs-comment">/*
+    @param parser {}
+      @param header function(buffer,offset) returns newoffset
+      @param line function(buffer,offset) return newoffset
+    @param fragment_factory function(direction, offset)
+    @param columns [] or undefined
+     provided if first fragment does not contain header.
+     */</span>
+    <span class="hljs-keyword">this</span>.file_type = file_type ;
+    <span class="hljs-keyword">this</span>.fragment_factory = fragment_factory;
+    <span class="hljs-keyword">this</span>.config = config ;
+    <span class="hljs-keyword">this</span>.hasHeader = ! u$.isNullish(config);
+    <span class="hljs-keyword">this</span>.fileInfo = <span class="hljs-literal">null</span>;
+    <span class="hljs-keyword">this</span>.fragments = newFragmentStorage();
+    <span class="hljs-keyword">this</span>.fragment_factory(<span class="hljs-string">'F'</span>,<span class="hljs-number">0</span>).then( <span class="hljs-keyword">this</span>.parse_fragment.bind(<span class="hljs-keyword">this</span>) ) ;
+  };
+
+  <span class="hljs-keyword">var</span> mime2parser = {
+    <span class="hljs-string">'text/plain'</span> : {
+      parse: parse_lf_separated,
+      static_header: { columns: [ <span class="hljs-string">'line'</span> ] } },
+    <span class="hljs-string">'text/wdf'</span> : {
+      parse: parse_lf_separated_json,
+      adjust_header: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">header</span>)</span>{<span class="hljs-keyword">return</span> header;} },
+    <span class="hljs-string">'text/csv'</span> : {
+      parse: parse_csv_to_array_of_rows,
+      adjust_header: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">header</span>)</span>{<span class="hljs-keyword">return</span> {columns: header};} },
+  };
+
+  DataFrame.MultiPart.prototype.difer=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fragment,fragment_data</span>)</span>{
+    <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.fileInfo &amp;&amp; !_.isEqual(<span class="hljs-keyword">this</span>.fileInfo, fragment_data.file_info) ){
+      <span class="hljs-keyword">return</span>;
+    }
+    <span class="hljs-keyword">if</span>( !<span class="hljs-keyword">this</span>.deferred_fragments ){
+      <span class="hljs-keyword">this</span>.deferred_fragments = [];
+    }
+    <span class="hljs-keyword">var</span> pos = fragment_data.direction == <span class="hljs-string">'F'</span> ?
+          fragment_data.start_position :
+          fragment_data.filesize - fragment_data.end_position ;
+    <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span> ; i &lt; <span class="hljs-keyword">this</span>.deferred_fragments.length ; i++){
+      <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.deferred_fragments[i].pos &gt; pos ) <span class="hljs-keyword">break</span> ;
+    }
+    <span class="hljs-keyword">this</span>.deferred_fragments.splice(i, <span class="hljs-number">0</span>, {pos: pos, fragment: fragment} );
+  };
+
+  DataFrame.MultiPart.prototype.parse_fragment=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">fragment</span>)</span>{
+    <span class="hljs-keyword">var</span> meta_data_idx = fragment.indexOf(<span class="hljs-string">'\n'</span>);
+    <span class="hljs-keyword">var</span> fragment_data = <span class="hljs-built_in">JSON</span>.parse(fragment.substr(<span class="hljs-number">0</span>,meta_data_idx));
+    <span class="hljs-comment">/*
+     @param filesize
+        size of file
+     @param mtime
+        modification time of file
+     @param start_position @param end_position
+        fragment boundaries in file. `end_positon` can be smaller
+        then `start position` if direction is backward `'B'`
+     @param num_of_records
+     @param content_type
+        mime type of original file
+     @param direction 'F' or 'B'
+     */</span>
+    <span class="hljs-keyword">var</span> parser = mime2parser[fragment_data.content_type];
+
+    <span class="hljs-keyword">if</span>( !<span class="hljs-keyword">this</span>.hasHeader &amp;&amp; parser.static_header ){
+      <span class="hljs-keyword">this</span>.config = parser.static_header;
+    }
+
+    fragment_data.file_info = u$.assignByKeys({}, fragment_data, FILE_INFO_COLUMNS);
+    <span class="hljs-keyword">if</span>(<span class="hljs-keyword">this</span>.fileInfo === <span class="hljs-literal">null</span>){
+      <span class="hljs-keyword">this</span>.fileInfo = fragment_data.file_info;
+    }<span class="hljs-keyword">else</span>{
+      <span class="hljs-keyword">if</span>( !_.isEqual(<span class="hljs-keyword">this</span>.fileInfo, fragment_data.file_info) ){
+        <span class="hljs-keyword">this</span>.fileInfo = fragment_data.file_info;
+        <span class="hljs-keyword">this</span>.fragments = newFragmentStorage() ;
+      }
+    }
+    <span class="hljs-keyword">if</span>( fragment_data.start_position !== <span class="hljs-number">0</span> &amp;&amp; ! <span class="hljs-keyword">this</span>.hasHeader &amp;&amp; ! <span class="hljs-keyword">this</span>.config ) {
+      <span class="hljs-keyword">this</span>.difer(fragment, fragment_data )
+    }<span class="hljs-keyword">else</span>{
+      <span class="hljs-keyword">var</span> rows = parser.parse(fragment,meta_data_idx+<span class="hljs-number">1</span>);
+      <span class="hljs-keyword">if</span>( fragment_data.start_position === <span class="hljs-number">0</span> &amp;&amp; fragment_data.end_position &gt; <span class="hljs-number">0</span> ){
+        <span class="hljs-keyword">if</span>( ! <span class="hljs-keyword">this</span>.hasHeader ){
+          <span class="hljs-keyword">this</span>.config = parser.adjust_header(rows.shift());
+        }
+      }
+      fragment_data.fragment = <span class="hljs-keyword">new</span> DataFrame(rows,<span class="hljs-keyword">this</span>.config);
+      <span class="hljs-keyword">var</span> processed = <span class="hljs-keyword">this</span>.fragments[fragment_data.direction].add(fragment_data);
+      <span class="hljs-keyword">if</span>(!processed){
+        <span class="hljs-keyword">this</span>.difer(fragment,fragment_data);
+      }
+      <span class="hljs-keyword">if</span>( <span class="hljs-keyword">this</span>.deferred_fragments ){
+        <span class="hljs-keyword">var</span> deferred = <span class="hljs-keyword">this</span>.deferred_fragments;
+        <span class="hljs-keyword">this</span>.deferred_fragments = <span class="hljs-literal">undefined</span>;
+        <span class="hljs-keyword">var</span> self = <span class="hljs-keyword">this</span> ;
+        deferred.forEach(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">f</span>)</span>{
+          self.parse_fragment(f.fragment);
+        });
+      }
+    }
+
+  };
   <span class="hljs-built_in">module</span>.exports = DataFrame;
 
 
