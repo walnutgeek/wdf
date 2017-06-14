@@ -535,41 +535,36 @@
 
 // define supported date patterns
   var DATE_PATTERNS = {
-    YYYY_MM_DDThh_mm_ss_zzzZ: { delims: ['-','-','T',':',':','.','Z'] }, //ISO-8601
-    YYYY_MM_DDThh_mm_ss_zzz:  { delims: ['-','-','T',':',':','.'] },
-    YYYY_MM_DD_hh_mm_ss_zzz:  { delims: ['-','-',' ',':',':','.'] },
-    YYYY_MM_DDThh_mm_ss:      { delims: ['-','-','T',':',':'] },
-    YYYY_MM_DD_hh_mm_ss:      { delims: ['-','-',' ',':',':'] },
-    YYYYMMDD_hhmmss:          { delims: ['','','-','',''] },
-    YYYYMMDDhhmmss:           { delims: ['','','','',''] },
-    YYYY_MM_DD:               { delims: ['-','-'] },
-    YYYYMMDD:                 { delims: ['',''] },
+    YYYY_MM_DDThh_mm_ss_zzzZ:   { pattern: '{Y:4}-{M:2}-{D:2}T{h:2}:{m:2}:{s:2}.{z:3}Z'} , //ISO-8601
+    YYYY_MM_DDThh_mm_ss_zzz:    { pattern: '{Y:4}-{M:2}-{D:2}T{h:2}:{m:2}:{s:2}.{z:3}'},
+    YYYY_MM_DD_hh_mm_ss_zzz:    { pattern: '{Y:4}-{M:2}-{D:2} {h:2}:{m:2}:{s:2}.{z:3}'},
+    YYYY_MM_DDThh_mm_ss:        { pattern: '{Y:4}-{M:2}-{D:2}T{h:2}:{m:2}:{s:2}'},
+    YYYY_MM_DD_hh_mm_ss:        { pattern: '{Y:4}-{M:2}-{D:2} {h:2}:{m:2}:{s:2}'},
+    YYYYMMDD_hhmmss:            { pattern: '{Y:4}{M:2}{D:2}-{h:2}{m:2}{s:2}'},
+    YYYYMMDDhhmmss:             { pattern: '{Y:4}{M:2}{D:2}{h:2}{m:2}{s:2}'},
+    YYYY_MM_DD:                 { pattern: '{Y:4}-{M:2}-{D:2}'},
+    YYYYMMDD:                   { pattern: '{Y:4}{M:2}{D:2}'},
+    YYYY_MM_DDThh_mm_ss_cccccc: { pattern: '{Y:4}-{M:2}-{D:2} {h:2}:{m:2}:{s:2}.{c:6}'} , // python json.dump
   };
 
-//prepare text for regexp
-  var DATE_FIELD_SIZES = [4,2,2,2,2,2,3];
-  var pattern_texts = DATE_FIELD_SIZES.map(function(n){
-    var s='(';
-    while(n--){
-      s+='\\d';
-    }
-    return s+')';
-  });
+  var DATE_FIELD_SIZES =  [4,2,2,2,2,2,3];
 
 // generate regexps in `DATE_PATTERNS`
   for(var name in DATE_PATTERNS){
     var o = DATE_PATTERNS[name];
-    var n = o.delims.length+1;
-    var s = '^';
-    for (var i = 0; i < n; i++) {
-      if(i>0){
-        s += o.delims[i-1];
-      }
-      var p = pattern_texts[i];
-      if( p )
-        s += p;
+    o.field_names = [];
+    var s = '^' + o.pattern.replace(
+            /\{(\w+):(\d+)\}/g,
+            function(m,name,len){
+                o.field_names.push(name);
+                return '(\\d{'+len+'})';
+          }) + '$';
+    var delims = o.pattern.split(/\{\w+:\d+\}/);
+    var len = delims.length;
+    if ( '' === delims[len-1] ){
+      len--;
     }
-    s+='$';
+    o.delims = delims.slice(1,len);
     o.regexp=new RegExp(s);
   }
 
@@ -584,14 +579,20 @@
 
 // try all patters to parse string
   function parse_date(in_utc, s){
-    for(var pkey in DATE_PATTERNS){
-      var m = DATE_PATTERNS[pkey].regexp.exec(s);
+    for(var dp_name in DATE_PATTERNS){
+      var dp = DATE_PATTERNS[dp_name];
+      var m = dp.regexp.exec(s);
       if(m){
-        var args = [];
+        var v = {};
         for(var i = 1 ; i < m.length ;i++){
-          args[i-1] = +m[i] ;
+          v[dp.field_names[i-1]] = +m[i] ;
         }
-        args[1]--;
+        v['M']--;
+        if(v.hasOwnProperty('c') && !v.hasOwnProperty('z')){
+          v.z = Math.round(v.c/1000);
+        }
+        var args = v.z === undefined? v.h === undefined ? [v.Y, v.M, v.D] : [v.Y, v.M, v.D, v.h, v.m, v.s] :
+            [v.Y, v.M, v.D, v.h, v.m, v.s, v.z];
         return new_date(in_utc, args);
       }
     }
@@ -609,7 +610,6 @@
 //   * `precision` -  date precision in mills
 //   * `strict` - if true, dates that does not
 //      exactly match precision will be undefined
-
   u$.date_from_string=function(s,precision,strict){
     precision = precision || 1;
     var dt = parse_date(true, s);

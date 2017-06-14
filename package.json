@@ -1,6 +1,6 @@
 {
   "name": "wdf",
-  "version": "0.0.9",
+  "version": "0.0.11",
   "description": "Web data frame",
   "main": "index.js",
   "scripts": {
