@@ -44,7 +44,7 @@
   },
   "homepage": "https://github.com/walnutgeek/wdf#readme",
   "devDependencies": {
-    "codecov": "^1.0.1",
+    "codecov": ">=3.6.5",
     "css-loader": "^0.23.1",
     "docco": "^0.7.0",
     "gh-pages": "^0.8.0",
